@@ -7,7 +7,26 @@ from rdflib.namespace import RDF
 CONF = Namespace("http://richard.cyganiak.de/2007/pubby/config.rdf#")
 FUNCTIONAL = [
         CONF.projectName,
+        CONF.projectHomepage,
+        CONF.webBase,
+        CONF.defaultLanguage,
+        CONF.indexResource,
+        CONF.showLabels,
+        CONF.defaultEndpoint,
+        CONF.sparqlEndpoint,
         CONF.datasetBase,
+        CONF.datasetURIPattern,
+        CONF.priority,
+        CONF.addSameAsStatements,
+        CONF.webResourcePrefix,
+        CONF.webDataPrefix,
+        CONF.webPagePrefix,
+        CONF.useSparqlMapping,
+        CONF.uriPattern,
+        CONF.sparqlQuery,
+        CONF.primaryResource,
+        CONF.fixUnescapedCharacters,
+        CONF.metadataTemplate,
         ]
 
 # Cache for the parsed configurations. Contains ConfigElements of the root nodes.

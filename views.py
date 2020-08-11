@@ -12,6 +12,10 @@ from pubby.config import getconfig
 def get(request, path):
     context = {}
     context["config"] = getconfig(request)
+    context["host"] = request.get_host()
+    context["port"] = request.get_port()
+    context["request_path"] = request.path
+    context["path"] = path
     print("rendering")
     return render(request, "pubby/page.html", context) 
 
