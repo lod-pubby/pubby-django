@@ -21,6 +21,8 @@ class ConfigElement():
         '''
         self.graph = graph
         self.subject = subject
+        self.cache = {}
+
 
 
     def get(self, prop):
@@ -29,13 +31,19 @@ class ConfigElement():
         If the value(s) are URIRefs or BNodes and therefore potentially subjects
         for further subconfigurations, they are wrapped as ConfigElements.
         '''
-        objects = [ConfigElement(self.graph, o) if type(o) in [URIRef, BNode] else o for o in self.graph.objects(self.subject, CONF[prop])]
-        if len(objects)==0:
+        if prop in self.cache:
+            return self.cache[prop]
+        objects = self.graph.objects(self.subject, CONF[prop])
+        res = [ConfigElement(self.graph, o) if type(o) in [URIRef, BNode] else o.toPython() for o in objects]
+        if len(res)==0:
+            self.cache[prop] = None
             return None
-        elif len(objects)==1:
-            return objects[0]
+        elif len(res)==1:
+            self.cache[prop] = res[0]
+            return res[0]
         else:
-            return objects
+            self.cache[prop] = res
+            return res
 
 
     def value(self):
