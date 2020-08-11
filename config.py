@@ -5,6 +5,10 @@ from rdflib.namespace import RDF
 
 
 CONF = Namespace("http://richard.cyganiak.de/2007/pubby/config.rdf#")
+FUNCTIONAL = [
+        CONF.projectName,
+        CONF.datasetBase,
+        ]
 
 # Cache for the parsed configurations. Contains ConfigElements of the root nodes.
 configs = {}
@@ -35,15 +39,22 @@ class ConfigElement():
             return self.cache[prop]
         objects = self.graph.objects(self.subject, CONF[prop])
         res = [ConfigElement(self.graph, o) if type(o) in [URIRef, BNode] else o.toPython() for o in objects]
-        if len(res)==0:
+        if CONF[prop] in FUNCTIONAL and len(res) == 0:
             self.cache[prop] = None
             return None
-        elif len(res)==1:
+        elif CONF[prop] in FUNCTIONAL and len(res)==1:
             self.cache[prop] = res[0]
             return res[0]
         else:
             self.cache[prop] = res
             return res
+
+
+    def __getitem__(self, prop):
+        '''
+        Configuration can be accessed like this: config['projectName']
+        '''
+        return self.get(prop)
 
 
     def value(self):
