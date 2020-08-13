@@ -19,3 +19,7 @@ def get(request, path):
     print("rendering")
     return render(request, "pubby/page.html", context) 
 
+
+def test(request):
+    return HttpResponse("test")
+
