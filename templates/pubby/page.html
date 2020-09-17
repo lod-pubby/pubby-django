@@ -8,19 +8,19 @@
 <body>
 
   <ul>
-  <li>{{config.projectName}}</li>
-  <li>{{path}}</li>
-  <li>{{request_path}}</li>
-  <li>{{host}}</li>
-  <li>{{port}}</li>
-  <li>{{config.webBase}}</li>
+  <li>Config projectName: {{config.projectName}}</li>
+  <li>path: {{path}}</li>
+  <li>request_path: {{request_path}}</li>
+  <li>host: {{host}}</li>
+  <li>port: {{port}}</li>
+  <li>Config webBase {{config.webBase}}</li>
   <ul>
   {% for ds in config.dataset %}
-  <li>{{ ds.datasetBase }}</li>
+  <li>datasetBase {{ ds.datasetBase }}</li>
   {% endfor %}
   </ul>
   </ul>
-  <a href="{% url 'pubby:test' %}">test</a>
+  <a href="{% url 'pubby:index' %}">Index page</a>
   
 </body>
 </html>

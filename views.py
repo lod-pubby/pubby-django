@@ -1,5 +1,5 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect
 from django.conf import settings
 import rdflib
 from pubby.config import getconfig
@@ -20,6 +20,8 @@ def get(request, path):
     return render(request, "pubby/page.html", context) 
 
 
-def test(request):
-    return HttpResponse("test")
+def index(request):
+    config = getconfig(request)
+    print(f"Index, redirecting to {config['indexResource']}")
+    return HttpResponseRedirect(str(config["indexResource"]).encode('utf-8'))
 
