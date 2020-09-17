@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.conf import settings
 from pubby.config import getconfig
 from SPARQLWrapper import SPARQLWrapper, XML, JSONLD
@@ -8,19 +8,48 @@ from rdflib import Graph, URIRef, Literal
 # Create your views here.
 
 
+def get_sparql(path, config):
+    for ds in config["dataset"]:
+        local_path = path.replace(ds["webDataPrefix"], "")
+        local_path = local_path.replace(ds["webPagePrefix"], "")
+        print(f"Checking Dataset {ds['datasetBase']} for matches.")
+        datasetURIPattern = ds["datasetURIPattern"]
+        if datasetURIPattern:
+            print("Found datasetURIPattern")
+            match = datasetURIPattern.fullmatch(ds["datasetBase"].str() + local_path)
+            if match:
+                print("Matched datasetURIPattern")
+                raise NotImplementedError("Not yet implemented")
+        useSparqlMapping = ds["useSparqlMapping"]
+        if useSparqlMapping:
+            uriPattern = useSparqlMapping["uriPattern"]
+            match = uriPattern.fullmatch(ds["datasetBase"].str() + local_path)
+            if match:
+                print("Matched uriPattern")
+                sparql = useSparqlMapping["sparqlQuery"]
+                for i, group in enumerate(match.groups(), start=1):
+                    sparql = sparql.replace(f"${i}", group)
+                print("Generated query: " + sparql)
+                return sparql
+
+
+
 def get(request, URI):
     # get config
     config = getconfig(request)
     sparql_query = config["dataset"][0]["useSparqlMapping"]["sparqlQuery"]
     dataset_base = config["dataset"][0]["datasetBase"]
     sparql_endpoint = str(config["dataset"][0]["sparqlEndpoint"])
-    uri_pattern = str(config["dataset"][0]["useSparqlMapping"]["uriPattern"])
+    uri_pattern = str(config["dataset"][0]["useSparqlMapping"]["uriPattern"].pattern)
     if sparql_endpoint == "default":
         sparql_endpoint = str(config["defaultEndpoint"])
 
     # add sparql_query to use the given URI
     target_uri = URIRef(uri_pattern.replace("(.*)", URI))
-    sparql_query = sparql_query.replace("$1", f"<{target_uri}>")
+    # sparql_query = sparql_query.replace("$1", f"<{target_uri}>")
+
+    sparql_query = get_sparql(URI, config)
+    print("Query: ", sparql_query)
 
     # get data from the sparql_endpoint, using JSONLD for the graph info
     sparql = SPARQLWrapper(sparql_endpoint)
@@ -86,5 +115,8 @@ def get(request, URI):
     return render(request, "pubby/page.html", context)
 
 
-def test(request):
-    return HttpResponse("test")
+def index(request):
+    config = getconfig(request)
+    print(f"Index, redirecting to {config['indexResource']}")
+    return redirect(config["indexResource"].str())
+
