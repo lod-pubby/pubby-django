@@ -77,7 +77,7 @@
         <http://dublincore.org/2012/06/14/dcelements.rdf>;
 #    conf:loadVocabularyFromFile
 #        "";
-    conf:defaultEndpoint <http://localhost:8080/fuseki/judaicalink/sparql>;
+    conf:defaultEndpoint <http://localhost:3030/jvmg>;
 
 
 
@@ -91,7 +91,7 @@
         # Default graph name to query (not necessary for most endpoints)
         # conf:sparqlDefaultGraph <http://141.20.126.155/api/file/50b8c6d228f37c3d62000007/data>;
         # Common URI prefix of all resource URIs in the SPARQL dataset
-        conf:datasetBase <http://data.judaicalink.org/data/>;
+        conf:datasetBase <http://mediagraph.link/>;
         conf:priority "3";
         conf:addSameAsStatements "false";
         # Will be appended to the conf:webBase to form the public
@@ -106,18 +106,38 @@
         conf:webPagePrefix "html/";
 
         conf:useSparqlMapping [
-           conf:uriPattern "http://data.judaicalink.org/data/(.*)";
-           conf:sparqlQuery '''CONSTRUCT {
-                        ?s ?p ?o .
-                    } WHERE {
-                        graph ?g {
-                            ?s ?p ?o .
-                        }
-                        FILTER (
-                            ?s = <http://data.judaicalink.org/data/$1> || ?o = <http://data.judaicalink.org/data/$1>
-                         || ?s = <http://data.judaicalink.org/data/rdf/$1> || ?o = <http://data.judaicalink.org/data/rdf/$1>
-                       )
-                    } ''';
+           conf:uriPattern "http://mediagraph.link/(.*)";
+           conf:sparqlQuery '''
+        PREFIX is_label: <http://www.w3.org/2000/01/rdf-schema#label>
+        CONSTRUCT {
+          GRAPH ?graph {
+            ?subject ?predicate ?object .
+          } .
+          ?object ?pOutLabel ?oOutLabel .
+          ?predicate ?pOutLabel2 ?oOutLabel2 .
+          GRAPH ?gIn {
+            ?sIn ?pIn ?subject .
+          }
+          ?sIn ?pInLabel ?oInLabel .
+          ?pIn ?pInLabel2 ?oInLabel2 .
+        }
+        WHERE {
+          GRAPH ?graph {
+            ?subject ?predicate ?object . FILTER ( ?subject = $1 )
+          } .
+          OPTIONAL { ?object ?pOutLabel ?oOutLabel . FILTER ( ?pOutLabel = is_label: )}
+          OPTIONAL { ?predicate ?pOutLabel2 ?oOutLabel2 . FILTER ( ?pOutLabel2 = is_label: )}
+          OPTIONAL {
+            GRAPH ?gIn {
+              ?sIn ?pIn ?subject .
+          }
+          OPTIONAL { ?sIn ?pInLabel ?oInLabel . FILTER ( ?pInLabel = is_label: )} .
+          OPTIONAL { ?pIn ?pInLabel2 ?oInLabel2 . FILTER ( ?pInLabel2 = is_label: )}
+          }
+        }''';
+
+
+
                     conf:publishResources
                         "http://data.judaicalink.org/data/rdf/$1", "http://data.judaicalink.org/data/$1";
                     conf:primaryResource
