@@ -123,7 +123,7 @@
         }
         WHERE {
           GRAPH ?graph {
-            ?subject ?predicate ?object . FILTER ( ?subject = $1 )
+            ?subject ?predicate ?object . FILTER ( ?subject = <http://mediagraph.link/$1> )
           } .
           OPTIONAL { ?object is_label: ?o_label }
           OPTIONAL { ?predicate is_label: ?p_label1 }
@@ -131,7 +131,7 @@
             GRAPH ?gIn {
               ?sIn ?pIn ?subject .
           }
-          OPTIONAL { ?sIn is_label: ?s_label } 
+          OPTIONAL { ?sIn is_label: ?s_label }
           OPTIONAL { ?pIn is_label: ?p_label2 }
           }
         }''';
