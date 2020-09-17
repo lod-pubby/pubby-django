@@ -114,7 +114,9 @@ def getconfig(request):
     Gets access to the root ConfigElement. 
     The namespace is determined based on the request path.
     '''
+    print("request.path:", request.path)
     namespace = resolve(request.path).namespace
+    print("namespace:", namespace)
     return configs[namespace]
 
 

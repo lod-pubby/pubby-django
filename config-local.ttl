@@ -77,7 +77,7 @@
         <http://dublincore.org/2012/06/14/dcelements.rdf>;
 #    conf:loadVocabularyFromFile
 #        "";
-    conf:defaultEndpoint <http://localhost:8080/fuseki/judaicalink/sparql>;
+    conf:defaultEndpoint <http://localhost:3030/judaicalink/query>;
 
 
 

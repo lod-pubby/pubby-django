@@ -1,0 +1,23 @@
+<table>
+  <tr><th>Property</th><th>Value</th></tr>
+  {% for predicate in sparql_data %}
+  <tr>
+    <td>
+      {% if predicate.is_subject %}
+        {% include "pubby/link.html" with link=predicate.link label=predicate.label %}
+      {% else %}
+        is {% include "pubby/link.html" with link=predicate.link label=predicate.label %} of
+      {% endif %}
+    </td>
+    <td>
+      <ul>
+        {% for object in predicate.objects %}
+        <li>
+          {% include "pubby/link.html" with link=object.link label=object.label graph=object.graph %}
+        </li>
+        {% endfor %}
+      </ul>
+    </td>
+  </tr>
+  {% endfor %}
+</table>

@@ -6,6 +6,6 @@ from . import views
 app_name = "pubby"
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    re_path(r'^(?P<path>.+)$', views.get, name='get'),
+    path('index', views.index, name='index'),
+    path("<path:URI>", views.get, name="get"),
 ]
