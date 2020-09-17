@@ -2,6 +2,7 @@ from django.conf import settings
 from django.urls import resolve
 from rdflib import Graph, Namespace, URIRef, BNode
 from rdflib.namespace import RDF
+import re
 
 
 CONF = Namespace("http://richard.cyganiak.de/2007/pubby/config.rdf#")
@@ -29,6 +30,11 @@ FUNCTIONAL = [
         CONF.metadataTemplate,
         ]
 
+PATTERN = [
+        CONF.datasetURIPattern,
+        CONF.uriPattern
+        ]
+
 # Cache for the parsed configurations. Contains ConfigElements of the root nodes.
 configs = {}
 
@@ -47,18 +53,25 @@ class ConfigElement():
         self.cache = {}
 
 
-
     def get(self, prop):
         '''
         Returns either a single value or a list.
+
         If the value(s) are URIRefs or BNodes and therefore potentially subjects
         for further subconfigurations, they are wrapped as ConfigElements.
+        
+        If the property is a known property for patterns, a regex is compiled
+        and returned.
         '''
         if prop in self.cache:
             return self.cache[prop]
         objects = self.graph.objects(self.subject, CONF[prop])
         res = [ConfigElement(self.graph, o) if type(o) in [URIRef, BNode] else o.toPython() for o in objects]
-        if CONF[prop] in FUNCTIONAL and len(res) == 0:
+        if CONF[prop] in PATTERN and len(res) == 1:
+            regex = re.compile(res[0])
+            self.cache[prop] = regex
+            return regex
+        elif CONF[prop] in FUNCTIONAL and len(res) == 0:
             self.cache[prop] = None
             return None
         elif CONF[prop] in FUNCTIONAL and len(res)==1:
@@ -81,6 +94,13 @@ class ConfigElement():
         Returns the wrapped subject, either a URIRef or a BNode.
         '''
         return self.subject
+
+
+    def str(self):
+        '''
+        Returns the wrapped subject as String.
+        '''
+        return str(self.subject)
 
 
     def __repr__(self):
