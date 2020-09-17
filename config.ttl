@@ -113,26 +113,26 @@
           GRAPH ?graph {
             ?subject ?predicate ?object .
           } .
-          ?object ?pOutLabel ?oOutLabel .
-          ?predicate ?pOutLabel2 ?oOutLabel2 .
+          ?object is_label: ?o_label .
+          ?predicate is_label: ?p_label1 .
           GRAPH ?gIn {
             ?sIn ?pIn ?subject .
           }
-          ?sIn ?pInLabel ?oInLabel .
-          ?pIn ?pInLabel2 ?oInLabel2 .
+          ?sIn is_label: ?s_label .
+          ?pIn is_label: ?p_label2 .
         }
         WHERE {
           GRAPH ?graph {
             ?subject ?predicate ?object . FILTER ( ?subject = $1 )
           } .
-          OPTIONAL { ?object ?pOutLabel ?oOutLabel . FILTER ( ?pOutLabel = is_label: )}
-          OPTIONAL { ?predicate ?pOutLabel2 ?oOutLabel2 . FILTER ( ?pOutLabel2 = is_label: )}
+          OPTIONAL { ?object is_label: ?o_label }
+          OPTIONAL { ?predicate is_label: ?p_label1 }
           OPTIONAL {
             GRAPH ?gIn {
               ?sIn ?pIn ?subject .
           }
-          OPTIONAL { ?sIn ?pInLabel ?oInLabel . FILTER ( ?pInLabel = is_label: )} .
-          OPTIONAL { ?pIn ?pInLabel2 ?oInLabel2 . FILTER ( ?pInLabel2 = is_label: )}
+          OPTIONAL { ?sIn is_label: ?s_label } 
+          OPTIONAL { ?pIn is_label: ?p_label2 }
           }
         }''';
 
