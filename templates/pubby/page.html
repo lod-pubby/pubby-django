@@ -29,6 +29,11 @@
           {% endif %}
         </td>
         <td>
+          {% if predicate.num_objects == 1 %}
+          {% for object in predicate.objects %}
+          {% include "pubby/object_link.html" with object=object %}
+          {% endfor %}
+          {% else %}
           <ul>
             {% for object in predicate.objects %}
             <li>
@@ -36,6 +41,7 @@
             </li>
             {% endfor %}
           </ul>
+          {% endif %}
         </td>
       </tr>
       {% endfor %}

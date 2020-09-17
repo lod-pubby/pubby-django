@@ -108,14 +108,16 @@
         conf:useSparqlMapping [
            conf:uriPattern "http://data.judaicalink.org/data/(.*)";
            conf:sparqlQuery '''CONSTRUCT {
-                        ?s ?p ?o .
+	   graph ?graph {
+                        ?subject ?predicate ?object .
+			}
                     } WHERE {
-                        graph ?g {
-                            ?s ?p ?o .
+                        graph ?graph {
+                            ?subject ?predicate ?object .
                         }
                         FILTER (
-                            ?s = <http://data.judaicalink.org/data/$1> || ?o = <http://data.judaicalink.org/data/$1>
-                         || ?s = <http://data.judaicalink.org/data/rdf/$1> || ?o = <http://data.judaicalink.org/data/rdf/$1>
+                            ?subject = <http://data.judaicalink.org/data/$1> || ?object = <http://data.judaicalink.org/data/$1>
+                         || ?subject = <http://data.judaicalink.org/data/rdf/$1> || ?object = <http://data.judaicalink.org/data/rdf/$1>
                        )
                     } ''';
                     conf:publishResources
