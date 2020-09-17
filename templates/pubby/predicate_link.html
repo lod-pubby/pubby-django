@@ -1,0 +1,17 @@
+{% if predicate.graph %}
+<a class="graph" href="{{predicate.graph.link}}">
+  {{predicate.graph.label}}
+</a>
+{% endif %}
+<a href="{{predicate.link}}">
+  {% for item in predicate.label %}
+  {% if item.language %}
+  <span lang="{{item.language}}">{{item}}</span>
+  {% else %}
+  <span>{{item}}</span>
+  {% endif %}
+  {% endfor %}
+</a>
+{% if predicate.num_objects > 7 %}
+<span class=count>{{predicate.num_objects}}</span>
+{% endif %}

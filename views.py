@@ -1,9 +1,7 @@
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.conf import settings
 from pubby.config import getconfig
-from SPARQLWrapper import SPARQLWrapper, XML, JSONLD
-from rdflib import Graph, URIRef, Literal
+from SPARQLWrapper import SPARQLWrapper, JSONLD
+from rdflib import URIRef, BNode
 
 # Create your views here.
 
@@ -45,11 +43,11 @@ def get(request, URI):
         sparql_endpoint = str(config["defaultEndpoint"])
 
     # add sparql_query to use the given URI
-    target_uri = URIRef(uri_pattern.replace("(.*)", URI))
-    # sparql_query = sparql_query.replace("$1", f"<{target_uri}>")
+    resource_uri = URIRef(uri_pattern.replace("(.*)", URI))
+    # sparql_query = sparql_query.replace("$1", f"<{resource_uri}>")
 
     sparql_query = get_sparql(URI, config)
-    print("Query: ", sparql_query)
+    # print("Query: ", sparql_query)
 
     # get data from the sparql_endpoint, using JSONLD for the graph info
     sparql = SPARQLWrapper(sparql_endpoint)
@@ -70,48 +68,47 @@ def get(request, URI):
 
     # create quads by predicate, and do a label lookup for each thing on hand
     quads_by_predicate = {}
-    for subject_uri, predicate_uri, object, graph in result.quads():
-        if subject_uri == target_uri:
-            key = (predicate_uri, True)
-            value = quads_by_predicate.setdefault(key, {
-                "label": get_labels_for(predicate_uri),
-                "link": predicate_uri,
-                "is_subject": True,
-                "objects": []})
-            if isinstance(object, URIRef):
-                value["objects"].append(
-                    {"link": object,
-                     "label": get_labels_for(object),
-                     "graph": graph.identifier})
-            else:
-                value["objects"].append(
-                    {"link": "",
-                     "label": object,
-                     "graph": graph.identifier})
-        elif object == target_uri:
-            key = (predicate_uri, False)
-            value = quads_by_predicate.setdefault(key, {
-                "label": get_labels_for(predicate_uri),
-                "link": predicate_uri,
-                "is_subject": False,
-                "objects": []})
-            value["objects"].append(
-                {"link": subject_uri,
-                 "label": get_labels_for(subject_uri),
-                 "graph": graph.identifier})
+    for subject_uri, predicate_uri, object_uri, graph in result.quads():
+        object = None
+        is_subject = True
+        if subject_uri == resource_uri:
+            object = object_uri
+        elif object_uri == resource_uri:
+            is_subject = False
+            object = subject_uri
         else:
             # otherwise it's a label
-            pass
+            continue
+
+        key = (predicate_uri, is_subject, graph.identifier)
+        value = quads_by_predicate.setdefault(key, {
+            "label": get_labels_for(predicate_uri),
+            "link": predicate_uri,
+            "is_subject": is_subject,
+            "objects": [],
+            "graph": {"link": graph.identifier if not isinstance(graph.identifier, BNode) else "",
+                      "label": graph.identifier.split("/")[-1]
+                      }
+        })
+        if isinstance(object, URIRef):
+            value["objects"].append(
+                {"link": object,
+                 "label": get_labels_for(object)})
+        else:
+            value["objects"].append(
+                {"link": "",
+                 "label": object})
 
     # sort the predicates and objects so the presentation of the data does not change on a refresh
     sparql_data = sorted(quads_by_predicate.values(),
                          key=lambda item: "".join(item["label"]).casefold())
     for value in sparql_data:
         value["objects"].sort(key=lambda item: "".join(item["label"]).casefold())
+        value["num_objects"] = len(value["objects"])
 
-    context = {"target_uri": get_labels_for(target_uri)[0]}
+    context = {"resource_uri": get_labels_for(resource_uri)[0]}
     context["sparql_data"] = sparql_data
-    print("jvmg", URI, sparql_query, dataset_base, target_uri)
+    print("jvmg", URI, sparql_query, dataset_base, resource_uri)
     return render(request, "pubby/page.html", context)
 
 
