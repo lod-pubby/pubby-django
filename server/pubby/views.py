@@ -77,16 +77,12 @@ def rewrite_URL(URL, dataset_base, web_base):
 
 def get(request, URI):
     # get config
-    config = getconfig(request)
-    web_base = config["webBase"]
     resource = Resource(request, URI)
-    resource_uri = URIRef(resource.resource_uri)
-    sparql_query = resource.sparql_query
     # print("Query: ", sparql_query)
 
     # get data from the sparql_endpoint, using JSONLD for the graph info
     sparql = SPARQLWrapper(resource.sparql_endpoint)
-    sparql.setQuery(sparql_query)
+    sparql.setQuery(resource.sparql_query)
     sparql.setReturnFormat(JSONLD)
     result = sparql.query().convert()
     # print(f"Result {result.serialize()}")
@@ -118,16 +114,16 @@ def get(request, URI):
         key = (predicate_uri, is_subject, graph.identifier)
         value = quads_by_predicate.setdefault(key, {
             "label": get_labels_for(predicate_uri),
-            "link": rewrite_URL(predicate_uri, resource.dataset_base, web_base),
+            "link": rewrite_URL(predicate_uri, resource.dataset_base, resource.web_base),
             "is_subject": is_subject,
             "objects": [],
-            "graph": {"link": rewrite_URL(graph.identifier, resource.dataset_base, web_base) if not isinstance(graph.identifier, BNode) else None,
+            "graph": {"link": rewrite_URL(graph.identifier, resource.dataset_base, resource.web_base) if not isinstance(graph.identifier, BNode) else None,
                       "label": graph.identifier.split("/")[-1]
                       }
         })
         if isinstance(object, URIRef):
             value["objects"].append(
-                {"link": rewrite_URL(object, resource.dataset_base, web_base),
+                {"link": rewrite_URL(object, resource.dataset_base, resource.web_base),
                  "label": get_labels_for(object)})
         else:
             value["objects"].append(
