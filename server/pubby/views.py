@@ -5,52 +5,60 @@ from rdflib import URIRef, BNode
 
 # Create your views here.
 
+class Resource:
+    def __init__(self, request_path, config):
+        # Important: use consistent terminology
+        # The original path where we have to create a response. Can be either the same as resource, page or data path.
+        self.request_path = request_path
+        # The path representing the resource URI, e.g. http://dbpedia.org/resource/Berlin
+        self.resource_path = ""
+        # The path representing the HTML description, e.g. http://dbpedia.org/page/Berlin
+        self.page_path = ""
+        # The path representing the data description, e.g. http://dbpedia.org/data/Berlin
+        self.data_path = ""
+        # The full URI of the resource
+        self.resource_uri = ""
+        # The Sparql query used to populate this resource
+        self.sparql_query = ""
 
-def get_sparql(path, config):
-    for ds in config["dataset"]:
-        local_path = path.replace(ds["webDataPrefix"], "")
-        local_path = local_path.replace(ds["webPagePrefix"], "")
-        print(f"Checking Dataset {ds['datasetBase']} for matches.")
-        datasetURIPattern = ds["datasetURIPattern"]
-        if datasetURIPattern:
-            print("Found datasetURIPattern")
-            match = datasetURIPattern.fullmatch(ds["datasetBase"].str() + local_path)
-            if match:
-                print("Matched datasetURIPattern")
-                raise NotImplementedError("Not yet implemented")
-        useSparqlMapping = ds["useSparqlMapping"]
-        if useSparqlMapping:
-            uriPattern = useSparqlMapping["uriPattern"]
-            match = uriPattern.fullmatch(ds["datasetBase"].str() + local_path)
-            if match:
-                print("Matched uriPattern")
-                sparql = useSparqlMapping["sparqlQuery"]
-                for i, group in enumerate(match.groups(), start=1):
-                    sparql = sparql.replace(f"${i}", group)
-                print("Generated query: " + sparql)
-                return sparql
+        # Find matching dataset in configuration
+        for ds in config["dataset"]:
+            # Cut the prefix
+            if request_path.startswith(ds["webDataPrefix"]):
+                path_suffix = request_path[len(ds["webDataPrefix"]):]
+            elif request_path.startswith(ds["webPagePrefix"]):
+                path_suffix = request_path[len(ds["webPagePrefix"]):]
+            elif request_path.startswith(ds["webResourcePrefix"]):
+                path_suffix = request_path[len(ds["webResourcePrefix"]):]
+            
+            # Create all possible paths. So far these are only candidates
+            self.resource_path = ds["webResourcePrefix"] + path_suffix
+            self.data_path = ds["webDataPrefix"] + path_suffix
+            self.page_path = ds["webPagePrefix"] + path_suffix
+            self.resource_uri = ds["datasetBase"].str() + self.resource_path
 
-
-def get_resource_uri(path, config):
-    for ds in config["dataset"]:
-        local_path = path.replace(ds["webDataPrefix"], "")
-        local_path = local_path.replace(ds["webPagePrefix"], "")
-        print(f"Checking Dataset {ds['datasetBase']} for matches.")
-        datasetURIPattern = ds["datasetURIPattern"]
-        if datasetURIPattern:
-            print("Found datasetURIPattern")
-            match = datasetURIPattern.fullmatch(ds["datasetBase"].str() + local_path)
-            if match:
-                print("Matched datasetURIPattern")
-                raise NotImplementedError("Not yet implemented")
-        useSparqlMapping = ds["useSparqlMapping"]
-        if useSparqlMapping:
-            uriPattern = useSparqlMapping["uriPattern"]
-            match = uriPattern.fullmatch(ds["datasetBase"].str() + local_path)
-            if match:
-                print("Matched uriPattern")
-                return ds["datasetBase"].str() + local_path
-
+            print(f"Checking Dataset {ds['datasetBase']} for matches.")
+            datasetURIPattern = ds["datasetURIPattern"]
+            if datasetURIPattern:
+                print("Found datasetURIPattern")
+                match = datasetURIPattern.fullmatch(self.resource_uri)
+                if match:
+                    print("Matched datasetURIPattern")
+                    self.sparql_query = f"DESCRIBE <{self.resource_uri}>"
+                    return
+            useSparqlMapping = ds["useSparqlMapping"]
+            if useSparqlMapping:
+                uriPattern = useSparqlMapping["uriPattern"]
+                match = uriPattern.fullmatch(self.resource_uri)
+                if match:
+                    print("Matched uriPattern")
+                    sparql = useSparqlMapping["sparqlQuery"]
+                    for i, group in enumerate(match.groups(), start=1):
+                        sparql = sparql.replace(f"${i}", group)
+                    print("Generated query: " + sparql)
+                    self.sparql_query = sparql
+                    return
+        raise ValueError(f"No matching Dataset in configuration for {request_path}")
 
 
 def get(request, URI):
@@ -62,13 +70,15 @@ def get(request, URI):
     uri_pattern = config["dataset"][0]["useSparqlMapping"]["uriPattern"].pattern
     if sparql_endpoint == "default":
         sparql_endpoint = str(config["defaultEndpoint"])
+    
+    resource = Resource(URI, config)
 
     # add sparql_query to use the given URI
-    resource_uri = URIRef(get_resource_uri(URI, config))
+    resource_uri = URIRef(resource.resource_uri)
     # sparql_query = sparql_query.replace("$1", f"<{target_uri}>")
 
 
-    sparql_query = get_sparql(URI, config)
+    sparql_query = resource.sparql_query
     # print("Query: ", sparql_query)
 
     # get data from the sparql_endpoint, using JSONLD for the graph info
