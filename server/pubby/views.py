@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from pubby.config import getconfig
 from SPARQLWrapper import SPARQLWrapper, JSONLD
@@ -68,10 +68,36 @@ class Resource:
                     sparql = useSparqlMapping["sparqlQuery"]
                     for i, group in enumerate(match.groups(), start=1):
                         sparql = sparql.replace(f"${i}", group)
-                    print("Generated query: " + sparql)
                     self.sparql_query = sparql
                     return
         raise ValueError(f"No matching Dataset in configuration for {request_path}")
+
+'''
+RDFLib Serializations:
+
+n3, nquads, nt, pretty-xml, trig, trix, turtle, xml , json-ld
+'''
+
+mime2serialisation = {
+    "application/json": "json-ld",
+    "application/ld+json": "json-ld",
+    "application/n-triples": "nt",
+    "application/rdf+n3": "n3",
+    "application/rdf+xml": "xml",
+    "application/turtle": "turtle",
+    "application/x-turtle": "turtle",
+    "application/xhtml+xml": "html",
+    "application/xml": "html",
+    "text/html": "html",
+    "text/json": "json-ld",
+    "text/n3": "n3",
+    "text/plain": "nt",
+    "text/rdf": "turtle",
+    "text/rdf+n3": "n3",
+    "text/turtle": "turtle",
+    "text/x-nquads": "nquads",
+    "text/xml": "xml",
+}
 
 
 class HttpResponseSeeOther(HttpResponseRedirect):
@@ -84,16 +110,38 @@ def rewrite_URL(URL, dataset_base, web_base):
 
 def get(request, URI):
     resource = Resource(request, URI)
-    if resource.resource_path == resource.request_path:
-        return HttpResponseSeeOther(resource.web_base + resource.page_path)
 
-    # print("Query: ", sparql_query)
+    accept = request.META.get("HTTP_ACCEPT").lower()
+    serialization = "html"
+    for mime in mime2serialisation:
+        if mime in accept:
+            serialization = mime2serialisation[mime]
+            break
+    print(accept)
+    print(f"Content negotiation: {serialization}")
+
+    if resource.resource_path == resource.request_path:
+        if serialization == "html":
+            return HttpResponseSeeOther(resource.web_base + resource.page_path)
+        else:
+            return HttpResponseSeeOther(resource.web_base + resource.data_path)
+
 
     # get data from the sparql_endpoint, using JSONLD for the graph info
     sparql = SPARQLWrapper(resource.sparql_endpoint)
     sparql.setQuery(resource.sparql_query)
     sparql.setReturnFormat(JSONLD)
     result = sparql.query().convert()
+
+    if resource.request_path == resource.data_path:
+        if serialization == "html":
+            serialization = "turtle"
+            mime = "text/turtle"
+        response = HttpResponse() 
+        response.content = result.serialize(format=serialization)
+        response.content_type = f"{mime};charset=utf-8"
+        return response
+
     # print(f"Result {result.serialize()}")
     # result.serialize(destination="result.xml", format='xml')
 
