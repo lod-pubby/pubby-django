@@ -6,7 +6,8 @@ from rdflib import URIRef, BNode
 # Create your views here.
 
 class Resource:
-    def __init__(self, request_path, config):
+    def __init__(self, request, request_path):
+        self.config = getconfig(request)
         # Important: use consistent terminology
         # The original path where we have to create a response. Can be either the same as resource, page or data path.
         self.request_path = request_path
@@ -18,11 +19,15 @@ class Resource:
         self.data_path = ""
         # The full URI of the resource
         self.resource_uri = ""
+        # The Dataset Base
+        self.dataset_base = ""
         # The Sparql query used to populate this resource
         self.sparql_query = ""
+        # The Sparql endpoint to be used
+        self.sparql_endpoint = ""
 
         # Find matching dataset in configuration
-        for ds in config["dataset"]:
+        for ds in self.config["dataset"]:
             # Cut the prefix
             if request_path.startswith(ds["webDataPrefix"]):
                 path_suffix = request_path[len(ds["webDataPrefix"]):]
@@ -36,6 +41,10 @@ class Resource:
             self.data_path = ds["webDataPrefix"] + path_suffix
             self.page_path = ds["webPagePrefix"] + path_suffix
             self.resource_uri = ds["datasetBase"].str() + self.resource_path
+            self.dataset_base = ds["datasetBase"].str()
+            self.sparql_endpoint = str(ds["sparqlEndpoint"])
+            if self.sparql_endpoint == "default":
+                self.sparql_endpoint = str(self.config["defaultEndpoint"])
 
             print(f"Checking Dataset {ds['datasetBase']} for matches.")
             datasetURIPattern = ds["datasetURIPattern"]
@@ -62,27 +71,15 @@ class Resource:
 
 
 def get(request, URI):
-    # get config
-    config = getconfig(request)
-    sparql_query = config["dataset"][0]["useSparqlMapping"]["sparqlQuery"]
-    dataset_base = config["dataset"][0]["datasetBase"]
-    sparql_endpoint = str(config["dataset"][0]["sparqlEndpoint"])
-    uri_pattern = config["dataset"][0]["useSparqlMapping"]["uriPattern"].pattern
-    if sparql_endpoint == "default":
-        sparql_endpoint = str(config["defaultEndpoint"])
     
-    resource = Resource(URI, config)
+    resource = Resource(request, URI)
 
-    # add sparql_query to use the given URI
     resource_uri = URIRef(resource.resource_uri)
-    # sparql_query = sparql_query.replace("$1", f"<{target_uri}>")
-
-
     sparql_query = resource.sparql_query
     # print("Query: ", sparql_query)
 
     # get data from the sparql_endpoint, using JSONLD for the graph info
-    sparql = SPARQLWrapper(sparql_endpoint)
+    sparql = SPARQLWrapper(resource.sparql_endpoint)
     sparql.setQuery(sparql_query)
     sparql.setReturnFormat(JSONLD)
     result = sparql.query().convert()
