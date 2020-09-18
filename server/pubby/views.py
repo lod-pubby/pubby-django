@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from pubby.config import getconfig
 from SPARQLWrapper import SPARQLWrapper, JSONLD
@@ -72,12 +73,20 @@ class Resource:
                     return
         raise ValueError(f"No matching Dataset in configuration for {request_path}")
 
+
+class HttpResponseSeeOther(HttpResponseRedirect):
+    status_code = 303
+
+
 def rewrite_URL(URL, dataset_base, web_base):
     return URL.replace(dataset_base, str(web_base))
 
+
 def get(request, URI):
-    # get config
     resource = Resource(request, URI)
+    if resource.resource_path == resource.request_path:
+        return HttpResponseSeeOther(resource.web_base + resource.page_path)
+
     # print("Query: ", sparql_query)
 
     # get data from the sparql_endpoint, using JSONLD for the graph info
