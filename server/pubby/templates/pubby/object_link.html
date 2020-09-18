@@ -1,4 +1,4 @@
-{% if object.link == "" %}
+{% if not object.link %}
   {{object.label}}
 {% else %}
     <a href="{{object.link}}">

@@ -27,6 +27,7 @@ class Resource:
         self.sparql_query = ""
         # The Sparql endpoint to be used
         self.sparql_endpoint = ""
+        #
 
         # Find matching dataset in configuration
         for ds in self.config["dataset"]:
@@ -71,11 +72,12 @@ class Resource:
                     return
         raise ValueError(f"No matching Dataset in configuration for {request_path}")
 
+def rewrite_URL(URL, dataset_base, web_base):
+    return URL.replace(dataset_base, str(web_base))
 
 def get(request, URI):
-    
+    # get config
     resource = Resource(request, URI)
-
     # print("Query: ", sparql_query)
 
     # get data from the sparql_endpoint, using JSONLD for the graph info
@@ -89,7 +91,6 @@ def get(request, URI):
     # transfrom the result data into more usable format.
     # since we have predicates which points towards the target and from the target
     # ( stuff -> p_in -> target -> p_out -> stuff ), we need to distinguish them.
-    # TODO function to rewrite URLs
 
     # returns a sorted list of labels for a given URI or Literal
     def get_labels_for(URI_or_literal):
@@ -113,20 +114,20 @@ def get(request, URI):
         key = (predicate_uri, is_subject, graph.identifier)
         value = quads_by_predicate.setdefault(key, {
             "label": get_labels_for(predicate_uri),
-            "link": predicate_uri,
+            "link": rewrite_URL(predicate_uri, resource.dataset_base, resource.web_base),
             "is_subject": is_subject,
             "objects": [],
-            "graph": {"link": graph.identifier if not isinstance(graph.identifier, BNode) else "",
+            "graph": {"link": rewrite_URL(graph.identifier, resource.dataset_base, resource.web_base) if not isinstance(graph.identifier, BNode) else None,
                       "label": graph.identifier.split("/")[-1]
                       }
         })
         if isinstance(object, URIRef):
             value["objects"].append(
-                {"link": object,
+                {"link": rewrite_URL(object, resource.dataset_base, resource.web_base),
                  "label": get_labels_for(object)})
         else:
             value["objects"].append(
-                {"link": "",
+                {"link": None,
                  "label": object})
 
     # sort the predicates and objects so the presentation of the data does not change on a refresh
@@ -136,7 +137,7 @@ def get(request, URI):
         value["objects"].sort(key=lambda item: "".join(item["label"]).casefold())
         value["num_objects"] = len(value["objects"])
 
-    context = {"resource_uri": get_labels_for(resource.resource_uri)[0]}
+    context = {"resource_label": get_labels_for(resource.resource_uri)[0]}
     context["sparql_data"] = sparql_data
 
     return render(request, "pubby/page.html", context)
