@@ -7,10 +7,10 @@
   <head>
     <!-- <meta charset="UTF-8"> -->
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
-    <title>{{resource_uri}}</title>
+    <title>{{resource_label}}</title>
   </head>
   <body>
-    <h1>{{resource_uri}}</h1>
+    <h1>{{resource_label}}</h1>
     <nav>
       <a href="#" class=switch-mode>
         <span class=text-for-light>Light Mode</span>
@@ -30,9 +30,7 @@
         </td>
         <td>
           {% if predicate.num_objects == 1 %}
-          {% for object in predicate.objects %}
-          {% include "pubby/object_link.html" with object=object %}
-          {% endfor %}
+          {% include "pubby/object_link.html" with object=predicate.objects.0 %}
           {% else %}
           <ul>
             {% for object in predicate.objects %}

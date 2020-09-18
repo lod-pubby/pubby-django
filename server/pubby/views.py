@@ -6,7 +6,8 @@ from rdflib import URIRef, BNode
 # Create your views here.
 
 class Resource:
-    def __init__(self, request_path, config):
+    def __init__(self, request, request_path):
+        self.config = getconfig(request)
         # Important: use consistent terminology
         # The original path where we have to create a response. Can be either the same as resource, page or data path.
         self.request_path = request_path
@@ -18,11 +19,16 @@ class Resource:
         self.data_path = ""
         # The full URI of the resource
         self.resource_uri = ""
+        # The Dataset Base
+        self.dataset_base = ""
         # The Sparql query used to populate this resource
         self.sparql_query = ""
+        # The Sparql endpoint to be used
+        self.sparql_endpoint = ""
+        #
 
         # Find matching dataset in configuration
-        for ds in config["dataset"]:
+        for ds in self.config["dataset"]:
             # Cut the prefix
             if request_path.startswith(ds["webDataPrefix"]):
                 path_suffix = request_path[len(ds["webDataPrefix"]):]
@@ -36,6 +42,10 @@ class Resource:
             self.data_path = ds["webDataPrefix"] + path_suffix
             self.page_path = ds["webPagePrefix"] + path_suffix
             self.resource_uri = ds["datasetBase"].str() + self.resource_path
+            self.dataset_base = ds["datasetBase"].str()
+            self.sparql_endpoint = str(ds["sparqlEndpoint"])
+            if self.sparql_endpoint == "default":
+                self.sparql_endpoint = str(self.config["defaultEndpoint"])
 
             print(f"Checking Dataset {ds['datasetBase']} for matches.")
             datasetURIPattern = ds["datasetURIPattern"]
@@ -60,30 +70,20 @@ class Resource:
                     return
         raise ValueError(f"No matching Dataset in configuration for {request_path}")
 
-def rewrite_URL(URL, dataset_base, web_base, page_path):
-    return URL.replace(dataset_base, web_base+page_path)
+def rewrite_URL(URL, dataset_base, web_base):
+    return URL.replace(dataset_base, str(web_base))
 
 def get(request, URI):
     # get config
     config = getconfig(request)
     web_base = config["webBase"]
-    dataset_base = config["dataset"][0]["datasetBase"]
-    sparql_endpoint = str(config["dataset"][0]["sparqlEndpoint"])
-    if sparql_endpoint == "default":
-        sparql_endpoint = str(config["defaultEndpoint"])
-
-    resource = Resource(URI, config)
-
-    # add sparql_query to use the given URI
+    resource = Resource(request, URI)
     resource_uri = URIRef(resource.resource_uri)
-    # sparql_query = sparql_query.replace("$1", f"<{target_uri}>")
-
-
     sparql_query = resource.sparql_query
     # print("Query: ", sparql_query)
 
     # get data from the sparql_endpoint, using JSONLD for the graph info
-    sparql = SPARQLWrapper(sparql_endpoint)
+    sparql = SPARQLWrapper(resource.sparql_endpoint)
     sparql.setQuery(sparql_query)
     sparql.setReturnFormat(JSONLD)
     result = sparql.query().convert()
@@ -116,20 +116,20 @@ def get(request, URI):
         key = (predicate_uri, is_subject, graph.identifier)
         value = quads_by_predicate.setdefault(key, {
             "label": get_labels_for(predicate_uri),
-            "link": rewrite_URL(predicate_uri, dataset_base, web_base, resource.page_path),
+            "link": rewrite_URL(predicate_uri, resource.dataset_base, web_base),
             "is_subject": is_subject,
             "objects": [],
-            "graph": {"link": rewrite_URL(graph.identifier, dataset_base, web_base, resource.page_path) if not isinstance(graph.identifier, BNode) else None,
+            "graph": {"link": rewrite_URL(graph.identifier, resource.dataset_base, web_base) if not isinstance(graph.identifier, BNode) else None,
                       "label": graph.identifier.split("/")[-1]
                       }
         })
         if isinstance(object, URIRef):
             value["objects"].append(
-                {"link": rewrite_URL(object, dataset_base, web_base, resource.page_path),
+                {"link": rewrite_URL(object, resource.dataset_base, web_base),
                  "label": get_labels_for(object)})
         else:
             value["objects"].append(
-                {"link": "",
+                {"link": None,
                  "label": object})
 
     # sort the predicates and objects so the presentation of the data does not change on a refresh
@@ -139,7 +139,7 @@ def get(request, URI):
         value["objects"].sort(key=lambda item: "".join(item["label"]).casefold())
         value["num_objects"] = len(value["objects"])
 
-    context = {"resource_uri": get_labels_for(resource_uri)[0]}
+    context = {"resource_label": get_labels_for(resource_uri)[0]}
     context["sparql_data"] = sparql_data
 
     return render(request, "pubby/page.html", context)
