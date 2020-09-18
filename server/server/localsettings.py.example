@@ -1,0 +1,16 @@
+"""
+Django settings for this project.
+
+Copy this file to localsettings.py and adjust it.
+You can overwrite all settings here.
+
+This is used for deployment settings and can be used
+for local development as well.
+
+The localsettings.py is never added to git.
+"""
+
+SECRET_KEY = 'CHANGE_ME'
+DEBUG = False
+# The path where the static files are copied on the server
+STATIC_ROOT = '/data/judaicalink/judaicalink-labs/static'
