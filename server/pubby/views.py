@@ -21,6 +21,8 @@ class Resource:
         self.resource_uri = ""
         # The Dataset Base
         self.dataset_base = ""
+        # The Web Base, i.e. the full URI to this pubby instance
+        self.web_base = self.config["webBase"].str()
         # The Sparql query used to populate this resource
         self.sparql_query = ""
         # The Sparql endpoint to be used
@@ -41,7 +43,7 @@ class Resource:
             self.resource_path = ds["webResourcePrefix"] + path_suffix
             self.data_path = ds["webDataPrefix"] + path_suffix
             self.page_path = ds["webPagePrefix"] + path_suffix
-            self.resource_uri = ds["datasetBase"].str() + self.resource_path
+            self.resource_uri = URIRef(ds["datasetBase"].str() + self.resource_path)
             self.dataset_base = ds["datasetBase"].str()
             self.sparql_endpoint = str(ds["sparqlEndpoint"])
             if self.sparql_endpoint == "default":
@@ -104,9 +106,9 @@ def get(request, URI):
     for subject_uri, predicate_uri, object_uri, graph in result.quads():
         object = None
         is_subject = True
-        if subject_uri == resource_uri:
+        if subject_uri == resource.resource_uri:
             object = object_uri
-        elif object_uri == resource_uri:
+        elif object_uri == resource.resource_uri:
             is_subject = False
             object = subject_uri
         else:
@@ -139,7 +141,7 @@ def get(request, URI):
         value["objects"].sort(key=lambda item: "".join(item["label"]).casefold())
         value["num_objects"] = len(value["objects"])
 
-    context = {"resource_label": get_labels_for(resource_uri)[0]}
+    context = {"resource_label": get_labels_for(resource.resource_uri)[0]}
     context["sparql_data"] = sparql_data
 
     return render(request, "pubby/page.html", context)
