@@ -60,17 +60,18 @@ class Resource:
                     return
         raise ValueError(f"No matching Dataset in configuration for {request_path}")
 
+def rewrite_URL(URL, dataset_base, web_base, page_path):
+    return URL.replace(dataset_base, web_base+page_path)
 
 def get(request, URI):
     # get config
     config = getconfig(request)
-    sparql_query = config["dataset"][0]["useSparqlMapping"]["sparqlQuery"]
+    web_base = config["webBase"]
     dataset_base = config["dataset"][0]["datasetBase"]
     sparql_endpoint = str(config["dataset"][0]["sparqlEndpoint"])
-    uri_pattern = config["dataset"][0]["useSparqlMapping"]["uriPattern"].pattern
     if sparql_endpoint == "default":
         sparql_endpoint = str(config["defaultEndpoint"])
-    
+
     resource = Resource(URI, config)
 
     # add sparql_query to use the given URI
@@ -92,7 +93,6 @@ def get(request, URI):
     # transfrom the result data into more usable format.
     # since we have predicates which points towards the target and from the target
     # ( stuff -> p_in -> target -> p_out -> stuff ), we need to distinguish them.
-    # TODO function to rewrite URLs
 
     # returns a sorted list of labels for a given URI or Literal
     def get_labels_for(URI_or_literal):
@@ -116,16 +116,16 @@ def get(request, URI):
         key = (predicate_uri, is_subject, graph.identifier)
         value = quads_by_predicate.setdefault(key, {
             "label": get_labels_for(predicate_uri),
-            "link": predicate_uri,
+            "link": rewrite_URL(predicate_uri, dataset_base, web_base, resource.page_path),
             "is_subject": is_subject,
             "objects": [],
-            "graph": {"link": graph.identifier if not isinstance(graph.identifier, BNode) else "",
+            "graph": {"link": rewrite_URL(graph.identifier, dataset_base, web_base, resource.page_path) if not isinstance(graph.identifier, BNode) else None,
                       "label": graph.identifier.split("/")[-1]
                       }
         })
         if isinstance(object, URIRef):
             value["objects"].append(
-                {"link": object,
+                {"link": rewrite_URL(object, dataset_base, web_base, resource.page_path),
                  "label": get_labels_for(object)})
         else:
             value["objects"].append(

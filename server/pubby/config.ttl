@@ -57,7 +57,7 @@
     conf:projectHomepage <http://www.judaicalink.org/>;
     # The Pubby root, where the webapp is running inside the servlet container.
     # Recommended. If not available, automatic detection is used.
-    conf:webBase <http://data.judaicalink.org/data/>;
+    conf:webBase <127.0.0.1/pubby/>;
     # URL of an RDF file whose prefix mapping is to be used by the
     # server; defaults to <>, which is *this* file.
     # conf:usePrefixesFrom <http://lelystad.informatik.uni-mannheim.de:8080/prefixes.n3>;
