@@ -1,0 +1,13 @@
+{% if object.link == "" %}
+  {{object.label}}
+{% else %}
+    <a href="{{object.link}}">
+      {% for item in object.label %}
+      {% if item.language %}
+      <span lang="{{item.language}}">{{item}}</span>
+      {% else %}
+      <span>{{item}}</span>
+      {% endif %}
+      {% endfor %}
+    </a>
+{% endif %}

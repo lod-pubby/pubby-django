@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'pubby/styles.css' %}">
+
+<html lang="en">
+  <head>
+    <!-- <meta charset="UTF-8"> -->
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>{{resource_uri}}</title>
+  </head>
+  <body>
+    <h1>{{resource_uri}}</h1>
+    <nav>
+      <a href="#" class=switch-mode>
+        <span class=text-for-light>Light Mode</span>
+        <span class=text-for-dark>Dark Mode</span>
+      </a>
+    </nav>
+    <table>
+      <tr><th>Property</th><th>Value</th></tr>
+      {% for predicate in sparql_data %}
+      <tr>
+        <td>
+          {% if predicate.is_subject %}
+          {% include "pubby/predicate_link.html" with predicate=predicate %}
+          {% else %}
+          is {% include "pubby/predicate_link.html" with predicate=predicate %} of
+          {% endif %}
+        </td>
+        <td>
+          {% if predicate.num_objects == 1 %}
+          {% for object in predicate.objects %}
+          {% include "pubby/object_link.html" with object=object %}
+          {% endfor %}
+          {% else %}
+          <ul>
+            {% for object in predicate.objects %}
+            <li>
+              {% include "pubby/object_link.html" with object=object %}
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>
