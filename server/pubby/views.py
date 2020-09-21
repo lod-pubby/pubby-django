@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from pubby.config import getconfig
 from SPARQLWrapper import SPARQLWrapper, JSONLD
-from rdflib import URIRef, BNode
+from rdflib import URIRef, BNode, Literal
 
 # Create your views here.
 
@@ -151,8 +151,35 @@ def get(request, URI):
 
     # returns a sorted list of labels for a given URI or Literal
     def get_labels_for(URI_or_literal):
-        return sorted([label for _, label
-                       in result.preferredLabel(URI_or_literal, default=[(None, URI_or_literal)])])
+        '''
+        Each predicate and each value (subject or object) can have multiple labels.
+        To support various options how to present the information in the template, 
+        a list of dictionaries is created:
+        [
+            {
+                "label": A label, if it exists, otherwise none.
+                "label_or_uri": label or local name from qname, used for sorting.
+                "uri": the full qualified URI of the resource as string.
+                "qname": The deconstructed URI using configured namespaces, see ConfigElement#shorten()
+            }
+        ]
+        '''
+        labels = []
+        for _, label in result.preferredLabel(URI_or_literal, default=[(None, URI_or_literal)]):
+            label_dict = {}
+            print(label)
+            if isinstance(label, URIRef):
+                label_dict["label"] = None
+                label_dict["uri"] = str(URI_or_literal)
+                label_dict["qname"] = resource.config.shorten(URI_or_literal)
+                label_dict["label_or_uri"] = label_dict["qname"][2]
+            else:
+                label_dict["label"] = str(label)
+                label_dict["uri"] = None
+                label_dict["qname"] = None
+                label_dict["label_or_uri"] = label_dict["label"]
+            labels.append(label_dict)
+        return sorted(labels, key=lambda label: label["label_or_uri"])
 
     # create quads by predicate, and do a label lookup for each thing on hand
     quads_by_predicate = {}
@@ -170,8 +197,9 @@ def get(request, URI):
 
         key = (predicate_uri, is_subject, graph.identifier)
         value = quads_by_predicate.setdefault(key, {
-            "label": get_labels_for(predicate_uri),
+            "labels": get_labels_for(predicate_uri),
             "link": rewrite_URL(predicate_uri, resource.dataset_base, resource.web_base),
+            "qname": resource.config.shorten(predicate_uri),
             "is_subject": is_subject,
             "objects": [],
             "graph": {"link": rewrite_URL(graph.identifier, resource.dataset_base, resource.web_base) if not isinstance(graph.identifier, BNode) else None,
@@ -181,20 +209,22 @@ def get(request, URI):
         if isinstance(object, URIRef):
             value["objects"].append(
                 {"link": rewrite_URL(object, resource.dataset_base, resource.web_base),
-                 "label": get_labels_for(object)})
+                 "qname": resource.config.shorten(predicate_uri),
+                 "labels": get_labels_for(object)})
         else:
             value["objects"].append(
                 {"link": None,
-                 "label": object})
+                 "qname": None,
+                 "labels": get_labels_for(object)})
 
     # sort the predicates and objects so the presentation of the data does not change on a refresh
     sparql_data = sorted(quads_by_predicate.values(),
-                         key=lambda item: "".join(item["label"]).casefold())
+                         key=lambda item: item["labels"][0]["label_or_uri"])
     for value in sparql_data:
-        value["objects"].sort(key=lambda item: "".join(item["label"]).casefold())
+        value["objects"].sort(key=lambda item: item["labels"][0]["label_or_uri"])
         value["num_objects"] = len(value["objects"])
 
-    context = {"resource_label": get_labels_for(resource.resource_uri)[0]}
+    context = {"resource_label": get_labels_for(resource.resource_uri)[0]["label_or_uri"]}
     context["sparql_data"] = sparql_data
 
     return render(request, "pubby/page.html", context)

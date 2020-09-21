@@ -4,12 +4,14 @@
 </a>
 {% endif %}
 <a href="{{predicate.link}}">
-  {% for item in predicate.label %}
-  {% if item.language %}
-  <span lang="{{item.language}}">{{item}}</span>
+  {% for item in predicate.labels %}
+  <span lang="{{item.language}}">
+    {% if item.label %}
+     {{item.label}}
   {% else %}
-  <span>{{item}}</span>
+    {{item.qname.2}}
   {% endif %}
+  </span>
   {% endfor %}
 </a>
 {% if predicate.num_objects > 7 %}

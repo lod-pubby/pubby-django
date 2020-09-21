@@ -103,6 +103,23 @@ class ConfigElement():
         return str(self.subject)
 
 
+    def shorten(self, uri):
+        '''
+        Decomposes a URL with respect to the configures namespaces.
+
+        Example:
+        g.compute_qname(URIRef(“http://foo/bar#baz”)) returns
+        (“ns2”, URIRef(“http://foo/bar#”), “baz”))
+        '''
+        if type(uri) == str:
+            uri = URIRef(uri)
+        try:
+            res = self.graph.compute_qname(str(uri))
+        except:
+            res = (None, None, str(uri))
+        return res
+
+
     def __repr__(self):
         return str(self.subject)
 
@@ -133,6 +150,8 @@ def init_config():
         g = Graph()
         with open(file_path, "r", encoding="utf-8") as f:
             g.parse(f, format="turtle")
+            for ns in g.namespaces():
+                print(f"Namespaces configured :{ns}")
         subject = g.value(None, RDF.type, CONF.Configuration, any=False)
         configs[namespace] = ConfigElement(g, subject)
         print(f"Pubby configured for namespace '{namespace}', using '{file_path}'")

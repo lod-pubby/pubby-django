@@ -14,7 +14,7 @@ table td ul { margin: 0; padding: 0; list-style: outside; column-width: 400px; }
 table td ul > li { margin: 3px 0; break-inside: avoid; }
 table tr:nth-of-type(even) td { background: hsl(0, 0%, 90%); }
 table tr td:nth-of-type(1) { width: 200px; }
-table td span { white-space: pre-line; }
+/* table td span { white-space: pre-line; } */
 
 a.graph { color: gray; font-size: 0.77em; }
 span.count { color: gray; font-size: 0.77em; }
