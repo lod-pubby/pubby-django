@@ -2,9 +2,9 @@
       {% for item in object.labels %}
         <span lang="{{item.language}}">
           {% if item.label %}
-           {{item.label|truncatechars:40}}
+           {{item.label|truncatechars:length}}
         {% else %}
-          {{item.qname.2|truncatechars:40}}
+          {{item.qname.2|truncatechars:length}}
         {% endif %}
         </span>
       {% endfor %}
@@ -13,9 +13,9 @@
       {% for item in object.labels %}
         <span lang="{{item.language}}">
           {% if item.label %}
-           {{item.label|truncatechars:40}}
+           {{item.label|truncatechars:length}}
         {% else %}
-          {{item.qname.2|truncatechars:40}}
+          {{item.qname.2|truncatechars:length}}
         {% endif %}
         </span>
       {% endfor %}

@@ -31,12 +31,12 @@
         </td>
         <td>
           {% if predicate.num_objects == 1 %}
-          {% include "pubby/object_link.html" with object=predicate.objects.0 %}
+          {% include "pubby/object_link.html" with object=predicate.objects.0 length=10000 %}
           {% else %}
           <ul>
             {% for object in predicate.objects %}
             <li>
-              {% include "pubby/object_link.html" with object=object %}
+              {% include "pubby/object_link.html" with object=object length=40 %}
             </li>
             {% endfor %}
           </ul>

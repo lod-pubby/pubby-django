@@ -157,7 +157,7 @@ def get(request, URI):
         a list of dictionaries is created:
         [
             {
-                "label": A label, if it exists, otherwise none.
+                "label": A label as rdflib Literal, if it exists, otherwise none.
                 "label_or_uri": label or local name from qname, used for sorting.
                 "uri": the full qualified URI of the resource as string.
                 "qname": The deconstructed URI using configured namespaces, see ConfigElement#shorten()
@@ -174,7 +174,7 @@ def get(request, URI):
                 label_dict["qname"] = resource.config.shorten(URI_or_literal)
                 label_dict["label_or_uri"] = label_dict["qname"][2]
             else:
-                label_dict["label"] = str(label)
+                label_dict["label"] = label
                 label_dict["uri"] = None
                 label_dict["qname"] = None
                 label_dict["label_or_uri"] = label_dict["label"]
@@ -225,6 +225,7 @@ def get(request, URI):
         value["num_objects"] = len(value["objects"])
 
     context = {"resource_label": get_labels_for(resource.resource_uri)[0]["label_or_uri"]}
+    # What is in sparql_data
     context["sparql_data"] = sparql_data
 
     return render(request, "pubby/page.html", context)
