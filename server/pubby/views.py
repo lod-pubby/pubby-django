@@ -3,7 +3,8 @@ from django.shortcuts import render, redirect
 from pubby.config import getconfig
 from SPARQLWrapper import SPARQLWrapper, JSONLD
 from rdflib import URIRef, BNode, Literal
-import re
+from urllib.parse import unquote
+import regex as re
 
 # Create your views here.
 
@@ -144,9 +145,10 @@ def get(request, URI):
         return response
 
     uri_spaces = re.compile(r"[-_+.]")
-    camel_case_words = re.compile(r"[a-zA-Z][^A-Z ]*")
+    camel_case_words = re.compile(r"[\p{L}][^\p{Lu} ]*")
 
     def calculate_heuristic_label(uri):
+        uri = unquote(uri)
         if "#" in uri:
             last_element = uri.split("#")[-1]
         else:
