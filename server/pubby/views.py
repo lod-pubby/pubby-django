@@ -154,9 +154,7 @@ def get(request, URI):
         else:
             last_element = uri.split("/")[-1]
         last_element = uri_spaces.sub(" ", last_element)
-        print(last_element)
         last_element = " ".join(camel_case_words.findall(last_element))
-        print(last_element)
         return " ".join([word.capitalize() for word in last_element.split(" ")])
 
     # print(f"Result {result.serialize()}")
