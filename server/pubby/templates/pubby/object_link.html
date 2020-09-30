@@ -4,7 +4,7 @@
           {% if item.label %}
            {{item.label|truncatechars:length}}
         {% else %}
-          {{item.qname.2|truncatechars:length}}
+          {{item.heuristic|truncatechars:length}}
         {% endif %}
         </span>
       {% endfor %}
@@ -15,7 +15,7 @@
           {% if item.label %}
            {{item.label|truncatechars:length}}
         {% else %}
-          {{item.qname.2|truncatechars:length}}
+          {{item.heuristic|truncatechars:length}}
         {% endif %}
         </span>
       {% endfor %}

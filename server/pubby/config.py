@@ -105,7 +105,7 @@ class ConfigElement():
 
     def shorten(self, uri):
         '''
-        Decomposes a URL with respect to the configures namespaces.
+        Decomposes a URL with respect to the configured namespaces.
 
         Example:
         g.compute_qname(URIRef(“http://foo/bar#baz”)) returns
@@ -114,8 +114,8 @@ class ConfigElement():
         if type(uri) == str:
             uri = URIRef(uri)
         try:
-            res = self.graph.compute_qname(str(uri))
-        except:
+            res = self.graph.compute_qname(str(uri), generate=False)
+        except Exception as e:
             res = (None, None, str(uri))
         return res
 

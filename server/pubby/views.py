@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from pubby.config import getconfig
 from SPARQLWrapper import SPARQLWrapper, JSONLD
 from rdflib import URIRef, BNode, Literal
+import re
 
 # Create your views here.
 
@@ -142,6 +143,20 @@ def get(request, URI):
         response.content_type = f"{mime};charset=utf-8"
         return response
 
+    uri_spaces = re.compile(r"[-_+.]")
+    camel_case_words = re.compile(r"[a-zA-Z][^A-Z ]*")
+
+    def calculate_heuristic_label(uri):
+        if "#" in uri:
+            last_element = uri.split("#")[-1]
+        else:
+            last_element = uri.split("/")[-1]
+        last_element = uri_spaces.sub(" ", last_element)
+        print(last_element)
+        last_element = " ".join(camel_case_words.findall(last_element))
+        print(last_element)
+        return " ".join([word.capitalize() for word in last_element.split(" ")])
+
     # print(f"Result {result.serialize()}")
     # result.serialize(destination="result.xml", format='xml')
 
@@ -161,22 +176,24 @@ def get(request, URI):
                 "label_or_uri": label or local name from qname, used for sorting.
                 "uri": the full qualified URI of the resource as string.
                 "qname": The deconstructed URI using configured namespaces, see ConfigElement#shorten()
+                "heuristic": A calculated version for a label based on the URI.
             }
         ]
         '''
         labels = []
         for _, label in result.preferredLabel(URI_or_literal, default=[(None, URI_or_literal)]):
             label_dict = {}
-            print(label)
             if isinstance(label, URIRef):
                 label_dict["label"] = None
                 label_dict["uri"] = str(URI_or_literal)
                 label_dict["qname"] = resource.config.shorten(URI_or_literal)
-                label_dict["label_or_uri"] = label_dict["qname"][2]
+                label_dict["heuristic"] = calculate_heuristic_label(label_dict["uri"])
+                label_dict["label_or_uri"] = label_dict["uri"]
             else:
                 label_dict["label"] = label
                 label_dict["uri"] = None
                 label_dict["qname"] = None
+                label_dict["heuristic"] = None
                 label_dict["label_or_uri"] = label_dict["label"]
             labels.append(label_dict)
         return sorted(labels, key=lambda label: label["label_or_uri"])
