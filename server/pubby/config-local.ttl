@@ -57,7 +57,7 @@
     conf:projectHomepage <http://www.judaicalink.org/>;
     # The Pubby root, where the webapp is running inside the servlet container.
     # Recommended. If not available, automatic detection is used.
-    conf:webBase <http://localhost:8000/pubby/>;
+    conf:webBase <http://127.0.0.1:8000/pubby/>;
     # URL of an RDF file whose prefix mapping is to be used by the
     # server; defaults to <>, which is *this* file.
     # conf:usePrefixesFrom <http://lelystad.informatik.uni-mannheim.de:8080/prefixes.n3>;
@@ -67,7 +67,7 @@
     conf:defaultLanguage "en";
     # When the homepage of the server is accessed, this resource will
     # be shown.
-    conf:indexResource <http://localhost:8000/pubby/html/yivo/Moscow>;
+    conf:indexResource <http://data.judaicalink.org/data/html/yivo/Moscow>;
     conf:labelProperty rdfs:label, dc:title, dc:identifier, skos:prefLabel;
     conf:imageProperty <http://onto.dm2e.eu/schemas/dm2e/1.1/hasAnnotatableVersionAt>;
     conf:showLabels "true";
@@ -77,7 +77,7 @@
         <http://dublincore.org/2012/06/14/dcelements.rdf>;
 #    conf:loadVocabularyFromFile
 #        "";
-    conf:defaultEndpoint <http://localhost:3030/judaicalink/query>;
+    conf:defaultEndpoint <http://localhost:3030/jvmg>;
 
 
 
@@ -91,7 +91,7 @@
         # Default graph name to query (not necessary for most endpoints)
         # conf:sparqlDefaultGraph <http://141.20.126.155/api/file/50b8c6d228f37c3d62000007/data>;
         # Common URI prefix of all resource URIs in the SPARQL dataset
-        conf:datasetBase <http://data.judaicalink.org/data/>;
+        conf:datasetBase <http://mediagraph.link/>;
         conf:priority "3";
         conf:addSameAsStatements "false";
         # Will be appended to the conf:webBase to form the public
@@ -106,27 +106,52 @@
         conf:webPagePrefix "html/";
 
         conf:useSparqlMapping [
-           conf:uriPattern "http://data.judaicalink.org/data/(.*)";
-           conf:sparqlQuery '''CONSTRUCT {
-	   graph ?graph {
-                        ?subject ?predicate ?object .
-			}
-                    } WHERE {
-                        graph ?graph {
-                            ?subject ?predicate ?object .
-                        }
-                        FILTER (
-                            ?subject = <http://data.judaicalink.org/data/$1> || ?object = <http://data.judaicalink.org/data/$1>
-                         || ?subject = <http://data.judaicalink.org/data/rdf/$1> || ?object = <http://data.judaicalink.org/data/rdf/$1>
-                       )
-                    } ''';
+           conf:uriPattern "http://mediagraph.link/(.*)";
+           conf:sparqlQuery '''
+        PREFIX is_label: <http://www.w3.org/2000/01/rdf-schema#label>
+        PREFIX graph_label: <http://mediagraph.link/jvmg/ont/shortLabel>
+        CONSTRUCT {
+          GRAPH ?graph {
+            ?subject ?predicate ?object .
+          } .
+          ?graph graph_label: ?g_label .
+          ?object is_label: ?o_label .
+          ?predicate is_label: ?p_label1 .
+          GRAPH ?gIn {
+            ?sIn ?pIn ?subject .
+          }
+          ?gIn graph_label: ?g_label1 .
+          ?sIn is_label: ?s_label .
+          ?pIn is_label: ?p_label2 .
+        }
+        WHERE {
+          GRAPH ?graph {
+            ?subject ?predicate ?object . FILTER ( ?subject = <http://mediagraph.link/$1> )
+          } .
+          OPTIONAL { ?graph graph_label: ?g_label }
+          OPTIONAL { ?object is_label: ?o_label }
+          OPTIONAL { ?predicate is_label: ?p_label1 }
+          OPTIONAL {
+            GRAPH ?gIn {
+              ?sIn ?pIn ?subject .
+            }
+            OPTIONAL { ?gIn graph_label: ?g_label1 }
+            OPTIONAL { ?sIn is_label: ?s_label }
+            OPTIONAL { ?pIn is_label: ?p_label2 }
+          }
+        }''';
+
+
+
                     conf:publishResources
                         "http://data.judaicalink.org/data/rdf/$1", "http://data.judaicalink.org/data/$1";
                     conf:primaryResource
-                        "http://data.judaicalink.org/data/$1";
-                ];
+            "http://data.judaicalink.org/data/$1";
 
 
+            ];
+        # Set predicate can to use a custom label-predicate for graph-labels
+        conf:graphLabelPredicate <http://mediagraph.link/jvmg/ont/shortLabel>;
 
         # Fixes an issue with the server running behind an Apache proxy;
         # can be ignored otherwise
@@ -148,6 +173,8 @@
     ];
 
 
+
+        
 # Dataset configuration section #2 (for DBpedia classes and properties)
 #
 # URIs in the SPARQL endpoint: http://dbpedia.org/class/*

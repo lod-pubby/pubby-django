@@ -1,19 +1,28 @@
-{% if predicate.graph.link %}
-<a class="graph" href="{{predicate.graph.link}}">
-  {{predicate.graph.label}}
-</a>
-{% endif %}
+{% if predicate.is_subject %}
 <a href="{{predicate.link}}">
   {% for item in predicate.labels %}
-  <span lang="{{item.language}}">
-    {% if item.label %}
-     {{item.label}}
-  {% else %}
-    {{item.qname.2}}
-  {% endif %}
+  {% include "pubby/span.html" with item=item %}
+  {% endfor %}
+</a>
+{% else %}
+is <a href="{{predicate.link}}">
+  {% for item in predicate.labels %}
+  {% include "pubby/span.html" with item=item %}
+  {% endfor %}
+</a> of
+{% endif %}
+
+{% if predicate.graph.link %}
+<a class="graph" href="{{predicate.graph.link}}">
+  {% for item in predicate.graph.label %}
+  <span>
+    {{item}}
   </span>
   {% endfor %}
 </a>
+{% endif %}
+
 {% if predicate.num_objects > 7 %}
+<br>
 <span class=count>{{predicate.num_objects}}</span>
 {% endif %}

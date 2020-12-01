@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from pubby.config import getconfig
-from SPARQLWrapper import SPARQLWrapper, JSONLD
+from SPARQLWrapper import SPARQLWrapper, JSONLD, JSON
 from rdflib import URIRef, BNode, Literal
 
 # Create your views here.
@@ -9,6 +9,7 @@ from rdflib import URIRef, BNode, Literal
 class Resource:
     def __init__(self, request, request_path):
         self.config = getconfig(request)
+        print("----------------------"+repr(self.config))
         # Important: use consistent terminology
         # The original path where we have to create a response. Can be either the same as resource, page or data path.
         self.request_path = request_path
@@ -29,6 +30,7 @@ class Resource:
         # The Sparql endpoint to be used
         self.sparql_endpoint = ""
         #
+        self.graph_label_predicate = ""
 
         # Find matching dataset in configuration
         for ds in self.config["dataset"]:
@@ -39,7 +41,7 @@ class Resource:
                 path_suffix = request_path[len(ds["webPagePrefix"]):]
             elif request_path.startswith(ds["webResourcePrefix"]):
                 path_suffix = request_path[len(ds["webResourcePrefix"]):]
-            
+
             # Create all possible paths. So far these are only candidates
             self.resource_path = ds["webResourcePrefix"] + path_suffix
             self.data_path = ds["webDataPrefix"] + path_suffix
@@ -49,6 +51,7 @@ class Resource:
             self.sparql_endpoint = str(ds["sparqlEndpoint"])
             if self.sparql_endpoint == "default":
                 self.sparql_endpoint = str(self.config["defaultEndpoint"])
+            self.graph_label_predicate = [URIRef(item.str()) for item in ds["graphLabelPredicate"]]
 
             print(f"Checking Dataset {ds['datasetBase']} for matches.")
             datasetURIPattern = ds["datasetURIPattern"]
@@ -62,6 +65,7 @@ class Resource:
             useSparqlMapping = ds["useSparqlMapping"]
             if useSparqlMapping:
                 uriPattern = useSparqlMapping["uriPattern"]
+                print(repr(uriPattern))
                 match = uriPattern.fullmatch(self.resource_uri)
                 if match:
                     print("Matched uriPattern")
@@ -110,6 +114,7 @@ def rewrite_URL(URL, dataset_base, web_base):
 
 def get(request, URI):
     resource = Resource(request, URI)
+    print(resource.sparql_query)
 
     accept = request.META.get("HTTP_ACCEPT").lower()
     serialization = "html"
@@ -125,7 +130,6 @@ def get(request, URI):
             return HttpResponseSeeOther(resource.web_base + resource.page_path)
         else:
             return HttpResponseSeeOther(resource.web_base + resource.data_path)
-
 
     # get data from the sparql_endpoint, using JSONLD for the graph info
     sparql = SPARQLWrapper(resource.sparql_endpoint)
@@ -150,36 +154,18 @@ def get(request, URI):
     # ( stuff -> p_in -> target -> p_out -> stuff ), we need to distinguish them.
 
     # returns a sorted list of labels for a given URI or Literal
-    def get_labels_for(URI_or_literal):
-        '''
-        Each predicate and each value (subject or object) can have multiple labels.
-        To support various options how to present the information in the template, 
-        a list of dictionaries is created:
-        [
-            {
-                "label": A label as rdflib Literal, if it exists, otherwise none.
-                "label_or_uri": label or local name from qname, used for sorting.
-                "uri": the full qualified URI of the resource as string.
-                "qname": The deconstructed URI using configured namespaces, see ConfigElement#shorten()
-            }
-        ]
-        '''
-        labels = []
-        for _, label in result.preferredLabel(URI_or_literal, default=[(None, URI_or_literal)]):
-            label_dict = {}
-            print(label)
-            if isinstance(label, URIRef):
-                label_dict["label"] = None
-                label_dict["uri"] = str(URI_or_literal)
-                label_dict["qname"] = resource.config.shorten(URI_or_literal)
-                label_dict["label_or_uri"] = label_dict["qname"][2]
-            else:
-                label_dict["label"] = label
-                label_dict["uri"] = None
-                label_dict["qname"] = None
-                label_dict["label_or_uri"] = label_dict["label"]
-            labels.append(label_dict)
-        return sorted(labels, key=lambda label: label["label_or_uri"])
+    def get_labels_for(URI_or_literal, custom_label=None):
+        if custom_label:
+            labels = [label for _, label in
+                      result.preferredLabel(URI_or_literal,
+                                            labelProperties=custom_label,
+                                            default=[(None, URI_or_literal)])]
+        else:
+            labels = [label for _, label in
+                      result.preferredLabel(URI_or_literal,
+                                            default=[(None, URI_or_literal)])]
+        return sorted(labels)
+
 
     # create quads by predicate, and do a label lookup for each thing on hand
     quads_by_predicate = {}
@@ -203,7 +189,8 @@ def get(request, URI):
             "is_subject": is_subject,
             "objects": [],
             "graph": {"link": rewrite_URL(graph.identifier, resource.dataset_base, resource.web_base) if not isinstance(graph.identifier, BNode) else None,
-                      "label": graph.identifier.split("/")[-1]
+                      "label": get_labels_for(graph.identifier,
+                                              custom_label=resource.graph_label_predicate)
                       }
         })
         if isinstance(object, URIRef):
@@ -219,14 +206,15 @@ def get(request, URI):
 
     # sort the predicates and objects so the presentation of the data does not change on a refresh
     sparql_data = sorted(quads_by_predicate.values(),
-                         key=lambda item: item["labels"][0]["label_or_uri"])
+                         key=lambda item: item["labels"])
     for value in sparql_data:
-        value["objects"].sort(key=lambda item: item["labels"][0]["label_or_uri"])
+        value["objects"].sort(key=lambda item: item["labels"])
         value["num_objects"] = len(value["objects"])
 
-    context = {"resource_label": get_labels_for(resource.resource_uri)[0]["label_or_uri"]}
+    context = {"resource_label": " ".join([label for label in get_labels_for(resource.resource_uri)])}
     # What is in sparql_data
     context["sparql_data"] = sparql_data
+    context["URI"] = URI
 
     return render(request, "pubby/page.html", context)
 

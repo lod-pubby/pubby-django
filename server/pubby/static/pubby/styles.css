@@ -17,9 +17,28 @@ table tr td:nth-of-type(1) { width: 200px; }
 /* table td span { white-space: pre-line; } */
 
 a.graph { color: gray; font-size: 0.77em; }
-span.count { color: gray; font-size: 0.77em; }
+span.count { color: grey; font-size: 0.85em; }
+span.info { color: hsl(0, 0%, 26%); font-size: 0.65em; }
 span[lang]::after { content: attr(lang); color: gray; font-size: 0.77em; padding-left: 3px; }
 a[lang]::after { padding-left: 3px; }
+/* lang attribute in ISO 639-1 (languages), files use ISO 3166-1 alpha-2 (countries) and the comment is the language name  */
+span[lang^=bg]::after, a[lang^=bg]::after { content: url(bg.png); }  /* Bulgarian */
+span[lang^=cs]::after, a[lang^=cs]::after { content: url(cz.png); }  /* Czech */
+span[lang^=de]::after, a[lang^=de]::after { content: url(de.png); }  /* Germany */
+span[lang^=en]::after, a[lang^=en]::after { content: url(gb.png); }  /* English */
+span[lang^=es]::after, a[lang^=es]::after { content: url(es.png); }  /* Spanish, Castilian */
+span[lang^=fr]::after, a[lang^=fr]::after { content: url(fr.png); }  /* French */
+span[lang^=hu]::after, a[lang^=hu]::after { content: url(hu.png); }  /* Hungarian */
+span[lang^=it]::after, a[lang^=it]::after { content: url(it.png); }  /* Italian */
+span[lang^=ja]::after, a[lang^=ja]::after { content: url(jp.png); }  /* Japanese */
+span[lang^=ko]::after, a[lang^=ko]::after { content: url(kr.png); }  /* Korean */
+span[lang^=pl]::after, a[lang^=pl]::after { content: url(pl.png); }  /* Polish */
+span[lang^=pt]::after, a[lang^=pt]::after { content: url(pt.png); }  /* Portuguese */
+span[lang^=ru]::after, a[lang^=ru]::after { content: url(ru.png); }  /* Russian */
+span[lang^=th]::after, a[lang^=th]::after { content: url(th.png); }  /* Thai */
+span[lang^=tr]::after, a[lang^=tr]::after { content: url(tr.png); }  /* Turkish */
+span[lang^=uk]::after, a[lang^=uk]::after { content: url(ua.png); }  /* Ukrainian */
+span[lang^=zh]::after, a[lang^=zh]::after { content: url(cn.png); }  /* Chinese */
 h1 span[lang]::after { content: none; }
 
 nav { position: absolute; top: 0; right: 0; margin: 0; padding: 0.5em 1em; }
@@ -35,3 +54,4 @@ html.dark-mode a { color: hsl(210, 45%, 60%);  }
 html.dark-mode a:hover, html.dark-mode a:focus, html.dark-mode a:active { color: hsl(210, 100%, 50%); }
 html.dark-mode table tr:nth-of-type(even) td { background: hsl(0, 0%, 7.5%); }
 html.dark-mode a.graph, html.dark-mode span.count { color: gray; }
+html.dark-mode span.info { color: lightgray; }

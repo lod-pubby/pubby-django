@@ -1,0 +1,7 @@
+{% if item.language %}
+  <span lang="{{item.language}}">
+    {{item}}
+  </span>
+{% else %}
+  <span>{{item}}</span>
+{% endif %}
