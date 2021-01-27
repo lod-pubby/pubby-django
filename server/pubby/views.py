@@ -144,17 +144,27 @@ def get(request, URI):
         response.content_type = f"{mime};charset=utf-8"
         return response
 
-    uri_spaces = re.compile(r"[-_+.]")
-    camel_case_words = re.compile(r"[\p{L}][^\p{Lu} ]*")
+    uri_spaces = re.compile(r"[-_+.#?]")
+    camel_case_words = re.compile(r"[\p{L}\p{N}][^\p{Lu} ]*")
+    bad_chars = "?="
+    bad_words = ["html", "xml", "ttl"]
 
     def calculate_heuristic_label(uri):
         uri = unquote(uri)
-        if "#" in uri:
-            last_element = uri.split("#")[-1]
-        else:
-            last_element = uri.split("/")[-1]
+        elements = uri.split("/")
+        elements.reverse()
+        for element in elements:
+            if element != '':
+                last_element = element
+                break
         last_element = uri_spaces.sub(" ", last_element)
-        last_element = " ".join(camel_case_words.findall(last_element))
+        words = last_element.split(" ")
+        filtered_words = filter(lambda word: word not in bad_words, words)
+        filtered_words = filter(lambda word: all(char not in bad_chars for char in word),
+                                filtered_words)
+        filtered_words = " ".join(list(filtered_words))
+        last_element = " ".join(camel_case_words.findall(filtered_words))
+        " ".join([word.capitalize() for word in last_element.split(" ")])
         return " ".join([word.capitalize() for word in last_element.split(" ")])
 
     # print(f"Result {result.serialize()}")
