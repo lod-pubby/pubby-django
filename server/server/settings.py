@@ -126,8 +126,8 @@ STATIC_URL = '/static/'
 
 # PUBBY_CONFIG = "pubby/config.ttl"
 PUBBY_CONFIG = {
-       "pubby": "pubby/config-local.ttl",
-       "pubby2": "pubby/config.ttl",
+       "pubby": "pubby/config.ttl",
+       "pubby2": "pubby/config-local.ttl",
         }
 
 USE_X_FORWARDED_HOST = True
