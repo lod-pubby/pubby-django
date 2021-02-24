@@ -113,6 +113,8 @@ def get(request, URI):
 
     accept = request.META.get("HTTP_ACCEPT").lower()
     serialization = "html"
+    # Not a real content negotiation, simply the first match
+    # in our dictionary is used.
     for mime in mime2serialisation:
         if mime in accept:
             serialization = mime2serialisation[mime]
@@ -120,6 +122,7 @@ def get(request, URI):
     print(accept)
     print(f"Content negotiation: {serialization}")
 
+    # Only redirect if we are at the resource URI, not at the html or rdf views
     if resource.resource_path == resource.request_path:
         if serialization == "html":
             return HttpResponseSeeOther(resource.web_base + resource.page_path)
@@ -130,10 +133,13 @@ def get(request, URI):
     # get data from the sparql_endpoint, using JSONLD for the graph info
     sparql = SPARQLWrapper(resource.sparql_endpoint)
     sparql.setQuery(resource.sparql_query)
+    # We need JSON-LD to get the graph information
     sparql.setReturnFormat(JSONLD)
     result = sparql.query().convert()
 
+    # We want data
     if resource.request_path == resource.data_path:
+        # Hard-coded decision what we deliver if a browser accesses our data page
         if serialization == "html":
             serialization = "turtle"
             mime = "text/turtle"
@@ -181,6 +187,7 @@ def get(request, URI):
             labels.append(label_dict)
         return sorted(labels, key=lambda label: label["label_or_uri"])
 
+
     # create quads by predicate, and do a label lookup for each thing on hand
     quads_by_predicate = {}
     for subject_uri, predicate_uri, object_uri, graph in result.quads():
@@ -227,6 +234,7 @@ def get(request, URI):
     context = {"resource_label": get_labels_for(resource.resource_uri)[0]["label_or_uri"]}
     # What is in sparql_data
     context["sparql_data"] = sparql_data
+    context["resource_uri"] = resource.resource_uri
 
     return render(request, "pubby/page.html", context)
 
