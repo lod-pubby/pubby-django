@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
 
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 <link rel="stylesheet" type="text/css" href="{% static 'pubby/styles.css' %}">
 <script rel="javascript" src="{% static 'pubby/scripts.js' %}"></script>
 
@@ -31,6 +32,11 @@
           {% endif %}
         </td>
         <td>
+          {% if predicate.graph.link %}
+          <a class="graph badge badge-secondary float-right ml-3 mb-3" href="{{predicate.graph.link}}">
+            {{predicate.graph.label}}
+          </a>
+          {% endif %}
           {% if predicate.num_objects == 1 %}
           {% include "pubby/object_link.html" with object=predicate.objects.0 length=10000 %}
           {% else %}
