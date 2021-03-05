@@ -1,26 +1,31 @@
-<!DOCTYPE html>
+{% extends 'pubby/base.html' %}
+{% block content %}
 {% load static %}
 
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-<link rel="stylesheet" type="text/css" href="{% static 'pubby/styles.css' %}">
-<script rel="javascript" src="{% static 'pubby/scripts.js' %}"></script>
 
-<html lang="en">
-  <head>
+<!--content-->
+    {% include "pubby/header.html" %}
+<main class="row">
+	<div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8">
+
+
     <!-- <meta charset="UTF-8"> -->
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <title>{{resource_label}}</title>
-  </head>
-  <body>
-    <h1>{{resource_label}}</h1>
+    <h1 class="text-center text-md-left">{{resource_label}}</h1>
+
     <p>URI: <a href="{{resource_uri}}">{{resource_uri}}</a></p>
-    <nav>
+
+<!--    <nav>
       <a href="#" class=switch-mode>
         <span class=text-for-light>Light Mode</span>
         <span class=text-for-dark>Dark Mode</span>
       </a>
-    </nav>
-    <table>
+    </nav>-->
+
+    <div class="table-responsive">
+
+    <table class="table table-light table-striped">
       <tr><th>Property</th><th>Value</th></tr>
       {% for predicate in sparql_data %}
       <tr>
@@ -52,5 +57,18 @@
       </tr>
       {% endfor %}
     </table>
-  </body>
-</html>
+    </div>
+
+
+</div>
+
+</main>
+
+
+<!--footer-->
+
+{% include "pubby/footer.html" %}
+
+<!--footer-->
+
+{% endblock content %}

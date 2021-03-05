@@ -1,0 +1,89 @@
+{% extends 'pubby/base.html' %}
+{% block content %}
+{% load static %}
+
+
+<!--content-->
+    {% include "pubby/header.html" %}
+<main class="row">
+	<div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8">
+
+
+    <!-- <meta charset="UTF-8"> -->
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>{{resource_label}}</title>
+
+    <h1>{{resource_label}}</h1>
+    <p>URI: <a href="{{resource_uri}}">{{resource_uri}}</a></p>
+    <nav>
+      <a href="#" class=switch-mode>
+        <span class=text-for-light>Light Mode</span>
+        <span class=text-for-dark>Dark Mode</span>
+      </a>
+    </nav>
+    <table>
+      <tr><th>Property</th><th>Value</th></tr>
+      {% for predicate in sparql_data %}
+      <tr>
+        <td>
+          {% if predicate.is_subject %}
+          {% include "pubby/predicate_link.html" with predicate=predicate %}
+          {% else %}
+          is {% include "pubby/predicate_link.html" with predicate=predicate %} of
+          {% endif %}
+        </td>
+        <td>
+          {% if predicate.graph.link %}
+          <a class="graph badge badge-secondary float-right ml-3 mb-3" href="{{predicate.graph.link}}">
+            {{predicate.graph.label}}
+          </a>
+          {% endif %}
+          {% if predicate.num_objects == 1 %}
+          {% include "pubby/object_link.html" with object=predicate.objects.0 length=10000 %}
+          {% else %}
+          <ul>
+            {% for object in predicate.objects %}
+            <li>
+              {% include "pubby/object_link.html" with object=object length=40 %}
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+
+
+
+
+
+<h1 class="text-center text-md-left">Welcome to JudaicaLink!</h1>
+<p>
+Currently, we provide data about <b>58,111 entities</b>, consisting of <b>531,794 triples</b>, within <b>9 different datasets</b>.
+</p>
+<video height="auto" width="100%" autoplay loop muted>
+          <source src="/img/Animation.mp4" type="video/mp4" />
+        </video>
+	<!--<video src="/img/Animation.mp4" height="auto" width="100%" autoplay="autoplay" loop preload="metadata"></video>-->
+
+<!--<img src="/img/homepage-graphics.png" alt="Linked Data Web"/>-->
+<h2 class="text-center text-md-left">Jewish Studies</h2>
+<p>
+JudaicaLink is the knowledge graph behind the <a href="http://www.jewishstudies.de">specialized information service for Jewish Studies</a> (Fachinformationsdienst Jüdische Studien, FID) of the University Library of Frankfurt.
+JudaicaLink is a data resource for data professionals. Stay tuned for more services dedicated to the end user.
+</p>
+
+
+</div>
+
+</main>
+
+
+<!--footer-->
+
+{% include "pubby/footer.html" %}
+
+<!--footer-->
+
+{% endblock content %}
