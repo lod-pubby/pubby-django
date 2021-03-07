@@ -30,7 +30,10 @@ class Resource:
         self.sparql_query = ""
         # The Sparql endpoint to be used
         self.sparql_endpoint = ""
-        #
+        # primary resource
+        self.primary_resource = ""
+        # publish resources
+        self.publish_resources = []
 
         # Find matching dataset in configuration
         for ds in self.config["dataset"]:
@@ -68,9 +71,15 @@ class Resource:
                 if match:
                     print("Matched uriPattern")
                     sparql = useSparqlMapping["sparqlQuery"]
+                    primary_resource = useSparqlMapping["primaryResource"]
+                    publish_resources = useSparqlMapping["publishResources"]
                     for i, group in enumerate(match.groups(), start=1):
                         sparql = sparql.replace(f"${i}", group)
+                        primary_resource = primary_resource.replace(f"${i}", group)
+                        publish_resources = [resource.replace(f"${i}", group) for resource in publish_resources ]
                     self.sparql_query = sparql
+                    self.primary_resource = URIRef(primary_resource)
+                    self.publish_resources = [URIRef(resource) for resource in publish_resources]
                     return
         raise ValueError(f"No matching Dataset in configuration for {request_path}")
 
@@ -145,17 +154,81 @@ def get(request, URI):
         if serialization == "html":
             serialization = "turtle"
             mime = "text/turtle"
-        response = HttpResponse() 
+        response = HttpResponse()
         response.content = result.serialize(format=serialization)
         response.content_type = f"{mime};charset=utf-8"
         return response
 
-    uri_spaces = re.compile(r"[-_+.#?]")
-    camel_case_words = re.compile(r"[\p{L}\p{N}][^\p{Lu} ]*")
-    bad_chars = "?="
-    bad_words = ["html", "xml", "ttl"]
 
-    def calculate_heuristic_label(uri):
+    primary_resource = create_quad_by_predicate(resource.primary_resource, resource, result)
+    publish_resources = []
+    for publish_resource in resource.publish_resources:
+        publish_resources.append(create_quad_by_predicate(publish_resource, resource, result))
+
+    context = {"resource_label": get_labels_for(resource.resource_uri, result, resource)[0]["label_or_uri"]}
+    # What is in primary_resource
+    context["primary_resource"] = primary_resource
+    context["publish_resources"] = publish_resources
+    context["resource_uri"] = resource.resource_uri
+
+
+    return render(request, "pubby/page.html", context)
+
+
+def create_quad_by_predicate(uri, resource, result):
+    # create quads by predicate, and do a label lookup for each thing on hand
+    quads_by_predicate = {}
+    for subject_uri, predicate_uri, object_uri, graph in result.quads():
+        object = None
+        is_subject = True
+        if subject_uri == uri:
+            object = object_uri
+        elif object_uri == uri:
+            is_subject = False
+            object = subject_uri
+        else:
+            # otherwise it's a label
+            continue
+
+        key = (predicate_uri, is_subject, graph.identifier)
+        value = quads_by_predicate.setdefault(key, {
+            "labels": get_labels_for(predicate_uri, result, resource),
+            "link": rewrite_URL(predicate_uri, resource.dataset_base, resource.web_base),
+            "qname": resource.config.shorten(predicate_uri),
+            "is_subject": is_subject,
+            "objects": [],
+            "graph": {"link": rewrite_URL(graph.identifier, resource.dataset_base, resource.web_base) if not isinstance(graph.identifier, BNode) else None,
+                      "label": graph.identifier.split("/")[-1]
+                      }
+        })
+        if isinstance(object, URIRef):
+            value["objects"].append(
+                {"link": rewrite_URL(object, resource.dataset_base, resource.web_base),
+                 "qname": resource.config.shorten(predicate_uri),
+                 "labels": get_labels_for(object, result, resource)})
+        else:
+            value["objects"].append(
+                {"link": None,
+                 "qname": None,
+                 "labels": get_labels_for(object, result, resource)})
+
+    # sort the predicates and objects so the presentation of the data does not change on a refresh
+    sparql_data = sorted(quads_by_predicate.values(),
+                         key=lambda item: item["labels"][0]["label_or_uri"])
+    for value in sparql_data:
+        value["objects"].sort(key=lambda item: item["labels"][0]["label_or_uri"])
+        value["num_objects"] = len(value["objects"])
+
+    return sparql_data
+
+
+uri_spaces = re.compile(r"[-_+.#?]")
+camel_case_words = re.compile(r"[\p{L}\p{N}][^\p{Lu} ]*")
+bad_chars = "?="
+bad_words = ["html", "xml", "ttl"]
+
+
+def calculate_heuristic_label(uri):
         uri = unquote(uri)
         elements = uri.split("/")
         elements.reverse()
@@ -173,97 +246,44 @@ def get(request, URI):
         " ".join([word.capitalize() for word in last_element.split(" ")])
         return " ".join([word.capitalize() for word in last_element.split(" ")])
 
-    # print(f"Result {result.serialize()}")
-    # result.serialize(destination="result.xml", format='xml')
 
-    # transfrom the result data into more usable format.
-    # since we have predicates which points towards the target and from the target
-    # ( stuff -> p_in -> target -> p_out -> stuff ), we need to distinguish them.
+# transfrom the result data into more usable format.
+# since we have predicates which points towards the target and from the target
+# ( stuff -> p_in -> target -> p_out -> stuff ), we need to distinguish them.
 
-    # returns a sorted list of labels for a given URI or Literal
-    def get_labels_for(URI_or_literal):
-        '''
-        Each predicate and each value (subject or object) can have multiple labels.
-        To support various options how to present the information in the template, 
-        a list of dictionaries is created:
-        [
-            {
-                "label": A label as rdflib Literal, if it exists, otherwise none.
-                "label_or_uri": label or local name from qname, used for sorting.
-                "uri": the full qualified URI of the resource as string.
-                "qname": The deconstructed URI using configured namespaces, see ConfigElement#shorten()
-                "heuristic": A calculated version for a label based on the URI.
-            }
-        ]
-        '''
-        labels = []
-        for _, label in result.preferredLabel(URI_or_literal, default=[(None, URI_or_literal)]):
-            label_dict = {}
-            if isinstance(label, URIRef):
-                label_dict["label"] = None
-                label_dict["uri"] = str(URI_or_literal)
-                label_dict["qname"] = resource.config.shorten(URI_or_literal)
-                label_dict["heuristic"] = calculate_heuristic_label(label_dict["uri"])
-                label_dict["label_or_uri"] = label_dict["uri"]
-            else:
-                label_dict["label"] = label
-                label_dict["uri"] = None
-                label_dict["qname"] = None
-                label_dict["heuristic"] = None
-                label_dict["label_or_uri"] = label_dict["label"]
-            labels.append(label_dict)
-        return sorted(labels, key=lambda label: label["label_or_uri"])
-
-
-    # create quads by predicate, and do a label lookup for each thing on hand
-    quads_by_predicate = {}
-    for subject_uri, predicate_uri, object_uri, graph in result.quads():
-        object = None
-        is_subject = True
-        if subject_uri == resource.resource_uri:
-            object = object_uri
-        elif object_uri == resource.resource_uri:
-            is_subject = False
-            object = subject_uri
+# returns a sorted list of labels for a given URI or Literal
+def get_labels_for(URI_or_literal, result, resource):
+    '''
+    Each predicate and each value (subject or object) can have multiple labels.
+    To support various options how to present the information in the template,
+    a list of dictionaries is created:
+    [
+        {
+            "label": A label as rdflib Literal, if it exists, otherwise none.
+            "label_or_uri": label or local name from qname, used for sorting.
+            "uri": the full qualified URI of the resource as string.
+            "qname": The deconstructed URI using configured namespaces, see ConfigElement#shorten()
+            "heuristic": A calculated version for a label based on the URI.
+        }
+    ]
+    '''
+    labels = []
+    for _, label in result.preferredLabel(URI_or_literal, default=[(None, URI_or_literal)]):
+        label_dict = {}
+        if isinstance(label, URIRef):
+            label_dict["label"] = None
+            label_dict["uri"] = str(URI_or_literal)
+            label_dict["qname"] = resource.config.shorten(URI_or_literal)
+            label_dict["heuristic"] = calculate_heuristic_label(label_dict["uri"])
+            label_dict["label_or_uri"] = label_dict["uri"]
         else:
-            # otherwise it's a label
-            continue
-
-        key = (predicate_uri, is_subject, graph.identifier)
-        value = quads_by_predicate.setdefault(key, {
-            "labels": get_labels_for(predicate_uri),
-            "link": rewrite_URL(predicate_uri, resource.dataset_base, resource.web_base),
-            "qname": resource.config.shorten(predicate_uri),
-            "is_subject": is_subject,
-            "objects": [],
-            "graph": {"link": rewrite_URL(graph.identifier, resource.dataset_base, resource.web_base) if not isinstance(graph.identifier, BNode) else None,
-                      "label": graph.identifier.split("/")[-1]
-                      }
-        })
-        if isinstance(object, URIRef):
-            value["objects"].append(
-                {"link": rewrite_URL(object, resource.dataset_base, resource.web_base),
-                 "qname": resource.config.shorten(predicate_uri),
-                 "labels": get_labels_for(object)})
-        else:
-            value["objects"].append(
-                {"link": None,
-                 "qname": None,
-                 "labels": get_labels_for(object)})
-
-    # sort the predicates and objects so the presentation of the data does not change on a refresh
-    sparql_data = sorted(quads_by_predicate.values(),
-                         key=lambda item: item["labels"][0]["label_or_uri"])
-    for value in sparql_data:
-        value["objects"].sort(key=lambda item: item["labels"][0]["label_or_uri"])
-        value["num_objects"] = len(value["objects"])
-
-    context = {"resource_label": get_labels_for(resource.resource_uri)[0]["label_or_uri"]}
-    # What is in sparql_data
-    context["sparql_data"] = sparql_data
-    context["resource_uri"] = resource.resource_uri
-
-    return render(request, "pubby/page.html", context)
+            label_dict["label"] = label
+            label_dict["uri"] = None
+            label_dict["qname"] = None
+            label_dict["heuristic"] = None
+            label_dict["label_or_uri"] = label_dict["label"]
+        labels.append(label_dict)
+    return sorted(labels, key=lambda label: label["label_or_uri"])
 
 
 def index(request):

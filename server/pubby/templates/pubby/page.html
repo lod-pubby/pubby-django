@@ -27,7 +27,7 @@
 
     <table class="table table-light table-striped">
       <tr><th scope="col" style="width: 35%">Property</th><th scope="col">Value</th></tr>
-      {% for predicate in sparql_data %}
+      {% for predicate in primary_resource %}
       <tr>
         <td>
           {% if predicate.is_subject %}
