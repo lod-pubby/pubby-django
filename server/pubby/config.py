@@ -22,12 +22,18 @@ FUNCTIONAL = [
         CONF.webResourcePrefix,
         CONF.webDataPrefix,
         CONF.webPagePrefix,
-        CONF.useSparqlMapping,
         CONF.uriPattern,
         CONF.sparqlQuery,
         CONF.primaryResource,
         CONF.fixUnescapedCharacters,
         CONF.metadataTemplate,
+        CONF.listOrder,
+        CONF.queryType,
+        CONF.queryTitle,
+        CONF.variableName,
+        CONF.columnHeader,
+        CONF.defaultTemplate,
+        CONF.template,
         ]
 
 PATTERN = [
@@ -53,6 +59,13 @@ class ConfigElement():
         self.cache = {}
 
 
+    def is_list_of_config_elements(self, l):
+        if len(l) > 0:
+            element = l[0]
+            if type(element) is ConfigElement:
+                return True
+        return False
+
     def get(self, prop):
         '''
         Returns either a single value or a list.
@@ -67,17 +80,24 @@ class ConfigElement():
             return self.cache[prop]
         objects = self.graph.objects(self.subject, CONF[prop])
         res = [ConfigElement(self.graph, o) if type(o) in [URIRef, BNode] else o.toPython() for o in objects]
+        # Regular expressions are immediately parsed
         if CONF[prop] in PATTERN and len(res) == 1:
             regex = re.compile(res[0])
             self.cache[prop] = regex
             return regex
+        # Single value elements that have no value get None
         elif CONF[prop] in FUNCTIONAL and len(res) == 0:
             self.cache[prop] = None
             return None
+        # Single value elements directly get the value assigned
         elif CONF[prop] in FUNCTIONAL and len(res)==1:
             self.cache[prop] = res[0]
             return res[0]
+        # Anything else is a list
         else:
+            print(res)
+            if self.is_list_of_config_elements(res):
+                res.sort(key=lambda x: x["listOrder"])
             self.cache[prop] = res
             return res
 

@@ -78,6 +78,7 @@
 #    conf:loadVocabularyFromFile
 #        "";
     conf:defaultEndpoint <https://data.judaicalink.org/sparql/query>;
+    conf:defaultTemplate "pubby/page.html";
 
 
 
@@ -104,6 +105,7 @@
         # Will be appended to the conf:webBase to form the public
         # page URIs; if not present, defaults to "page/"
         conf:webPagePrefix "html/";
+        conf:template "pubby/page.html";
 
         conf:useSparqlMapping [
            conf:uriPattern "http://data.judaicalink.org/data/(.*)";
@@ -135,6 +137,7 @@
           OPTIONAL { ?pIn is_label: ?p_label2 }
           }
         }''';
+           conf:queryType conf:ConstructQuery;
 
 
 
@@ -142,8 +145,33 @@
                         "http://data.judaicalink.org/data/rdf/$1", "http://data.judaicalink.org/data/$1";
                     conf:primaryResource
                         "http://data.judaicalink.org/data/$1";
+            conf:listOrder 1;
                 ];
 
+        conf:useSparqlMapping [
+           conf:uriPattern "http://data.judaicalink.org/data/(.*)";
+           conf:sparqlQuery '''
+           SELECT ?birthDate, ?birthPlace WHERE {
+            GRAPH ?graph {
+                <http://data.judaicalink.org/data/$1> <http://data.judaicalink.org/ontology/birthDate> ?birthDate.
+                <http://data.judaicalink.org/data/$1> <http://data.judaicalink.org/ontology/birthPlace> ?birthPlace.
+            }
+           }
+        }''';
+           conf:queryType conf:SelectQuery;
+           conf:queryTitle "Birthdate";
+           conf:columnHeaders [
+            conf:variableName "birthDate";
+            conf:columnHeader "Birthday";
+           ];
+           conf:columnHeaders [
+            conf:variableName "birthPlace";
+            conf:columnHeader "Place";
+           ];
+            conf:listOrder 2;
+
+
+        ];
 
 
         # Fixes an issue with the server running behind an Apache proxy;

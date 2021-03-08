@@ -66,13 +66,14 @@ class Resource:
                     return
             useSparqlMapping = ds["useSparqlMapping"]
             if useSparqlMapping:
-                uriPattern = useSparqlMapping["uriPattern"]
+                # TODO: Extend to multiple mappings
+                uriPattern = useSparqlMapping[0]["uriPattern"]
                 match = uriPattern.fullmatch(self.resource_uri)
                 if match:
                     print("Matched uriPattern")
-                    sparql = useSparqlMapping["sparqlQuery"]
-                    primary_resource = useSparqlMapping["primaryResource"]
-                    publish_resources = useSparqlMapping["publishResources"]
+                    sparql = useSparqlMapping[0]["sparqlQuery"]
+                    primary_resource = useSparqlMapping[0]["primaryResource"]
+                    publish_resources = useSparqlMapping[0]["publishResources"]
                     for i, group in enumerate(match.groups(), start=1):
                         sparql = sparql.replace(f"${i}", group)
                         primary_resource = primary_resource.replace(f"${i}", group)
