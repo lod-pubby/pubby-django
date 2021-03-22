@@ -1,0 +1,53 @@
+{% load static %}
+
+
+<div class="wrapper">
+
+      <!-- Page Navigation -->
+
+      <nav id="sidebar">
+
+            <div class="sidebar-header">
+
+            </div>
+
+            <ul class="list-unstyled components">
+                <li class="{% if request.resolver_match.view_name == "index" %}active{% endif %}">
+                    <a href="https://web.judaicalink.org" ><i class="fas fa-home"></i>  Web Home</a>
+                </li>
+                <li class="{% if request.resolver_match.namespace == "search" %}active{% endif %}">
+                    <a href="https://web.judaicalink.org/datasets/"><i class="fas fa-table"></i>  Datasets</a>
+                </li>
+                <li class="{% if request.resolver_match.view_name == "search_index" %}active{% endif %}">
+                    <a href="https://labs.judaicalink.org/search/"><i class="fas fa-search"></i>  Labs Search</a>
+                </li>
+                <li class="{% if request.resolver_match.view_name == "news" %}active{% endif %}">
+                <a href="http://web.judaicalink.org/news"><i class="fas fa-comment"></i>  News</a>
+                </li>
+                <li>
+                    <a href="https://www.ub.uni-frankfurt.de/judaica3/home.html" target="_blank"><i class="fas fa-hanukiah"></i>  FID Jewish Studies</a>
+                </li>
+
+            </ul>
+
+            <ul class="list-unstyled CTAs">
+                <li>
+                    <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fas fa-eye"></i>  Background</a>
+                    <ul class="collapse list-unstyled" id="pageSubmenu">
+                        <li>
+                            <a href="http://web.judaicalink.org/faq">FAQ</a>
+                        </li>
+                        <li>
+                            <a href="http://web.judaicalink.org/about-us">About</a>
+                        </li>
+                        <li>
+                            <a href="http://web.judaicalink.org/legal">Disclaimer</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+</div>
+      <!-- Page Navigation -->
+
+
