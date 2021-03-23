@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+    path('pubby/', include('pubby.urls', namespace="pubby")),
+    path('pubby2/', include('pubby.urls', namespace="pubby2")),
     path('admin/', admin.site.urls),
     path('data/', include('pubby.urls', namespace="data")),
     path('datasets/', include('pubby.urls', namespace="datasets")),
