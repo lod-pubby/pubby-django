@@ -209,6 +209,9 @@ a:hover {
     margin-top: 3px;
     }
 
+#picturemargintop30 {
+    top: 30px;
+}
 
 .header-logos{
     display: flex;
