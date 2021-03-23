@@ -18,6 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('pubby/', include('pubby.urls', namespace="pubby")),
-    path('pubby2/', include('pubby.urls', namespace="pubby2")),
+    path('data/', include('pubby.urls', namespace="data")),
+    path('datasets/', include('pubby.urls', namespace="datasets")),
+    path('ontology/', include('pubby.urls', namespace="ontology")),
 ]
