@@ -9,19 +9,15 @@
 	<div class="col-12 col-sm-12 col-md-12 col-lg-9 col-xl-8">
 
 
-    <!-- <meta charset="UTF-8"> -->
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
-    <title>{{resource_label}}</title>
+        <div style="word-wrap: break-word;">
     <h1 class="text-center text-md-left">{{resource_label}}</h1>
+        </div>
 
-    <p>URI: <a href="{{resource_uri}}">{{resource_uri}}</a></p>
-
-<!--    <nav>
-      <a href="#" class=switch-mode>
-        <span class=text-for-light>Light Mode</span>
-        <span class=text-for-dark>Dark Mode</span>
-      </a>
-    </nav>-->
+        <div style="word-wrap: break-word;">
+    <p class="text-center text-md-left">URI:
+        <a href="{{resource_uri}}">{{resource_uri}}</a>
+    </p>
+        </div>
 
     <div class="table-responsive">
 
@@ -66,9 +62,11 @@
 
     <div class="col-md-0 col-lg-3 col-xl-4">
      <div class="img-fluid mt-4 sticky-top" id="picturemargintop30">
-            <img src="{% static '/img/markus-winkler-aYPtEknQmXE-unsplash.jpg' %}" class="img-thumbnail img-fluid mt-4" alt="Dataset Picture">
+            <img src="{% static '/img/markus-winkler-aYPtEknQmXE-unsplash.jpg' %}" class="img-thumbnail img-fluid" alt="Dataset Picture">
        <br><br>
+         <div style="word-wrap: break-word;">
          <p class="alert alert-info text-center">Dataset about: <b>{{resource_label}}</b></p>
+         </div>
 
 </div>
     </div>

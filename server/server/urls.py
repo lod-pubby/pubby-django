@@ -18,8 +18,11 @@ from django.urls import path, include
 from django.conf import settings
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('pubby/', include('pubby.urls', namespace="pubby")),
     path('pubby2/', include('pubby.urls', namespace="pubby2")),
+    path('admin/', admin.site.urls),
+    path('data/', include('pubby.urls', namespace="data")),
+    path('datasets/', include('pubby.urls', namespace="datasets")),
+    path('ontology/', include('pubby.urls', namespace="ontology")),
     path(settings.WEB_HOOK_URL, include("django_webhook_consume.urls")),
 ]
