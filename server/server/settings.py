@@ -142,9 +142,9 @@ if os.path.isfile("server/localsettings.py"):
 WEB_HOOK_URL = "hook/"
 WEB_HOOK = {
     "pubby": {
-        "branch": "refs/heads/master",
+        "branch": "refs/heads/judaicalink",
         "secret_key_name": "SECRET_PUBBY",
         "github_header_name": "HTTP_X_HUB_SIGNATURE_256",
-        "script": "<ENTER HERE SCRIPT>"
+        "script": "/data/judaicalink/pubby-django/update.sh"
 }}
 
