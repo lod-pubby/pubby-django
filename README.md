@@ -13,3 +13,7 @@ Per default, the [JudaicaLink](http://web.judaicalink.org/) endpoint is configur
 The pubby instances are configured in server/settings.py.
 
 The default instance configuration is at pubby/config.ttl 
+
+## Installation
+
+For installation on the server you can add a webhook. See [here](https://github.com/FlorianRupp/django-webhook-consume.git).
