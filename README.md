@@ -16,4 +16,4 @@ The default instance configuration is at pubby/config.ttl
 
 ## Installation
 
-For installation on the server you can add a webhook. See [here](https://github.com/FlorianRupp/django-webhook-consume.git).
+For the installation on the server you can add a webhook. See [here](https://github.com/FlorianRupp/django-webhook-consume.git).
