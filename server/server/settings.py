@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pubby.apps.PubbyConfig',
+    "django_webhook_consume",
 ]
 
 MIDDLEWARE = [
@@ -135,4 +136,15 @@ USE_X_FORWARDED_PORT = True
 
 if os.path.isfile("server/localsettings.py"):
     from .localsettings import *
+
+
+# settings for web hooks
+WEB_HOOK_URL = "hook/"
+WEB_HOOK = {
+    "pubby": {
+        "branch": "refs/heads/master",
+        "secret_key_name": "SECRET_PUBBY",
+        "github_header_name": "HTTP_X_HUB_SIGNATURE_256",
+        "script": "<ENTER HERE SCRIPT>"
+}}
 
