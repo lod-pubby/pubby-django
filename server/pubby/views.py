@@ -171,7 +171,6 @@ def get(request, URI):
     context["publish_resources"] = publish_resources
     context["resource_uri"] = resource.resource_uri
 
-
     return render(request, "pubby/page.html", context)
 
 
@@ -227,6 +226,15 @@ camel_case_words = re.compile(r"[\p{L}\p{N}][^\p{Lu} ]*")
 bad_chars = "?="
 bad_words = ["html", "xml", "ttl"]
 
+def dataset_label (uri):
+    uri = unquote(uri)
+    elements = uri.split("/")
+    elements.reverse()
+    element = elements [1]
+    if element != '':
+        second_element = element
+    return second_element
+    
 
 def calculate_heuristic_label(uri):
         uri = unquote(uri)
@@ -275,12 +283,14 @@ def get_labels_for(URI_or_literal, result, resource):
             label_dict["uri"] = str(URI_or_literal)
             label_dict["qname"] = resource.config.shorten(URI_or_literal)
             label_dict["heuristic"] = calculate_heuristic_label(label_dict["uri"])
+            label_dict["dataset_label"]=dataset_label(label_dict["uri"])
             label_dict["label_or_uri"] = label_dict["uri"]
         else:
             label_dict["label"] = label
             label_dict["uri"] = None
             label_dict["qname"] = None
             label_dict["heuristic"] = None
+            label_dict["dataset_label"] = None
             label_dict["label_or_uri"] = label_dict["label"]
         labels.append(label_dict)
     return sorted(labels, key=lambda label: label["label_or_uri"])
