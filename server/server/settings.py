@@ -148,3 +148,4 @@ WEB_HOOK = {
         "script": "/data/judaicalink/pubby-django/update.sh"
 }}
 
+GND_FILE = "/data/judaicalink/data.judaicalink.org/htdocs/dumps/ep/ep_GND_ids.json.gz"
