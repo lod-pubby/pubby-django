@@ -15,7 +15,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.conf import settings
 
 urlpatterns = [
     path('pubby/', include('pubby.urls', namespace="pubby")),
@@ -24,5 +23,4 @@ urlpatterns = [
     path('data/', include('pubby.urls', namespace="data")),
     path('datasets/', include('pubby.urls', namespace="datasets")),
     path('ontology/', include('pubby.urls', namespace="ontology")),
-    path(settings.WEB_HOOK_URL, include("django_webhook_consume.urls")),
 ]
