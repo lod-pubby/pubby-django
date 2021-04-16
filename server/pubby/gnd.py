@@ -30,7 +30,7 @@ def fetch_gnd_id(entity):
 
             # search the json
             for key in dictionary.keys():
-                if key[-7:] == entity:
+                if key[-7:] == entity[-7:]:
                     return(dictionary.get(key))
     except FileNotFoundError as e:
         print(e)

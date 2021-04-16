@@ -5,7 +5,7 @@ from SPARQLWrapper import SPARQLWrapper, JSONLD
 from rdflib import URIRef, BNode, Literal
 from urllib.parse import unquote
 import regex as re
-
+from .gnd import fetch_gnd_id
 # Create your views here.
 
 class Resource:
@@ -170,8 +170,7 @@ def get(request, URI):
     context["primary_resource"] = primary_resource
     context["publish_resources"] = publish_resources
     context["resource_uri"] = resource.resource_uri
-
-
+    context["gndid"] = fetch_gnd_id(resource.resource_uri)
     return render(request, "pubby/page.html", context)
 
 
