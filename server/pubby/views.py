@@ -228,13 +228,12 @@ bad_words = ["html", "xml", "ttl"]
 
 def dataset_label (uri):
     uri = unquote(uri)
-    elements = uri.split("/")
-    elements.reverse()
-    element = elements [1]
-    if element != '':
-        second_element = element
-    return second_element
+    source_list = ["yivo", "jre", "bhr", "steinheim-institut", "rujen", "kulturportal-west-ost", "biographien", "deutsche-biographie", "gnd", "dbpedia", "data.europa.eu", "bnf",  "viaf", "ubffm", "culturegraph", "loc", "freebase", "filmportal", "isni", "wikidata", "yago", "wikipedia", "deutsche-digitale-bibliothek"]
+    for element in source_list:
+        if element in uri:
+            return element
     
+
 
 def calculate_heuristic_label(uri):
         uri = unquote(uri)

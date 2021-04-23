@@ -22,7 +22,7 @@
     <div class="table-responsive">
 
     <table class="table table-light table-striped">
-      <tr><th scope="col" style="width: 35%">Property</th><th scope="col">Value</th><th>Label</th><th></th></tr>
+      <tr><th scope="col" style="width: 35%">Property</th><th scope="col">Value</th><th>Label</th></tr>
       {% for predicate in primary_resource %}
       <tr>
         <td>
@@ -39,15 +39,17 @@
           <ul>
             {% for object in predicate.objects %}
             <li>
-              {% include "pubby/object_link.html" with object=object length=40 %}
+              {% include "pubby/object_link.html" with object=object length=25 %}
                 
                     {% for item in object.labels %}
                       {% if item.dataset_label != None %}
-                      <span class="graph badge badge-primary float-right">
+                      <span class="graph badge badge-info float-right">
                         {{item.dataset_label}}
                       </span>
+
                       {% endif %}
                     {% endfor %}
+
                 
             </li>
             {% endfor %}
