@@ -29,7 +29,7 @@
     <div class="table-responsive">
 
     <table class="table table-light table-striped">
-      <tr><th scope="col" style="width: 35%">Property</th><th scope="col">Value</th></tr>
+      <tr><th scope="col" style="width: 35%">Property</th><th scope="col">Value</th><th>Label</th></tr>
       {% for predicate in primary_resource %}
       <tr>
         <td>
@@ -40,21 +40,35 @@
           {% endif %}
         </td>
         <td>
-          {% if predicate.graph.link %}
-          <a class="graph badge badge-secondary float-right ml-3 mb-3" href="{{predicate.graph.link}}">
-            {{predicate.graph.label}}
-          </a>
-          {% endif %}
           {% if predicate.num_objects == 1 %}
           {% include "pubby/object_link.html" with object=predicate.objects.0 length=10000 %}
           {% else %}
           <ul>
             {% for object in predicate.objects %}
             <li>
-              {% include "pubby/object_link.html" with object=object length=40 %}
+              {% include "pubby/object_link.html" with object=object length=25 %}
+                
+                    {% for item in object.labels %}
+                      {% if item.dataset_label != None %}
+                      <span class="graph badge badge-info float-right">
+                        {{item.dataset_label}}
+                      </span>
+
+                      {% endif %}
+                    {% endfor %}
+
+                
             </li>
             {% endfor %}
           </ul>
+          {% endif %}
+        </td>
+
+        <td>
+          {% if predicate.graph.link %}
+          <a class="graph badge badge-secondary" href="{{predicate.graph.link}}">
+            {{predicate.graph.label}}
+          </a>
           {% endif %}
         </td>
       </tr>
