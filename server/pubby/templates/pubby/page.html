@@ -43,7 +43,7 @@
           {% if predicate.num_objects == 1 %}
           {% include "pubby/object_link.html" with object=predicate.objects.0 length=10000 %}
           {% else %}
-          <ul>
+          <ul class="list-unstyled">
             {% for object in predicate.objects %}
             <li>
               {% include "pubby/object_link.html" with object=object length=25 %}

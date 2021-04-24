@@ -71,32 +71,6 @@ a:hover {
     margin-left: -250px;
 }
 
-#sidebar a[data-toggle="collapse"] {
-    position: relative;
-}
-
-.dropdown-toggle::after {
-    display: block;
-    position: absolute;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
-}
-#sidebar .sidebar-header {
-    padding: 20px;
-   /* background: rgba(0,66,132,0.4); *//**//*hier*/
-
-}
-
-/*#sidebar ul.components {
-    padding: 20px 0;
-    border-bottom: 1px solid #505050;
-}*/
-
-#sidebar ul p {
-    padding: 10px;
-}
-
 #sidebar ul li a {
     padding: 10px;
     padding-left: 1.1em;
@@ -111,12 +85,6 @@ a:hover {
 #sidebar ul li.active{
     background: blue;
     color: #fff;}
-
-#sidebar ul ul a {  /*das sind die aufklapbaren*/
-    font-size: 0.9em !important;
-    padding-left: 30px !important;
-    /*background: #d8ffbf;*/
-}
 
 #content {
     width: calc(100% - 250px);
@@ -136,9 +104,6 @@ a:hover {
     padding: 10px;
     }
 
-.col-md-4 {
-    border-left: solid 1px lightgrey;
-    }
 .search_button {
     background-color: #004284;
     color: white;
@@ -179,7 +144,7 @@ a:hover {
     width: 110px;
     height: auto;
     margin-top: 10px;
-    margin-left: 5px;
+    margin-left: -10px;
 }
 #jcelogo {
     padding: 5px;
@@ -283,7 +248,7 @@ margin-top: -30px;}
     }
     .header-logos{
         margin-left: -5%;
-        margin-top: 30px;
+        margin-top: 10px;
     }
 
     footer-content {
@@ -305,20 +270,19 @@ margin-top: -30px;}
         text-align: center;
         font-size: 16px;
     }
-    #sidebar .sidebar-header {
-        padding: 40px;
-    }
 
-    #sidebar .active {
+    #sidebar.active {
         margin-left: 0px;
         height: 100%;
     }
+
     #sidebar ul li a {
-    padding-left: 0;
-}
+        padding-left: 0;
+    }
+
     .buttonnav {                    /*evtl. hier buttonnav vgl. labs*/
         z-index: 1000;
-        top: 1%;  /*Button auÃŸen*/
+        top: 1%;  /*Button außen*/
         right: 5%;
         height: 40px;
         width: 40px;
