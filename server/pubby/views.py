@@ -228,7 +228,7 @@ bad_words = ["html", "xml", "ttl"]
 
 def dataset_label (uri):
     uri = unquote(uri)
-    source_list = ["yivo", "jre", "bhr", "steinheim-institut", "rujen", "kulturportal-west-ost", "biographien", "deutsche-biographie", "gnd", "dbpedia", "data.europa.eu", "bnf",  "viaf", "ubffm", "culturegraph", "loc", "freebase", "filmportal", "isni", "wikidata", "yago", "wikipedia", "deutsche-digitale-bibliothek"]
+    source_list = ["yivo", "jre", "bhr", "steinheim-institut", "rujen", "kulturportal-west-ost", "biographien", "deutsche-biographie", "gnd", "dbpedia", "data.europa.eu", "bnf",  "viaf", "ubffm", "culturegraph", "loc", "freebase", "filmportal", "isni", "wikidata", "yago", "en.wikipedia", "de.wikipedia", "wikipedia", "deutsche-digitale-bibliothek"]
     for element in source_list:
         if element in uri:
             return element
