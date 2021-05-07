@@ -4,8 +4,13 @@ RUN mkdir /app
 COPY server /app
 WORKDIR /app
 
-EXPOSE 80
+EXPOSE 8000
 
-RUN pip install SPARQLWrapper rdflib django regex
+RUN pip install SPARQLWrapper rdflib django regex rdflib-jsonld
 
-CMD python manage.py runserver 0.0.0.0:80
+CMD python manage.py runserver 0.0.0.0:8000
+
+# docker build -t  pubby .
+# docker run --publish 8000:8000 pubby
+
+# Problem: redirects to port 8000 when running on port 80.
