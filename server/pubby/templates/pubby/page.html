@@ -20,14 +20,28 @@
         </div>
 
 
-        {% if gndid|length >= 4 %}
-        <a class="text-center text-md-left btn btn-outline-info" href="https://portal.jewishstudies.de/Search/Results?type=allfields&lookfor=gnd_from%3A{{gndid}}">see FID Datasets</a>
-        <br><br>
-        {% endif %}
+    <!-- FID-Link -->
+    <!-- Property = 22 Rdf Syntax Ns Type-->
+    {% for predicate in primary_resource %}
+        {% for item in predicate.labels %}
+           {% if item.heuristic == "22 Rdf Syntax Ns Type" %}
+                <!-- Value = Person-->
+                {% for object in predicate.objects %}
+                    {% for item in object.labels %}
+                        {% if item.heuristic == "Person" %}
+                            {% if gndid|length >= 4 %}
+                            <a class="text-center text-md-left btn btn-outline-info" href="https://portal.jewishstudies.de/Author/Home?gnd={{gndid}}" target="_blank">see FID Datasets</a>
+                            <br><br>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+           {% endif %}
+        {% endfor %}
+    {% endfor %}
 
 
     <div class="table-responsive">
-
     <table class="table table-light table-striped">
       <tr><th scope="col" style="width: 35%">Property</th><th scope="col">Value</th><th>Label</th></tr>
       {% for predicate in primary_resource %}
