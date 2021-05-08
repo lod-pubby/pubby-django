@@ -171,6 +171,9 @@ def get(request, URI):
     context["publish_resources"] = publish_resources
     context["resource_uri"] = resource.resource_uri
     context["gndid"] = fetch_gnd_id(resource.resource_uri)
+    context ["wikidata_url"] = img_url(primary_resource)
+    #print (primary_resource)
+
     return render(request, "pubby/page.html", context)
 
 
@@ -300,3 +303,48 @@ def index(request):
     print(f"Index, redirecting to {config['indexResource']}")
     return redirect(config["indexResource"].str())
 
+import requests
+import hashlib
+
+def img_url (primary_resource):
+    #gets the wikidata url for an image from the "Owl Same As" Property with the Value of the wikidata link
+
+    try:
+
+        for predicate in primary_resource:
+            for item in predicate["labels"]:
+                if item["heuristic"] == "Owl Same As":
+                    for object in predicate ["objects"]:
+                        #print (object)
+                        if "http://www.wikidata.org/entity/" in object ["link"]:
+                            id = object ["link"].split("/")[-1]
+
+        wikidata_id = id
+
+        params = {
+        "action": "wbgetclaims",
+        "format": "json",
+        "formatversion": "2",
+        "property": "P18",
+        "entity": wikidata_id
+        }
+        #P18 = image property from wikidata
+
+        SESSION = requests.Session()
+        ENDPOINT = "https://wikidata.org/w/api.php"
+
+        response = SESSION.get(url = ENDPOINT, params = params)
+        data = response.json()
+        filename = data["claims"]["P18"][0]["mainsnak"]["datavalue"]["value"]
+        filename = filename.replace(" ", "_")
+        #spaces have to be replaced with underscores to create the right link & md5sum
+        #filename = Junior-Jaguar-Belize-Zoo.jpg
+
+        md5sum = hashlib.md5(filename.encode('utf-8')).hexdigest()
+        # md5sum is created from the filname of the image and used to create the link to the image on wikidata (used are the first 2 digits)
+
+        url = "https://upload.wikimedia.org/wikipedia/commons/" + md5sum[0] + "/" + md5sum [0] + md5sum [1] + "/" + filename
+
+    except:
+        url = None
+    return (url)
