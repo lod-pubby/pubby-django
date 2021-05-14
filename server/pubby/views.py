@@ -6,6 +6,7 @@ from rdflib import URIRef, BNode, Literal
 from urllib.parse import unquote
 import regex as re
 from .gnd import fetch_gnd_id
+import csv
 # Create your views here.
 
 class Resource:
@@ -229,14 +230,25 @@ camel_case_words = re.compile(r"[\p{L}\p{N}][^\p{Lu} ]*")
 bad_chars = "?="
 bad_words = ["html", "xml", "ttl"]
 
+
+
 def dataset_label (uri):
     uri = unquote(uri)
-    source_list = ["yivo", "jre", "bhr", "steinheim-institut", "rujen", "kulturportal-west-ost", "biographien", "deutsche-biographie", "gnd", "dbpedia", "data.europa.eu", "bnf",  "viaf", "ubffm", "culturegraph", "loc", "freebase", "filmportal", "isni", "wikidata", "yago", "en.wikipedia", "de.wikipedia", "wikipedia", "deutsche-digitale-bibliothek"]
+    source_list = []
+
+    # reads the csv with all the labels -> small blue labels on the website (see table at values)
+    csvdatei = open("pubby/list_labels.csv", 'r')
+    read_file = csv.reader(csvdatei)
+
+    for list in read_file:
+        for one_label in list:
+            source_list.append(one_label.strip())
+
+    csvdatei.close()
+
     for element in source_list:
         if element in uri:
             return element
-    
-
 
 def calculate_heuristic_label(uri):
         uri = unquote(uri)
