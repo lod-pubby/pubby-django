@@ -307,7 +307,7 @@ import requests
 import hashlib
 
 def img_data (primary_resource):
-    #gets the wikidata url for an image from the "Owl Same As" Property with the Value of the wikidata link
+    # 1. gets the wikidata url for an image from the "Owl Same As" Property with the Value of the wikidata link
 
     try:
 
@@ -343,11 +343,11 @@ def img_data (primary_resource):
         md5sum = hashlib.md5(filename.encode('utf-8')).hexdigest()
         # md5sum is created from the filname of the image and used to create the link to the image on wikidata (used are the first 2 digits)
 
-        url = "https://upload.wikimedia.org/wikipedia/commons/" + md5sum[0] + "/" + md5sum [0] + md5sum [1] + "/" + filename
+        image_url = "https://upload.wikimedia.org/wikipedia/commons/" + md5sum[0] + "/" + md5sum [0] + md5sum [1] + "/" + filename
 
 
 
-        # gets the image license and author name from the wikimedia pictures for our datasets
+        # 2.  gets the image license and author name from the wikimedia pictures for our datasets
 
         start_of_end_point_str = 'https://commons.wikimedia.org' \
                                  '/w/api.php?action=query&titles=File:'
@@ -360,9 +360,27 @@ def img_data (primary_resource):
         image_author = result['query']['pages'][page_id]['imageinfo'][0]['extmetadata']['Artist']['value']
         # image_info = result['imageinfo']['extmetadata']['UsageTerms']
 
+
+
+        # 3. to get the description from wikidata
+
+        url = "https://www.wikidata.org/w/api.php"
+
+        params = {
+            "action": "wbsearchentities",
+            "language": "en",
+            "format": "json",
+            "search": wikidata_id
+        }
+
+
+        data = requests.get(url, params=params)
+        image_description = data.json()["search"][0]["description"]
+
+
     except:
         return None
 
 
-    return {"img_url" : url, "img_author" : image_author, "img_license" : image_license}
+    return {"img_url" : image_url, "img_author" : image_author, "img_license" : image_license, "img_description" : image_description}
 

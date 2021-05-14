@@ -12,7 +12,9 @@
         <div style="word-wrap: break-word;">
     <h1 class="text-center text-md-left">{{resource_label}}</h1>
         </div>
-
+        {% if wikidata_image_data != None %}
+            <p>{{wikidata_image_data.img_description}}</p>
+        {% endif %}
         <div style="word-wrap: break-word;">
     <p class="text-center text-md-left">URI:
         <a href="{{resource_uri}}">{{resource_uri}}</a>
@@ -101,7 +103,7 @@
             <img src="{{wikidata_image_data.img_url}}" class="img-thumbnail img-fluid" alt="Dataset Picture">
      </div>
             <div style="word-wrap: break-word;">
-            <p class="alert alert-info text-center mt-2">License: {{wikidata_image_data.img_license}}<br>{{wikidata_image_data.img_author|safe}}</p>
+            <p class="alert alert-info text-center mt-2">License: <b>{{wikidata_image_data.img_license}}</b><br>{{wikidata_image_data.img_author|safe}}</p>
             </div>
          {% else %}
             <img src="{% static '/img/markus-winkler-aYPtEknQmXE-unsplash.jpg' %}" class="img-thumbnail img-fluid" alt="Dataset Picture">
