@@ -171,7 +171,7 @@ def get(request, URI):
     context["publish_resources"] = publish_resources
     context["resource_uri"] = resource.resource_uri
     context["gndid"] = fetch_gnd_id(resource.resource_uri)
-    context ["wikidata_url"] = img_url(primary_resource)
+    context ["wikidata_image_data"] = img_data(primary_resource)
     #print (primary_resource)
 
     return render(request, "pubby/page.html", context)
@@ -306,7 +306,7 @@ def index(request):
 import requests
 import hashlib
 
-def img_url (primary_resource):
+def img_data (primary_resource):
     #gets the wikidata url for an image from the "Owl Same As" Property with the Value of the wikidata link
 
     try:
@@ -345,6 +345,24 @@ def img_url (primary_resource):
 
         url = "https://upload.wikimedia.org/wikipedia/commons/" + md5sum[0] + "/" + md5sum [0] + md5sum [1] + "/" + filename
 
+
+
+        # gets the image license and author name from the wikimedia pictures for our datasets
+
+        start_of_end_point_str = 'https://commons.wikimedia.org' \
+                                 '/w/api.php?action=query&titles=File:'
+        end_of_end_point_str = '&prop=imageinfo&iiprop=user' \
+                               '|userid|canonicaltitle|url|extmetadata&format=json'
+        result = requests.get(start_of_end_point_str + filename + end_of_end_point_str)
+        result = result.json()
+        page_id = next(iter(result['query']['pages']))
+        image_license = result['query']['pages'][page_id]['imageinfo'][0]['extmetadata']['UsageTerms']['value']
+        image_author = result['query']['pages'][page_id]['imageinfo'][0]['extmetadata']['Artist']['value']
+        # image_info = result['imageinfo']['extmetadata']['UsageTerms']
+
     except:
-        url = None
-    return (url)
+        return None
+
+
+    return {"img_url" : url, "img_author" : image_author, "img_license" : image_license}
+
