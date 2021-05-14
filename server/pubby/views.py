@@ -171,7 +171,7 @@ def get(request, URI):
     context["primary_resource"] = primary_resource
     context["publish_resources"] = publish_resources
     context["resource_uri"] = resource.resource_uri
-    context["gndid"] = fetch_gnd_id(resource.resource_uri)
+    context["fid_link"] = get_fid_link(primary_resource, fetch_gnd_id(resource.resource_uri))
     context ["wikidata_image_data"] = img_data(primary_resource)
     #print (primary_resource)
 
@@ -231,7 +231,6 @@ bad_chars = "?="
 bad_words = ["html", "xml", "ttl"]
 
 
-
 def dataset_label (uri):
     uri = unquote(uri)
     source_list = []
@@ -254,12 +253,14 @@ def calculate_heuristic_label(uri):
         uri = unquote(uri)
         elements = uri.split("/")
         elements.reverse()
+
         for element in elements:
             if element != '':
                 last_element = element
                 break
         last_element = uri_spaces.sub(" ", last_element)
         words = last_element.split(" ")
+
         filtered_words = filter(lambda word: word not in bad_words, words)
         filtered_words = filter(lambda word: all(char not in bad_chars for char in word),
                                 filtered_words)
@@ -395,4 +396,50 @@ def img_data (primary_resource):
 
 
     return {"img_url" : image_url, "img_author" : image_author, "img_license" : image_license, "img_description" : image_description}
+
+
+# to create a FID link from the gnd-ID
+def get_fid_link(primary_resource, gnd_id):
+    # GND_FILE = "server/ep_GND_ids.json.gz" to try it locally for the right setting PATH
+
+    try:
+
+        for predicate in primary_resource:
+            for item in predicate["labels"]:
+                # here for the entity pages see: http://127.0.0.1:8000/pubby/html/ep/1000063 Brzechwa, Jan
+                if gnd_id != None:
+                    if item["heuristic"] == "22 Rdf Syntax Ns Type":
+                        for object in predicate["objects"]:
+                            for item in object["labels"]:
+                                if item["heuristic"] == "Person":
+                                    fid_link = "https://portal.jewishstudies.de/Author/Home?gnd=" + gnd_id
+                                    return fid_link
+
+        # here for the gnd datasets see: http://127.0.0.1:8000/pubby/html/gnd/118529579 Albert Einstein
+        for predicate in primary_resource:
+            for item in predicate["labels"]:
+                if item["heuristic"] == "22 Rdf Syntax Ns Type":
+                    for object in predicate["objects"]:
+                        for item in object["labels"]:
+                            # We have to check if the dataset is a person - 22 Rdf Syntax Ns Type = Person
+                            if item["heuristic"] == "Person":
+
+                                # We have to check if the dataset has no gnd_id yet from ep_GND_ids.json.gz, is no entity page
+                                if gnd_id == None:
+                                    for predicate in primary_resource:
+                                        for item in predicate["labels"]:
+                                            if item["heuristic"] == "Gnd Gnd Identifier":  # -----Attention: if we change the name to GND Identifier we have to adjust it here too
+                                                for object in predicate["objects"]:
+                                                    for item in object["labels"]:
+                                                        gnd_id_value = item["label"]
+                                                        fid_link = "https://portal.jewishstudies.de/Author/Home?gnd=" + gnd_id_value
+                                                        return fid_link
+                                            else:
+                                                return None
+                            else:
+                                return None
+
+    except:
+        return None
+
 

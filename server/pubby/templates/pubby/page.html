@@ -8,40 +8,49 @@
 <main class="row">
 	<div class="col-12 col-sm-12 col-md-12 col-lg-9 col-xl-8">
 
-
+    <!-- Title -->
         <div style="word-wrap: break-word;">
     <h1 class="text-center text-md-left">{{resource_label}}</h1>
         </div>
-        {% if wikidata_image_data != None %}
-            <p>{{wikidata_image_data.img_description}}</p>
-        {% endif %}
-        <div style="word-wrap: break-word;">
-    <p class="text-center text-md-left">URI:
-        <a href="{{resource_uri}}">{{resource_uri}}</a>
-    </p>
-        </div>
 
+    <!-- Description -->
+        {% if wikidata_image_data != None %}
+            <p>Description: {{wikidata_image_data.img_description}}</p>
+        {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- URI -->
+<!--        <div style="word-wrap: break-word;">-->
+<!--    <p class="text-center text-md-left">URI:-->
+<!--        <a href="{{resource_uri}}">{{resource_uri}}</a>-->
+<!--    </p>-->
+<!--        </div>-->
 
     <!-- FID-Link -->
-    <!-- Property = 22 Rdf Syntax Ns Type-->
-    {% for predicate in primary_resource %}
-        {% for item in predicate.labels %}
-           {% if item.heuristic == "22 Rdf Syntax Ns Type" %}
-                <!-- Value = Person-->
-                {% for object in predicate.objects %}
-                    {% for item in object.labels %}
-                        {% if item.heuristic == "Person" %}
-                            {% if gndid|length >= 4 %}
-                            <a class="text-center text-md-left btn btn-outline-info" href="https://portal.jewishstudies.de/Author/Home?gnd={{gndid}}" target="_blank">see FID Datasets</a>
-                            <br><br>
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
-                {% endfor %}
-           {% endif %}
-        {% endfor %}
-    {% endfor %}
-
+    {% if fid_link != None %}
+    <a class="text-center text-md-left btn btn-outline-info" href="{{fid_link}}" target="_blank">see FID Datasets</a>
+    <br><br>
+    {% endif %}
 
     <div class="table-responsive">
     <table class="table table-light table-striped">
@@ -103,7 +112,7 @@
             <img src="{{wikidata_image_data.img_url}}" class="img-thumbnail img-fluid" alt="Dataset Picture">
      </div>
             <div style="word-wrap: break-word;">
-            <p class="alert alert-info text-center mt-2">License: <b>{{wikidata_image_data.img_license}}</b><br>{{wikidata_image_data.img_author|safe}}</p>
+                <p class="alert alert-info text-center mt-2"><b>License:</b> {{wikidata_image_data.img_license}}<br><b>Creator:</b> {{wikidata_image_data.img_author|safe}}</p>
             </div>
          {% else %}
             <img src="{% static '/img/markus-winkler-aYPtEknQmXE-unsplash.jpg' %}" class="img-thumbnail img-fluid" alt="Dataset Picture">
