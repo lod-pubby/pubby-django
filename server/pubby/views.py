@@ -430,14 +430,23 @@ def get_fid_link(primary_resource, gnd_id):
                                 if gnd_id == None:
                                     for predicate in primary_resource:
                                         for item in predicate["labels"]:
-                                            if item["heuristic"] == "Gnd Gnd Identifier":  # -----Attention: if we change the name to GND Identifier we have to adjust it here too
-                                                for object in predicate["objects"]:
-                                                    for item in object["labels"]:
-                                                        gnd_id_value = item["label"]
+                                            if item["heuristic"] == "Owl Same As":
+                                                for object in predicate ["objects"]:
+                                                    if "d-nb.info/gnd" in object ["link"] and "about" not in object ["link"]:
+                                                        gnd_id_value = object ["link"].split("/")[-1]
                                                         fid_link = "https://portal.jewishstudies.de/Author/Home?gnd=" + gnd_id_value
+                                                        # returns first gnd-id that is found in owl same as
                                                         return fid_link
-                                            else:
-                                                return None
+
+
+                                            #if item["heuristic"] == "Gnd Gnd Identifier":  # -----Attention: if we change the name to GND Identifier we have to adjust it here too
+                                            #    for object in predicate["objects"]:
+                                            #        for item in object["labels"]:
+                                            #            gnd_id_value = item["label"]
+                                            #            fid_link = "https://portal.jewishstudies.de/Author/Home?gnd=" + gnd_id_value
+                                            #            return fid_link
+                                            #else:
+                                            #   return None
                             else:
                                 return None
 
