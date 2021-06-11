@@ -373,6 +373,12 @@ def img_data (primary_resource):
         page_id = next(iter(result['query']['pages']))
         image_license = result['query']['pages'][page_id]['imageinfo'][0]['extmetadata']['UsageTerms']['value']
         image_author = result['query']['pages'][page_id]['imageinfo'][0]['extmetadata']['Artist']['value']
+        # removing <div>s from image_author so it's formatted correctly in the template
+        if "div" in image_author:
+            import re
+            image_author = re.sub("(?s)<div(?: [^>]*)?>", "", image_author)
+            image_author = re.sub("<\/div>", "", image_author)
+
         # image_info = result['imageinfo']['extmetadata']['UsageTerms']
 
 
@@ -392,12 +398,10 @@ def img_data (primary_resource):
         data = requests.get(url, params=params)
         image_description = data.json()["search"][0]["description"]
 
+        return {"img_url" : image_url, "img_author" : image_author, "img_license" : image_license, "img_description" : image_description}
 
     except:
         return None
-
-
-    return {"img_url" : image_url, "img_author" : image_author, "img_license" : image_license, "img_description" : image_description}
 
 
 # to create a FID link from the gnd-ID
@@ -437,9 +441,6 @@ def get_fid_link(primary_resource, gnd_id):
                                                         fid_link = "https://portal.jewishstudies.de/Author/Home?gnd=" + gnd_id_value
                                                         # returns first gnd-id that is found in owl same as
                                                         return fid_link
-                                                    else:
-                                                        return None
-
 
                                             #if item["heuristic"] == "Gnd Gnd Identifier":  # -----Attention: if we change the name to GND Identifier we have to adjust it here too
                                             #    for object in predicate["objects"]:
@@ -447,8 +448,7 @@ def get_fid_link(primary_resource, gnd_id):
                                             #            gnd_id_value = item["label"]
                                             #            fid_link = "https://portal.jewishstudies.de/Author/Home?gnd=" + gnd_id_value
                                             #            return fid_link
-                                            else:
-                                                return None
+
                             else:
                                 return None
 
