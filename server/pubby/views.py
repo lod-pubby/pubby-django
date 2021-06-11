@@ -234,20 +234,22 @@ bad_words = ["html", "xml", "ttl"]
 def dataset_label (uri):
     uri = unquote(uri)
     source_list = []
+    try:
+        # reads the csv with all the labels -> small blue labels on the website (see table at values)
+        csvdatei = open("pubby/list_labels.csv", 'r')
+        read_file = csv.reader(csvdatei)
 
-    # reads the csv with all the labels -> small blue labels on the website (see table at values)
-    csvdatei = open("pubby/list_labels.csv", 'r')
-    read_file = csv.reader(csvdatei)
+        for list in read_file:
+            for one_label in list:
+                source_list.append(one_label.strip())
 
-    for list in read_file:
-        for one_label in list:
-            source_list.append(one_label.strip())
+        csvdatei.close()
 
-    csvdatei.close()
-
-    for element in source_list:
-        if element in uri:
-            return element
+        for element in source_list:
+            if element in uri:
+                return element
+    except:
+        return None
 
 def calculate_heuristic_label(uri):
         uri = unquote(uri)
