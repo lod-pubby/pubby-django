@@ -10,8 +10,9 @@
 
     <!-- Title -->
         <div style="word-wrap: break-word;">
-    <h1 class="text-center text-md-left">{{resource_label}}</h1>
+    <h1 class="text-center text-md-left">{{resource_label}} <button type="button" class="btn btn-dark btn-sm" disabled>{{dataset_main_label}}</button></h1>
         </div>
+
 
     <!-- Description -->
         {% if wikidata_image_data != None %}
@@ -28,7 +29,7 @@
 
     <!-- FID-Link -->
     {% if fid_link != None %}
-    <a class="text-center text-md-left btn btn-outline-info" href="{{fid_link}}" target="_blank">see FID Datasets</a>
+    <a class="text-center text-md-left btn btn-info" href="{{fid_link}}" target="_blank">see FID Datasets</a>
     <br><br>
     {% endif %}
 

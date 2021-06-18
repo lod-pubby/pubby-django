@@ -172,7 +172,8 @@ def get(request, URI):
     context["publish_resources"] = publish_resources
     context["resource_uri"] = resource.resource_uri
     context["fid_link"] = get_fid_link(primary_resource, fetch_gnd_id(resource.resource_uri))
-    context ["wikidata_image_data"] = img_data(primary_resource)
+    context["wikidata_image_data"] = img_data(primary_resource)
+    context["dataset_main_label"] = dataset_main_label(resource.resource_uri)
     #print (primary_resource)
 
     return render(request, "pubby/page.html", context)
@@ -231,7 +232,16 @@ bad_chars = "?="
 bad_words = ["html", "xml", "ttl"]
 
 
-def dataset_label (uri):
+
+def dataset_main_label(uri):
+    uri = unquote(uri)
+    elements = uri.split("/")
+
+    label = elements[-2]
+    return label
+
+
+def dataset_label(uri):
     uri = unquote(uri)
     source_list = []
     try:
