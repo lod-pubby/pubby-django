@@ -236,7 +236,6 @@ bad_words = ["html", "xml", "ttl"]
 def dataset_main_label(uri):
     uri = unquote(uri)
     elements = uri.split("/")
-
     label = elements[-2]
     return label
 
@@ -272,7 +271,7 @@ def calculate_heuristic_label(uri):
                 break
         last_element = uri_spaces.sub(" ", last_element)
         words = last_element.split(" ")
-
+        # Gnd Gnd Identifier - here labels for properties
         filtered_words = filter(lambda word: word not in bad_words, words)
         filtered_words = filter(lambda word: all(char not in bad_chars for char in word),
                                 filtered_words)
