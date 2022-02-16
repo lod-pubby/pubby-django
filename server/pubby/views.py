@@ -465,3 +465,8 @@ def get_fid_link(primary_resource, gnd_id):
         return None
 
 
+def error_page(request):
+    context = {
+        "error_message": "The requested page does not exist."
+    }
+    return render(request, 'error_404.html', context=context)
