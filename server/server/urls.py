@@ -24,3 +24,8 @@ urlpatterns = [
     path('datasets/', include('pubby.urls', namespace="datasets")),
     path('ontology/', include('pubby.urls', namespace="ontology")),
 ]
+
+handler404 = 'pubby.views.custom_error_404'
+handler500 = 'pubby.views.custom_error_500'
+handler403 = 'pubby.views.custom_error_403'
+handler400 = 'pubby.views.custom_error_400'

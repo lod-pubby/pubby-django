@@ -465,3 +465,21 @@ def get_fid_link(primary_resource, gnd_id):
         return None
 
 
+def custom_error_404(request, exception):
+    return render(request, 'pubby/404.html', {})
+
+
+def custom_error_500(request):
+    return render(request, 'pubby/500.html', {})
+
+
+def custom_error_400(request, exception):
+    return render(request, 'pubby/400.html', {})
+
+
+def custom_error_403(request, exception):
+    return render(request, 'pubby/403.html', {})
+
+
+def test_error_page(request):
+    return render(request, 'pubby/404.html', {})
