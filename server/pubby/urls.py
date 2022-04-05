@@ -8,4 +8,6 @@ app_name = "pubby"
 urlpatterns = [
     path('', views.index, name='index'),
     path("<path:URI>", views.get, name="get"),
+    # for test purposes:
+    # path('error', views.test_error_page, name='test_error_page'),
 ]
