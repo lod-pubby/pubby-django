@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound, Http404
 from django.shortcuts import render, redirect
 from pubby.config import getconfig
 from SPARQLWrapper import SPARQLWrapper, JSONLD
@@ -7,6 +7,8 @@ from urllib.parse import unquote
 import regex as re
 from .gnd import fetch_gnd_id
 import csv
+
+
 # Create your views here.
 
 class Resource:
@@ -45,7 +47,7 @@ class Resource:
                 path_suffix = request_path[len(ds["webPagePrefix"]):]
             elif request_path.startswith(ds["webResourcePrefix"]):
                 path_suffix = request_path[len(ds["webResourcePrefix"]):]
-            
+
             # Create all possible paths. So far these are only candidates
             self.resource_path = ds["webResourcePrefix"] + path_suffix
             self.data_path = ds["webDataPrefix"] + path_suffix
@@ -124,23 +126,27 @@ def get(request, URI):
     resource = Resource(request, URI)
 
     accept = request.META.get("HTTP_ACCEPT").lower()
+    print(f"Accept: {accept}")
     serialization = "html"
+
     # Not a real content negotiation, simply the first match
     # in our dictionary is used.
     for mime in mime2serialisation:
+        print(f"Matching {mime}")
         if mime in accept:
             serialization = mime2serialisation[mime]
             break
-    print(accept)
+    print("Mime:", mime)
     print(f"Content negotiation: {serialization}")
 
     # Only redirect if we are at the resource URI, not at the html or rdf views
     if resource.resource_path == resource.request_path:
+        print(resource.resource_path, resource.request_path)
+        print(f"Redirecting to {resource.resource_uri}")
         if serialization == "html":
             return HttpResponseSeeOther(resource.web_base + resource.page_path)
         else:
             return HttpResponseSeeOther(resource.web_base + resource.data_path)
-
 
     # get data from the sparql_endpoint, using JSONLD for the graph info
     sparql = SPARQLWrapper(resource.sparql_endpoint)
@@ -148,7 +154,14 @@ def get(request, URI):
     # We need JSON-LD to get the graph information
     sparql.setReturnFormat(JSONLD)
     result = sparql.query().convert()
+    print(f'Result: {len(list(result.quads()))}')
 
+    if(len(list(result.quads())) == 0): #If there are no results.
+        raise Http404("No results")
+        #return HttpResponseNotFound("Data not found")
+
+
+    print("Data path:" + resource.data_path)
     # We want data
     if resource.request_path == resource.data_path:
         # Hard-coded decision what we deliver if a browser accesses our data page
@@ -158,8 +171,9 @@ def get(request, URI):
         response = HttpResponse(headers={"Content-Type": mime})
         response.content = result.serialize(format=serialization)
         response.content_type = f"{mime};charset=utf-8"
+        print("mime:", mime)
+        print("response:", response)
         return response
-
 
     primary_resource = create_quad_by_predicate(resource.primary_resource, resource, result)
     publish_resources = []
@@ -174,7 +188,7 @@ def get(request, URI):
     context["fid_link"] = get_fid_link(primary_resource, fetch_gnd_id(resource.resource_uri))
     context["wikidata_image_data"] = img_data(primary_resource)
     context["dataset_main_label"] = dataset_main_label(resource.resource_uri)
-    #print (primary_resource)
+    # print (primary_resource)
 
     return render(request, "pubby/page.html", context)
 
@@ -201,7 +215,8 @@ def create_quad_by_predicate(uri, resource, result):
             "qname": resource.config.shorten(predicate_uri),
             "is_subject": is_subject,
             "objects": [],
-            "graph": {"link": rewrite_URL(graph.identifier, resource.dataset_base, resource.web_base) if not isinstance(graph.identifier, BNode) else None,
+            "graph": {"link": rewrite_URL(graph.identifier, resource.dataset_base, resource.web_base) if not isinstance(
+                graph.identifier, BNode) else None,
                       "label": graph.identifier.split("/")[-1]
                       }
         })
@@ -232,7 +247,6 @@ bad_chars = "?="
 bad_words = ["html", "xml", "ttl"]
 
 
-
 def dataset_main_label(uri):
     uri = unquote(uri)
     elements = uri.split("/")
@@ -260,25 +274,26 @@ def dataset_label(uri):
     except:
         return None
 
-def calculate_heuristic_label(uri):
-        uri = unquote(uri)
-        elements = uri.split("/")
-        elements.reverse()
 
-        for element in elements:
-            if element != '':
-                last_element = element
-                break
-        last_element = uri_spaces.sub(" ", last_element)
-        words = last_element.split(" ")
-        # Gnd Gnd Identifier - here labels for properties
-        filtered_words = filter(lambda word: word not in bad_words, words)
-        filtered_words = filter(lambda word: all(char not in bad_chars for char in word),
-                                filtered_words)
-        filtered_words = " ".join(list(filtered_words))
-        last_element = " ".join(camel_case_words.findall(filtered_words))
-        " ".join([word.capitalize() for word in last_element.split(" ")])
-        return " ".join([word.capitalize() for word in last_element.split(" ")])
+def calculate_heuristic_label(uri):
+    uri = unquote(uri)
+    elements = uri.split("/")
+    elements.reverse()
+
+    for element in elements:
+        if element != '':
+            last_element = element
+            break
+    last_element = uri_spaces.sub(" ", last_element)
+    words = last_element.split(" ")
+    # Gnd Gnd Identifier - here labels for properties
+    filtered_words = filter(lambda word: word not in bad_words, words)
+    filtered_words = filter(lambda word: all(char not in bad_chars for char in word),
+                            filtered_words)
+    filtered_words = " ".join(list(filtered_words))
+    last_element = " ".join(camel_case_words.findall(filtered_words))
+    " ".join([word.capitalize() for word in last_element.split(" ")])
+    return " ".join([word.capitalize() for word in last_element.split(" ")])
 
 
 # transfrom the result data into more usable format.
@@ -309,7 +324,7 @@ def get_labels_for(URI_or_literal, result, resource):
             label_dict["uri"] = str(URI_or_literal)
             label_dict["qname"] = resource.config.shorten(URI_or_literal)
             label_dict["heuristic"] = calculate_heuristic_label(label_dict["uri"])
-            label_dict["dataset_label"]=dataset_label(label_dict["uri"])
+            label_dict["dataset_label"] = dataset_label(label_dict["uri"])
             label_dict["label_or_uri"] = label_dict["uri"]
         else:
             label_dict["label"] = label
@@ -327,10 +342,12 @@ def index(request):
     print(f"Index, redirecting to {config['indexResource']}")
     return redirect(config["indexResource"].str())
 
+
 import requests
 import hashlib
 
-def img_data (primary_resource):
+
+def img_data(primary_resource):
     # 1. gets the wikidata url for an image from the "Owl Same As" Property with the Value of the wikidata link
 
     try:
@@ -338,38 +355,37 @@ def img_data (primary_resource):
         for predicate in primary_resource:
             for item in predicate["labels"]:
                 if item["heuristic"] == "Owl Same As":
-                    for object in predicate ["objects"]:
-                        #print (object)
-                        if "http://www.wikidata.org/entity/" in object ["link"]:
-                            id = object ["link"].split("/")[-1]
+                    for object in predicate["objects"]:
+                        # print (object)
+                        if "http://www.wikidata.org/entity/" in object["link"]:
+                            id = object["link"].split("/")[-1]
 
         wikidata_id = id
 
         params = {
-        "action": "wbgetclaims",
-        "format": "json",
-        "formatversion": "2",
-        "property": "P18",
-        "entity": wikidata_id
+            "action": "wbgetclaims",
+            "format": "json",
+            "formatversion": "2",
+            "property": "P18",
+            "entity": wikidata_id
         }
-        #P18 = image property from wikidata
+        # P18 = image property from wikidata
 
         SESSION = requests.Session()
         ENDPOINT = "https://wikidata.org/w/api.php"
 
-        response = SESSION.get(url = ENDPOINT, params = params)
+        response = SESSION.get(url=ENDPOINT, params=params)
         data = response.json()
         filename = data["claims"]["P18"][0]["mainsnak"]["datavalue"]["value"]
         filename = filename.replace(" ", "_")
-        #spaces have to be replaced with underscores to create the right link & md5sum
-        #filename = Junior-Jaguar-Belize-Zoo.jpg
+        # spaces have to be replaced with underscores to create the right link & md5sum
+        # filename = Junior-Jaguar-Belize-Zoo.jpg
 
         md5sum = hashlib.md5(filename.encode('utf-8')).hexdigest()
         # md5sum is created from the filname of the image and used to create the link to the image on wikidata (used are the first 2 digits)
 
-        image_url = "https://upload.wikimedia.org/wikipedia/commons/" + md5sum[0] + "/" + md5sum [0] + md5sum [1] + "/" + filename
-
-
+        image_url = "https://upload.wikimedia.org/wikipedia/commons/" + md5sum[0] + "/" + md5sum[0] + md5sum[
+            1] + "/" + filename
 
         # 2.  gets the image license and author name from the wikimedia pictures for our datasets
 
@@ -390,8 +406,6 @@ def img_data (primary_resource):
 
         # image_info = result['imageinfo']['extmetadata']['UsageTerms']
 
-
-
         # 3. to get the description from wikidata
 
         url = "https://www.wikidata.org/w/api.php"
@@ -403,11 +417,11 @@ def img_data (primary_resource):
             "search": wikidata_id
         }
 
-
         data = requests.get(url, params=params)
         image_description = data.json()["search"][0]["description"]
 
-        return {"img_url" : image_url, "img_author" : image_author, "img_license" : image_license, "img_description" : image_description}
+        return {"img_url": image_url, "img_author": image_author, "img_license": image_license,
+                "img_description": image_description}
 
     except:
         return None
@@ -415,7 +429,7 @@ def img_data (primary_resource):
 
 # to create a FID link from the gnd-ID
 def get_fid_link(primary_resource, gnd_id):
-    # GND_FILE = "server/ep_GND_ids.json.gz" to try it locally for the right setting PATH
+
 
     try:
 
@@ -444,14 +458,15 @@ def get_fid_link(primary_resource, gnd_id):
                                     for predicate in primary_resource:
                                         for item in predicate["labels"]:
                                             if item["heuristic"] == "Owl Same As":
-                                                for object in predicate ["objects"]:
-                                                    if "d-nb.info/gnd" in object ["link"] and "about" not in object ["link"]:
-                                                        gnd_id_value = object ["link"].split("/")[-1]
+                                                for object in predicate["objects"]:
+                                                    if "d-nb.info/gnd" in object["link"] and "about" not in object[
+                                                        "link"]:
+                                                        gnd_id_value = object["link"].split("/")[-1]
                                                         fid_link = "https://portal.jewishstudies.de/Author/Home?gnd=" + gnd_id_value
                                                         # returns first gnd-id that is found in owl same as
                                                         return fid_link
 
-                                            #if item["heuristic"] == "Gnd Gnd Identifier":  # -----Attention: if we change the name to GND Identifier we have to adjust it here too
+                                            # if item["heuristic"] == "Gnd Gnd Identifier":  # -----Attention: if we change the name to GND Identifier we have to adjust it here too
                                             #    for object in predicate["objects"]:
                                             #        for item in object["labels"]:
                                             #            gnd_id_value = item["label"]
