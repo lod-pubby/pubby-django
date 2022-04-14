@@ -24,6 +24,7 @@ urlpatterns = [
     path('pubby2/', include('pubby.urls', namespace="pubby2")),
     path('admin/', admin.site.urls),
     path('sparql/', include('sparql.urls')),
+    path('sparql.html', include('sparql.urls')),
     path('data/', include('pubby.urls', namespace="data")),
     path('datasets/', include('pubby.urls', namespace="datasets")),
     path('ontology/', include('pubby.urls', namespace="ontology")),
