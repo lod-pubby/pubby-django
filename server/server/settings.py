@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import mimetypes
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,7 +26,7 @@ SECRET_KEY = 'wzc-#ww=hs59p81@m13ur8r0i#4sak!0u_wy6@5no$-y98rt+d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -38,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pubby.apps.PubbyConfig',
+    'sparql.apps.SparqlConfig',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -118,7 +121,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = '/static/'
+
+
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # You can configure multiple pubby instances, if needed.
 # In this case, pass a dictionary with the namespace as key
@@ -137,4 +144,10 @@ if os.path.isfile("server/localsettings.py"):
     from .localsettings import *
 
 
-GND_FILE = "/data/judaicalink/data.judaicalink.org/htdocs/dumps/ep/ep_GND_ids.json.gz"
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
+#GND_FILE = "/data/judaicalink/data.judaicalink.org/htdocs/dumps/ep/ep_GND_ids.json.gz"
+
+# disable strict mime checking
+mimetypes.add_type("text/css", ".css", True)

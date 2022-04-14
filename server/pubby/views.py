@@ -136,7 +136,7 @@ def get(request, URI):
         if mime in accept:
             serialization = mime2serialisation[mime]
             break
-    print("Mime:", mime)
+    #print("Mime:", mime)
     print(f"Content negotiation: {serialization}")
 
     # Only redirect if we are at the resource URI, not at the html or rdf views
@@ -484,15 +484,15 @@ def custom_error_404(request, exception):
     return render(request, 'pubby/404.html', {})
 
 
-def custom_error_500(request):
+def custom_error_500(request, exception=None):
     return render(request, 'pubby/500.html', {})
 
 
-def custom_error_400(request, exception):
+def custom_error_400(request, exception=None):
     return render(request, 'pubby/400.html', {})
 
 
-def custom_error_403(request, exception):
+def custom_error_403(request, exception=None):
     return render(request, 'pubby/403.html', {})
 
 
