@@ -92,6 +92,7 @@
         # conf:sparqlDefaultGraph <http://141.20.126.155/api/file/50b8c6d228f37c3d62000007/data>;
         # Common URI prefix of all resource URIs in the SPARQL dataset
         conf:datasetBase <http://data.judaicalink.org/data/>;
+        conf:name "JudaicaLink default";
         conf:priority "3";
         conf:addSameAsStatements "false";
         # Will be appended to the conf:webBase to form the public

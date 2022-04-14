@@ -1,0 +1,59 @@
+{% extends 'pubby/base.html' %}
+{% block content %}
+{% load static %}
+
+
+<!--content-->
+    {% include "pubby/header.html" %}
+<main class="row">
+	<div class="col-12 col-sm-12 col-md-12 col-lg-9 col-xl-8">
+    <h1>SPARQLer - General purpose processor</h1>
+
+    <div class="moreindent">
+
+      <form action="https://data.judaicalink.org/sparql/query" method="get">
+        <p>General SPARQL query : input query, set any options and press "Get Results"</p>
+        <p>
+	<textarea name="query" cols="70" rows="20">SELECT * WHERE {?s ?p ?o} LIMIT 10</textarea>
+          <br/>
+          Target graph URI (or use <code>FROM</code> in the query)
+          <input name="default-graph-uri" size="25" value="" />
+          <br/>
+
+          Output: <select name="output">
+            <option value="json">JSON</option>
+            <option value="xml">XML</option>
+            <option value="text">Text</option>
+            <option value="csv">CSV</option>
+            <option value="tsv">TSV</option>
+          </select>
+          <br/>
+         If XML output, XSLT style sheet (blank for none):
+          <select name="stylesheet">
+            <option value=""></option>
+            <option value="/xml-to-html.xsl">xml-to-html</option>
+            <option value="/xml-to-html-links.xsl">xml-to-html-links</option>
+            <option value="/xml-to-html-plain.xsl">xml-to-html-plain</option>
+          </select>
+          <br/>
+          <input type="checkbox" name="force-accept" value="text/plain"/>
+          Force the accept header to <tt>text/plain</tt> regardless
+          <br/>
+          <input type="submit" value="Get Results" />
+        </p>
+      </form>
+    </div>
+
+    </div>
+
+
+</main>
+
+
+<!--footer-->
+
+{% include "pubby/footer.html" %}
+
+<!--footer-->
+
+{% endblock content %}

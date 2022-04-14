@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'pubby.apps.PubbyConfig',
     'sparql.apps.SparqlConfig',
-    'django_extensions',
 ]
 
 MIDDLEWARE = [
