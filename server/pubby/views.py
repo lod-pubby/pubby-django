@@ -1,5 +1,6 @@
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound, Http404
 from django.shortcuts import render, redirect
+from django.template import RequestContext
 from pubby.config import getconfig
 from SPARQLWrapper import SPARQLWrapper, JSONLD
 from rdflib import URIRef, BNode, Literal
@@ -482,20 +483,20 @@ def get_fid_link(primary_resource, gnd_id):
 
 
 def custom_error_404(request, exception):
-    return render(request, 'pubby/404.html', {})
+    return render(request, 'pubby/404.html', context={}, content_type='text/html', status=404)
 
 
 def custom_error_500(request, exception=None):
-    return render(request, 'pubby/500.html', {})
+    return render(request, 'pubby/500.html', context={}, content_type='text/html', status=500)
 
 
 def custom_error_400(request, exception=None):
-    return render(request, 'pubby/400.html', {})
+    return render(request, 'pubby/400.html', context={}, content_type='text/html', status=400)
 
 
 def custom_error_403(request, exception=None):
-    return render(request, 'pubby/403.html', {})
+    return render(request, 'pubby/403.html', context={}, content_type='text/html', status=403)
 
 
 def test_error_page(request):
-    return render(request, 'pubby/404.html', {})
+    return render(request, 'pubby/404.html', context={}, content_type='text/html', status=404)
