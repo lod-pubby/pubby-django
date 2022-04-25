@@ -123,6 +123,7 @@ def rewrite_URL(URL, dataset_base, web_base):
 
 
 def get(request, URI):
+    print("____________")
     resource = Resource(request, URI)
 
     accept = request.META.get("HTTP_ACCEPT").lower()

@@ -25,7 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('sparql/', include('sparql.urls')),
     path('sparql.html', include('sparql.urls')),
-    path('data/', include('pubby.urls', namespace="data")),
+    path('data/', include('pubby.urls', namespace="pubby")),
     path('datasets/', include('pubby.urls', namespace="datasets")),
     path('ontology/', include('pubby.urls', namespace="ontology")),
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
