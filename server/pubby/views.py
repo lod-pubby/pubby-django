@@ -170,9 +170,8 @@ def get(request, URI):
         if serialization == "html":
             serialization = "turtle"
             mime = "text/turtle"
-        response = HttpResponse()
+        response = HttpResponse(content_type=mime, charset="utf-8")
         response.content = result.serialize(format=serialization)
-        response.content_type = f"{mime};charset=utf-8"
         print("mime:", mime)
         print("response:", response)
         return response
