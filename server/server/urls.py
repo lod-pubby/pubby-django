@@ -18,6 +18,8 @@ from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.static import serve
+from django.contrib.sitemaps.views import sitemap
+
 
 urlpatterns = [
     path('pubby/', include('pubby.urls', namespace="pubby")),
@@ -29,6 +31,7 @@ urlpatterns = [
     path('datasets/', include('pubby.urls', namespace="datasets")),
     path('ontology/', include('pubby.urls', namespace="ontology")),
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 handler404 = 'pubby.views.custom_error_404'
