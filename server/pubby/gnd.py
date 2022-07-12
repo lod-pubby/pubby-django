@@ -1,5 +1,6 @@
 import gzip
 import json
+import logging
 
 from django.conf import settings
 
@@ -33,5 +34,5 @@ def fetch_gnd_id(entity):
                 if key[-7:] == entity[-7:]:
                     return(dictionary.get(key))
     except FileNotFoundError as e:
-        print(e)
+        logging.error(e)
         return None

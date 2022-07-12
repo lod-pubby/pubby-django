@@ -1,4 +1,7 @@
+import logging
+
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound, Http404
+from django.contrib.sitemaps import Sitemap
 from django.shortcuts import render, redirect
 from django.template import RequestContext
 from pubby.config import getconfig
@@ -59,13 +62,13 @@ class Resource:
             if self.sparql_endpoint == "default":
                 self.sparql_endpoint = str(self.config["defaultEndpoint"])
 
-            print(f"Checking Dataset {ds['datasetBase']} for matches.")
+            logging.debug("Checking Dataset %S for matches.", ds['datasetBase'])
             datasetURIPattern = ds["datasetURIPattern"]
             if datasetURIPattern:
-                print("Found datasetURIPattern")
+                logging.debug("Found datasetURIPattern")
                 match = datasetURIPattern.fullmatch(self.resource_uri)
                 if match:
-                    print("Matched datasetURIPattern")
+                    logging.debug("Matched datasetURIPattern")
                     self.sparql_query = f"DESCRIBE <{self.resource_uri}>"
                     return
             useSparqlMapping = ds["useSparqlMapping"]
@@ -73,7 +76,7 @@ class Resource:
                 uriPattern = useSparqlMapping["uriPattern"]
                 match = uriPattern.fullmatch(self.resource_uri)
                 if match:
-                    print("Matched uriPattern")
+                    logging.debug("Matched uriPattern")
                     sparql = useSparqlMapping["sparqlQuery"]
                     primary_resource = useSparqlMapping["primaryResource"]
                     publish_resources = useSparqlMapping["publishResources"]
@@ -124,27 +127,26 @@ def rewrite_URL(URL, dataset_base, web_base):
 
 
 def get(request, URI):
-    print("____________")
+    logging.debug("____________")
     resource = Resource(request, URI)
 
     accept = request.META.get("HTTP_ACCEPT").lower()
-    print(f"Accept: {accept}")
+    logging.debug("Accept: %s", accept)
     serialization = "html"
 
     # Not a real content negotiation, simply the first match
     # in our dictionary is used.
     for mime in mime2serialisation:
-        print(f"Matching {mime}")
+        logging.debug("Matching %s", mime)
         if mime in accept:
             serialization = mime2serialisation[mime]
             break
-    #print("Mime:", mime)
-    print(f"Content negotiation: {serialization}")
+    logging.debug("Content negotiation: %s", serialization)
 
     # Only redirect if we are at the resource URI, not at the html or rdf views
     if resource.resource_path == resource.request_path:
-        print(resource.resource_path, resource.request_path)
-        print(f"Redirecting to {resource.resource_uri}")
+        logging.debug(resource.resource_path, resource.request_path)
+        logging.debug("Redirecting to %s", resource.resource_uri)
         if serialization == "html":
             return HttpResponseSeeOther(resource.web_base + resource.page_path)
         else:
@@ -156,14 +158,14 @@ def get(request, URI):
     # We need JSON-LD to get the graph information
     sparql.setReturnFormat(JSONLD)
     result = sparql.query().convert()
-    print(f'Result: {len(list(result.quads()))}')
+    logging.debug('Result: %s', len(list(result.quads())))
 
     if(len(list(result.quads())) == 0): #If there are no results.
         raise Http404("No results")
         #return HttpResponseNotFound("Data not found")
 
 
-    print("Data path:" + resource.data_path)
+    logging.debug("Data path: %s",  resource.data_path)
     # We want data
     if resource.request_path == resource.data_path:
         # Hard-coded decision what we deliver if a browser accesses our data page
@@ -172,8 +174,8 @@ def get(request, URI):
             mime = "text/turtle"
         response = HttpResponse(content_type=mime, charset="utf-8")
         response.content = result.serialize(format=serialization)
-        print("mime:", mime)
-        print("response:", response)
+        logging.debug("mime:", mime)
+        logging.debug("response:", response)
         return response
 
     primary_resource = create_quad_by_predicate(resource.primary_resource, resource, result)
@@ -340,7 +342,7 @@ def get_labels_for(URI_or_literal, result, resource):
 
 def index(request):
     config = getconfig(request)
-    print(f"Index, redirecting to {config['indexResource']}")
+    logging.debug("Index, redirecting to %s", config['indexResource'])
     return redirect(config["indexResource"].str())
 
 
@@ -499,3 +501,13 @@ def custom_error_403(request, exception=None):
 
 def test_error_page(request):
     return render(request, 'pubby/404.html', context={}, content_type='text/html', status=404)
+
+class SitemapGenerator(Sitemap):
+    changefreq = "never"
+    priority = 0.5
+
+    def items(self):
+        return Resource.
+
+    def lastmod(self, obj):
+        return obj.pub_date

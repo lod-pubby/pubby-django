@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.urls import resolve
 from rdflib import Graph, Namespace, URIRef, BNode
@@ -131,9 +133,9 @@ def getconfig(request):
     Gets access to the root ConfigElement. 
     The namespace is determined based on the request path.
     '''
-    print("request.path:", request.path)
+    logging.debug("request.path:", request.path)
     namespace = resolve(request.path).namespace
-    print("namespace:", namespace)
+    logging.debug("namespace:", namespace)
     return configs[namespace]
 
 
@@ -151,9 +153,9 @@ def init_config():
         with open(file_path, "r", encoding="utf-8") as f:
             g.parse(f, format="turtle")
             for ns in g.namespaces():
-                print(f"Namespaces configured :{ns}")
+                logging.debug("Namespaces configured :%s", ns)
         subject = g.value(None, RDF.type, CONF.Configuration, any=False)
         configs[namespace] = ConfigElement(g, subject)
-        print(f"Pubby configured for namespace '{namespace}', using '{file_path}'")
+        logging.debug("Pubby configured for namespace '%s', using '%d'", namespace, file_path)
 
 
