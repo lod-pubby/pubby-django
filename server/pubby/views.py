@@ -507,7 +507,7 @@ class SitemapGenerator(Sitemap):
     priority = 0.5
 
     def items(self):
-        return Resource.
+        return Resource.objects.all()
 
     def lastmod(self, obj):
         return obj.pub_date
