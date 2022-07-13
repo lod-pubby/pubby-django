@@ -159,7 +159,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': '/var/log/pubby.log',
+            'filename': 'pubby.log',
         },
     },
     'loggers': {
