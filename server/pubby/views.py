@@ -4,13 +4,16 @@ from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.contrib.sitemaps import Sitemap
 from django.shortcuts import render, redirect
 from django.template import RequestContext
-from pubby.config import getconfig
+from .config import getconfig
 from SPARQLWrapper import SPARQLWrapper, JSONLD
 from rdflib import URIRef, BNode, Literal
 from urllib.parse import unquote
 import regex as re
 from .gnd import fetch_gnd_id
 import csv
+import requests
+import hashlib
+
 
 
 # Create your views here.
@@ -346,9 +349,6 @@ def index(request):
     return redirect(config["indexResource"].str())
 
 
-import requests
-import hashlib
-
 
 def img_data(primary_resource):
     # 1. gets the wikidata url for an image from the "Owl Same As" Property with the Value of the wikidata link
@@ -501,6 +501,7 @@ def custom_error_403(request, exception=None):
 
 def test_error_page(request):
     return render(request, 'pubby/404.html', context={}, content_type='text/html', status=404)
+
 
 class SitemapGenerator(Sitemap):
     changefreq = "never"
