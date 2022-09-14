@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.contrib.sitemaps import Sitemap
 from django.shortcuts import render, redirect
 from django.template import RequestContext
-from .config import getconfig
+from pubby.config import getconfig
 from SPARQLWrapper import SPARQLWrapper, JSONLD
 from rdflib import URIRef, BNode, Literal
 from urllib.parse import unquote
