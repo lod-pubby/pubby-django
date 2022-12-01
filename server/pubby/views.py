@@ -323,24 +323,30 @@ def get_labels_for(URI_or_literal, result, resource):
     ]
     '''
     labels = []
-    for _, label in result.preferredLabel(URI_or_literal, default=[(None, URI_or_literal)]): # Fixme:'ConjunctiveGraph' object has no attribute 'preferredLabel'
-        label_dict = {}
-        if isinstance(label, URIRef):
-            label_dict["label"] = None
-            label_dict["uri"] = str(URI_or_literal)
-            label_dict["qname"] = resource.config.shorten(URI_or_literal)
-            label_dict["heuristic"] = calculate_heuristic_label(label_dict["uri"])
-            label_dict["dataset_label"] = dataset_label(label_dict["uri"])
-            label_dict["label_or_uri"] = label_dict["uri"]
-        else:
-            label_dict["label"] = label
-            label_dict["uri"] = None
-            label_dict["qname"] = None
-            label_dict["heuristic"] = None
-            label_dict["dataset_label"] = None
-            label_dict["label_or_uri"] = label_dict["label"]
-        labels.append(label_dict)
-    return sorted(labels, key=lambda label: label["label_or_uri"])
+    # if the result has the property preferredLabel
+    if hasattr(result, "preferredLabel"):
+
+        for _, label in result.preferredLabel(URI_or_literal, default=[(None, URI_or_literal)]):
+            label_dict = {}
+            if isinstance(label, URIRef):
+                label_dict["label"] = None
+                label_dict["uri"] = str(URI_or_literal)
+                label_dict["qname"] = resource.config.shorten(URI_or_literal)
+                label_dict["heuristic"] = calculate_heuristic_label(label_dict["uri"])
+                label_dict["dataset_label"] = dataset_label(label_dict["uri"])
+                label_dict["label_or_uri"] = label_dict["uri"]
+            else:
+                label_dict["label"] = label
+                label_dict["uri"] = None
+                label_dict["qname"] = None
+                label_dict["heuristic"] = None
+                label_dict["dataset_label"] = None
+                label_dict["label_or_uri"] = label_dict["label"]
+            labels.append(label_dict)
+        return sorted(labels, key=lambda label: label["label_or_uri"])
+    else:
+        logging.info("no preferredLabel")
+        return None
 
 
 def index(request):
