@@ -324,9 +324,6 @@ def get_labels_for(URI_or_literal, result, resource):
     '''
     labels = []
     # if the result has the property preferredLabel
-    if not hasattr(result, "preferredLabel"):
-        # if there is no preferredLabel, we should use the first label we find
-        return labels
 
     for _, label in result.preferredLabel(URI_or_literal, default=[(None, URI_or_literal)]):
         label_dict = {}
@@ -444,7 +441,7 @@ def get_fid_link(primary_resource, gnd_id):
 
         for predicate in primary_resource:
             for item in predicate["labels"]:
-                # here for the entity pages see: http://127.0.0.1:8002/pubby/html/ep/1000063 Brzechwa, Jan
+                # here for the entity pages see: http://127.0.0.1:8000/pubby/html/ep/1000063 Brzechwa, Jan
                 if gnd_id != None:
                     if item["heuristic"] == "22 Rdf Syntax Ns Type":
                         for object in predicate["objects"]:
@@ -453,7 +450,7 @@ def get_fid_link(primary_resource, gnd_id):
                                     fid_link = "https://portal.jewishstudies.de/Author/Home?gnd=" + gnd_id
                                     return fid_link
 
-        # here for the gnd datasets see: http://127.0.0.1:8002/pubby/html/gnd/118529579 Albert Einstein
+        # here for the gnd datasets see: http://127.0.0.1:8000/pubby/html/gnd/118529579 Albert Einstein
         for predicate in primary_resource:
             for item in predicate["labels"]:
                 if item["heuristic"] == "22 Rdf Syntax Ns Type":
