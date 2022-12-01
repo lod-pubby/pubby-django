@@ -57,7 +57,7 @@
     conf:projectHomepage <http://www.judaicalink.org/>;
     # The Pubby root, where the webapp is running inside the servlet container.
     # Recommended. If not available, automatic detection is used.
-    conf:webBase <http://127.0.0.1:8000/pubby/>;
+    conf:webBase <http://127.0.0.1:8002/pubby/>;
     # URL of an RDF file whose prefix mapping is to be used by the
     # server; defaults to <>, which is *this* file.
     # conf:usePrefixesFrom <http://lelystad.informatik.uni-mannheim.de:8080/prefixes.n3>;
@@ -67,7 +67,7 @@
     conf:defaultLanguage "en";
     # When the homepage of the server is accessed, this resource will
     # be shown.
-    conf:indexResource <http://localhost:8000/pubby/yivo/moscow>;
+    conf:indexResource <http://localhost:8002/pubby/yivo/moscow>;
     conf:labelProperty rdfs:label, dc:title, dc:identifier, skos:prefLabel;
     conf:imageProperty <http://onto.dm2e.eu/schemas/dm2e/1.1/hasAnnotatableVersionAt>;
     conf:showLabels "true";

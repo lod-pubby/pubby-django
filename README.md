@@ -8,7 +8,7 @@ pip install rdflib-jsonld
 
 ## Getting started
 
-Per default, the [JudaicaLink](http://web.judaicalink.org/) endpoint is configured. Start the Django server as usual and go to http://localhost:8000/pubby to browse the data.
+Per default, the [JudaicaLink](http://web.judaicalink.org/) endpoint is configured. Start the Django server as usual and go to http://localhost:8002/pubby to browse the data.
 
 The pubby instances are configured in server/settings.py.
 
