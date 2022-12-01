@@ -323,7 +323,7 @@ def get_labels_for(URI_or_literal, result, resource):
     ]
     '''
     labels = []
-    for _, label in result.preferredLabel(URI_or_literal, default=[(None, URI_or_literal)]):
+    for _, label in result.preferredLabel(URI_or_literal, default=[(None, URI_or_literal)]): # Fixme:'ConjunctiveGraph' object has no attribute 'preferredLabel'
         label_dict = {}
         if isinstance(label, URIRef):
             label_dict["label"] = None
