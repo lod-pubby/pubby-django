@@ -240,8 +240,11 @@ def create_quad_by_predicate(uri, resource, result):
     # if label is empty, use the predicate URI
     for predicate in quads_by_predicate.values():
         for object in predicate["objects"]:
-            if len(object["labels"]) == 0:
-                object["labels"].append({"label_or_uri": object["link"]})
+            if isinstance(object["labels"], list):
+                if len(object["labels"]) == 0:
+                    object["labels"].append({"label_or_uri": object["link"]})
+            else:
+                object["labels"] = [{"label_or_uri": object["link"]}]
 
 
     print('labels', value["labels"])
