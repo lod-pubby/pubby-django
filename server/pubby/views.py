@@ -338,23 +338,7 @@ def get_labels_for(URI_or_literal, result, resource):
                     label = result.value(subject=None, predicate=predicate_uri, object=URI_or_literal)
             else:
                 label = URI_or_literal
-            if label is not None:
-                if isinstance(label, Literal):
-                    labels.append({
-                        "label": label,
-                        "label_or_uri": label,
-                        "uri": None,
-                        "qname": None,
-                        "heuristic": None
-                    })
-                else:
-                    labels.append({
-                        "label": result.label(label),
-                        "label_or_uri": result.label(label) or label.split("/")[-1],
-                        "uri": label,
-                        "qname": resource.config.shorten(label),
-                        "heuristic": calculate_heuristic_label(label)
-                    })
+
             """        
             if hasattr(result, 'label'):
                 label = result.label(subject_uri if subject_uri == URI_or_literal else object_uri)
