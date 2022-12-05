@@ -332,7 +332,32 @@ def get_labels_for(URI_or_literal, result, resource):
             print("URI_or_literal: " + str(URI_or_literal))
             print("predicate_uri: " + str(predicate_uri))
             print("graph: " + str(graph))
-            label = result.label(subject_uri if subject_uri == URI_or_literal else object_uri)
+            if isinstance(URI_or_literal, URIRef):
+                label = result.value(subject=URI_or_literal, predicate=predicate_uri, object=None)
+                if label is None:
+                    label = result.value(subject=None, predicate=predicate_uri, object=URI_or_literal)
+            else:
+                label = URI_or_literal
+            if label is not None:
+                if isinstance(label, Literal):
+                    labels.append({
+                        "label": label,
+                        "label_or_uri": label,
+                        "uri": None,
+                        "qname": None,
+                        "heuristic": None
+                    })
+                else:
+                    labels.append({
+                        "label": result.label(label),
+                        "label_or_uri": result.label(label) or label.split("/")[-1],
+                        "uri": label,
+                        "qname": resource.config.shorten(label),
+                        "heuristic": calculate_heuristic_label(label)
+                    })
+            """        
+            if hasattr(result, 'label'):
+                label = result.label(subject_uri if subject_uri == URI_or_literal else object_uri)
             if label is None:
                 label = URI_or_literal
             labels.append({
@@ -345,7 +370,7 @@ def get_labels_for(URI_or_literal, result, resource):
             print(labels)
             logging.log(logging.DEBUG, "label: %s", label)
             return labels
-    """
+    
     labels = []
     # check if the result has the property preferredLabel
     logging.debug(result)
