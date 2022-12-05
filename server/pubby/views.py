@@ -337,6 +337,8 @@ def get_labels_for(URI_or_literal, result, resource):
                 "qname": resource.config.shorten(URI_or_literal),
                 "heuristic": calculate_heuristic_label(URI_or_literal)
             })
+            print(labels)
+            logging.log(logging.DEBUG, "label: %s", label)
             return labels
     """
     labels = []
