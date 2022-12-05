@@ -327,6 +327,11 @@ def get_labels_for(URI_or_literal, result, resource):
 
     for subject_uri, predicate_uri, object_uri, graph in result.quads():
         if subject_uri == URI_or_literal or object_uri == URI_or_literal:
+            print("subject_uri: " + str(subject_uri))
+            print("object_uri: " + str(object_uri))
+            print("URI_or_literal: " + str(URI_or_literal))
+            print("predicate_uri: " + str(predicate_uri))
+            print("graph: " + str(graph))
             label = result.label(subject_uri if subject_uri == URI_or_literal else object_uri)
             if label is None:
                 label = URI_or_literal
