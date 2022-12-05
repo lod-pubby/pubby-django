@@ -237,6 +237,8 @@ def create_quad_by_predicate(uri, resource, result):
                  "qname": None,
                  "labels": get_labels_for(object, result, resource)})
 
+    print('labels', value["labels"])
+
     # sort the predicates and objects so the presentation of the data does not change on a refresh
     sparql_data = sorted(quads_by_predicate.values(),
                          key=lambda item: item["labels"][0]["label_or_uri"])
