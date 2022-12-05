@@ -326,6 +326,18 @@ def get_labels_for(URI_or_literal, result, resource):
     # check if the result has the property preferredLabel
     logging.debug(result)
 
+    for subject_uri, predicate_uri, object_uri, graph in result.quads():
+        if subject_uri == URI_or_literal and predicate_uri == URIRef("http://www.w3.org/2004/02/skos/core#prefLabel"):
+            labels.append({
+                "label": object_uri,
+                "label_or_uri": object_uri,
+                "uri": None,
+                "qname": None,
+                "heuristic": None
+            })
+        else:
+            continue
+    """
     for _, label in result.preferredLabel(URI_or_literal, default=[(None, URI_or_literal)]):
         label_dict = {}
         if isinstance(label, URIRef):
@@ -344,7 +356,7 @@ def get_labels_for(URI_or_literal, result, resource):
             label_dict["label_or_uri"] = label_dict["label"]
         labels.append(label_dict)
     return sorted(labels, key=lambda label: label["label_or_uri"])
-
+    """
 
 
 def index(request):
