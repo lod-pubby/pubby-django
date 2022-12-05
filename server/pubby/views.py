@@ -323,21 +323,21 @@ def get_labels_for(URI_or_literal, result, resource):
     ]
     '''
 
+    labels = []
+
     for subject_uri, predicate_uri, object_uri, graph in result.quads():
-        if subject_uri == URI_or_literal:
-            if predicate_uri == RDFS.label:
-                return [{"label": object_uri,
-                         "label_or_uri": object_uri,
-                         "uri": subject_uri,
-                         "qname": resource.config.shorten(subject_uri),
-                         "heuristic": calculate_heuristic_label(subject_uri)}]
-        elif object_uri == URI_or_literal:
-            if predicate_uri == RDFS.label:
-                return [{"label": subject_uri,
-                         "label_or_uri": subject_uri,
-                         "uri": object_uri,
-                         "qname": resource.config.shorten(object_uri),
-                         "heuristic": calculate_heuristic_label(object_uri)}]
+        if subject_uri == URI_or_literal or object_uri == URI_or_literal:
+            label = result.label(subject_uri if subject_uri == URI_or_literal else object_uri)
+            if label is None:
+                label = URI_or_literal
+            labels.append({
+                "label": label,
+                "label_or_uri": label if isinstance(label, Literal) else URI_or_literal.split("/")[-1],
+                "uri": URI_or_literal,
+                "qname": resource.config.shorten(URI_or_literal),
+                "heuristic": calculate_heuristic_label(URI_or_literal)
+            })
+            return labels
     """
     labels = []
     # check if the result has the property preferredLabel
