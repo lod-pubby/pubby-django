@@ -5,13 +5,13 @@
 # localhost URIs.
 #
 # This assumes you already have a servlet container running
-# on your machine at http://localhost:8080/ .
+# on your machine at http://localhost:3030/ .
 #
 # Install Pubby as the root webapp of your servlet container,
 # and make sure the config-file parameter in Pubby's web.xml
 # points to this configuration file.
 #
-# Then browse to http://localhost:8080/ .
+# Then browse to http://localhost:3030/ .
 
 # Prefix declarations to be used in RDF output
 @prefix conf: <http://richard.cyganiak.de/2007/pubby/config.rdf#> .
@@ -25,9 +25,9 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
-@prefix dbpedia: <http://localhost:8080/resource/> .
-@prefix p: <http://localhost:8080/property/> .
-@prefix yago: <http://localhost:8080/class/yago/> .
+@prefix dbpedia: <http://localhost:3030/resource/> .
+@prefix p: <http://localhost:3030/property/> .
+@prefix yago: <http://localhost:3030/class/yago/> .
 @prefix units: <http://dbpedia.org/units/> .
 @prefix geonames: <http://www.geonames.org/ontology#> .
 @prefix prv:      <http://purl.org/net/provenance/ns#> .
@@ -44,7 +44,6 @@
 @prefix dm2e: <http://onto.dm2e.eu/schemas/dm2e/> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix bibo: <http://purl.org/ontology/bibo/> .
-@prefix jl2: <http://lelystad.informatik.uni-mannheim.de:3000/judaicalink/> .
 @prefix jld: <http://data.judaicalink.org/data/> .
 @prefix jlo: <http://data.judaicalink.org/ontology/> .
 
@@ -171,8 +170,8 @@
 #
 # URIs in the SPARQL endpoint: http://dbpedia.org/class/*
 #                              http://dbpedia.org/property/*
-# URIs on the Web:             http://localhost:8080/class/*
-#                              http://localhost:8080/property/*
+# URIs on the Web:             http://localhost:3030/class/*
+#                              http://localhost:3030/property/*
 #    conf:dataset [
 #        conf:sparqlEndpoint <http://lelystad.informatik.uni-mannheim.de:8080/openrdf-workbench/repositories/altedrucke/query>;
 #        conf:sparqlDefaultGraph <file://altedrucke.rdf>;
