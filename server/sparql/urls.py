@@ -9,5 +9,6 @@ app_name = "sparql"
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('sparql.html', views.index, name='index'),
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
