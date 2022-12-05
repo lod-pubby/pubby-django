@@ -324,7 +324,6 @@ def get_labels_for(URI_or_literal, result, resource):
     '''
     labels = []
     # check if the result has the property preferredLabel
-    if
     for _, label in result.prefLabel(URI_or_literal, default=[(None, URI_or_literal)]):
         label_dict = {}
         if isinstance(label, URIRef):
