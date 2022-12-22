@@ -352,6 +352,8 @@ def get_labels_for(URI_or_literal, result, resource):
             else:
                 label = URI_or_literal
 
+            print("label: " + str(label))
+
             """        
             if hasattr(result, 'label'):
                 label = result.label(subject_uri if subject_uri == URI_or_literal else object_uri)
