@@ -337,40 +337,6 @@ def get_labels_for(URI_or_literal, result, resource):
     '''
 
     labels = []
-
-    for subject_uri, predicate_uri, object_uri, graph in result.quads():
-        if subject_uri == URI_or_literal or object_uri == URI_or_literal:
-            print("subject_uri: " + str(subject_uri))
-            print("object_uri: " + str(object_uri))
-            print("URI_or_literal: " + str(URI_or_literal))
-            print("predicate_uri: " + str(predicate_uri))
-            print("graph: " + str(graph))
-            if isinstance(URI_or_literal, URIRef):
-                label = result.value(subject=URI_or_literal, predicate=predicate_uri, object=None)
-                if label is None:
-                    label = result.value(subject=None, predicate=predicate_uri, object=URI_or_literal)
-            else:
-                label = URI_or_literal
-
-            print("label: " + str(label))
-
-            """        
-            if hasattr(result, 'label'):
-                label = result.label(subject_uri if subject_uri == URI_or_literal else object_uri)
-            if label is None:
-                label = URI_or_literal
-            labels.append({
-                "label": label,
-                "label_or_uri": label if isinstance(label, Literal) else URI_or_literal.split("/")[-1],
-                "uri": URI_or_literal,
-                "qname": resource.config.shorten(URI_or_literal),
-                "heuristic": calculate_heuristic_label(URI_or_literal)
-            })
-            print(labels)
-            logging.log(logging.DEBUG, "label: %s", label)
-            return labels
-    
-    labels = []
     # check if the result has the property preferredLabel
     logging.debug(result)
 
@@ -402,9 +368,9 @@ def get_labels_for(URI_or_literal, result, resource):
             label_dict["dataset_label"] = None
             label_dict["label_or_uri"] = label_dict["label"]
         labels.append(label_dict)
+        print('labels', labels)
+        print('label_dict', label_dict)
     return sorted(labels, key=lambda label: label["label_or_uri"])
-    """
-
 
 def index(request):
     config = getconfig(request)
