@@ -186,7 +186,9 @@ def get(request, URI):
     for publish_resource in resource.publish_resources:
         publish_resources.append(create_quad_by_predicate(publish_resource, resource, result))
 
-    context = {"resource_label": get_labels_for(resource.resource_uri, result, resource)[0]["label_or_uri"]}
+    context = []
+    # FIXME: get the labels fot the resource, which is displayed in the entity page.
+    #context = {"resource_label": get_labels_for(resource.resource_uri, result, resource)[0]["label_or_uri"]}
     # What is in primary_resource
     context["primary_resource"] = primary_resource
     context["publish_resources"] = publish_resources
@@ -216,7 +218,7 @@ def create_quad_by_predicate(uri, resource, result):
 
         key = (predicate_uri, is_subject, graph.identifier)
         value = quads_by_predicate.setdefault(key, {
-            "labels": get_labels_for(predicate_uri, result, resource),
+            # Fixme: "labels": get_labels_for(predicate_uri, result, resource),
             "link": rewrite_URL(predicate_uri, resource.dataset_base, resource.web_base),
             "qname": resource.config.shorten(predicate_uri),
             "is_subject": is_subject,
@@ -230,12 +232,14 @@ def create_quad_by_predicate(uri, resource, result):
             value["objects"].append(
                 {"link": rewrite_URL(object, resource.dataset_base, resource.web_base),
                  "qname": resource.config.shorten(predicate_uri),
-                 "labels": get_labels_for(object, result, resource)})
+                 # Fixme: "labels": get_labels_for(object, result, resource)
+                 })
         else:
             value["objects"].append(
                 {"link": None,
                  "qname": None,
-                 "labels": get_labels_for(object, result, resource)})
+                 # Fixme: "labels": get_labels_for(object, result, resource)
+                 })
 
     # if label is empty, use the predicate URI
     for predicate in quads_by_predicate.values():
@@ -336,9 +340,12 @@ def get_labels_for(URI_or_literal, result, resource):
     ]
     '''
 
+    # Needs a fix. the function .preferredLabel is depreciated as is .label
+
     labels = []
     # check if the result has the property preferredLabel
     logging.debug(result)
+    print('result', result)
 
     for subject_uri, predicate_uri, object_uri, graph in result.quads():
         if subject_uri == URI_or_literal and predicate_uri == URIRef("http://www.w3.org/2004/02/skos/core#prefLabel"):
@@ -351,6 +358,8 @@ def get_labels_for(URI_or_literal, result, resource):
             })
         else:
             continue
+
+    # preferredLabel and Label are depriciated in rdflib 6.0.0
     for _, label in result.preferredLabel(URI_or_literal, default=[(None, URI_or_literal)]):
         label_dict = {}
         if isinstance(label, URIRef):
