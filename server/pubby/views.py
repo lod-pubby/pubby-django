@@ -240,7 +240,8 @@ def create_quad_by_predicate(uri, resource, result):
                  "qname": None,
                  # Fixme: "labels": get_labels_for(object, result, resource)
                  })
-
+    """ 
+    Fixme:
     # if label is empty, use the predicate URI
     for predicate in quads_by_predicate.values():
         for object in predicate["objects"]:
@@ -251,7 +252,7 @@ def create_quad_by_predicate(uri, resource, result):
             else:
                 object["labels"] = [{"label_or_uri": object["link"]}]
 
-
+    """
     print('labels', value["labels"])
 
     # sort the predicates and objects so the presentation of the data does not change on a refresh
