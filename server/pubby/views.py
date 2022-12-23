@@ -252,8 +252,9 @@ def create_quad_by_predicate(uri, resource, result):
             else:
                 object["labels"] = [{"label_or_uri": object["link"]}]
 
-    """
+   
     print('labels', value["labels"])
+     """
 
     # sort the predicates and objects so the presentation of the data does not change on a refresh
     sparql_data = sorted(quads_by_predicate.values(),
