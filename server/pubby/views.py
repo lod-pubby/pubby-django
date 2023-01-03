@@ -259,7 +259,7 @@ def create_quad_by_predicate(uri, resource, result):
     # sort the predicates and objects so the presentation of the data does not change on a refresh
     sparql_data = sorted(quads_by_predicate.values(key=lambda item: item["labels"][0]["label_or_uri"])
     for value in sparql_data:
-        value["objects"].sort() # Fixme: key=lambda item: item["labels"][0]["label_or_uri"])
+        value["objects"].sort(key=lambda item: item["labels"][0]["label_or_uri"])
         value["num_objects"] = len(value["objects"])
 
     return sparql_data
