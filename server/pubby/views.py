@@ -315,6 +315,47 @@ def calculate_heuristic_label(uri):
     return " ".join([word.capitalize() for word in last_element.split(" ")])
 
 
+
+def preferredLabel(rdf_graph, subject, lang=None, default=None, labelProperties=None):
+    """
+    Find the preferred label for subject.
+
+    By default prefers skos:prefLabels over rdfs:labels. In case at least
+    one prefLabel is found returns those, else returns labels. In case a
+    language string (e.g., 'en', 'de' or even '' for no lang-tagged
+    literals) is given, only such labels will be considered.
+
+    Return a list of (labelProp, label) pairs, where labelProp is either
+    skos:prefLabel or rdfs:label.
+
+    copy from rdflib: https://github.com/RDFLib/rdflib
+    """
+
+    if default is None:
+        default = []
+
+    if labelProperties is None:
+        labelProperties = (URIRef(u'http://www.w3.org/2004/02/skos/core#prefLabel'),
+                           URIRef(u'http://www.w3.org/2000/01/rdf-schema#label'))
+
+    # setup the language filtering
+    if lang is not None:
+        if lang == '':  # we only want not language-tagged literals
+            langfilter = lambda l: l.language is None
+        else:
+            langfilter = lambda l: l.language == lang
+    else:  # we don't care about language tags
+        langfilter = lambda l: True
+
+    for labelProp in labelProperties:
+        labels = filter(langfilter, self.objects(subject, labelProp))
+        if len(labels) == 0:
+            continue
+        else:
+            return [(labelProp, l) for l in labels]
+    return default
+
+
 # transfrom the result data into more usable format.
 # since we have predicates which points towards the target and from the target
 # ( stuff -> p_in -> target -> p_out -> stuff ), we need to distinguish them.
@@ -351,7 +392,7 @@ def get_labels_for(URI_or_literal, result, resource):
             })
         else:
             continue
-    for _, label in result.preferredLabel(URI_or_literal, default=[(None, URI_or_literal)]):
+    for _, label in preferredLabel(result, URI_or_literal, default=[(None, URI_or_literal)]):
         label_dict = {}
         if isinstance(label, URIRef):
             label_dict["label"] = None
