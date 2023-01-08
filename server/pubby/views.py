@@ -348,7 +348,7 @@ def preferredLabel(rdf_graph, subject, lang=None, default=None, labelProperties=
         langfilter = lambda l: True
 
     for labelProp in labelProperties:
-        labels = filter(langfilter, self.objects(subject, labelProp))
+        labels = filter(langfilter, rdf_graph.objects(subject, labelProp))
         if len(labels) == 0:
             continue
         else:
