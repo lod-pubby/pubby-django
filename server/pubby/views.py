@@ -254,7 +254,7 @@ def create_quad_by_predicate(uri, resource, result):
     sparql_data = list(quads_by_predicate.values())
     if len(sparql_data) > 0:
         print("Sparql Data: {}".format(list(sparql_data)))
-        sparql_data = sorted(sparql_data, key=lambda x: x["labels"]["label_or_uri"])
+        sparql_data.sort(key=lambda x: x["labels"][0]["label_or_uri"])
     else:
         sparql_data = []
     for value in sparql_data:
