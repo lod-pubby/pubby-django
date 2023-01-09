@@ -359,7 +359,7 @@ def preferredLabel(rdf_graph, subject, lang=None, default=None, labelProperties=
     for labelProp in labelProperties:
         labels = list(filter(langfilter, rdf_graph.objects(subject, labelProp)))
         print("Labels: {}".format(labels))
-        if labels is not None:
+        if len(labels) > 0:
             return [(labelProp, label) for label in labels]
         else:
             continue
