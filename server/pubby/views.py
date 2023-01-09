@@ -432,7 +432,7 @@ def index(request):
 
 
 
-def img_data(primary_resource):
+def cc(primary_resource):
     # 1. gets the wikidata url for an image from the "Owl Same As" Property with the Value of the wikidata link
 
     try:
@@ -485,7 +485,7 @@ def img_data(primary_resource):
         image_author = result['query']['pages'][page_id]['imageinfo'][0]['extmetadata']['Artist']['value']
         # removing <div>s from image_author so it's formatted correctly in the template
         if "div" in image_author:
-            import re
+            # Fixme: import re
             image_author = re.sub("(?s)<div(?: [^>]*)?>", "", image_author)
             image_author = re.sub("<\/div>", "", image_author)
 

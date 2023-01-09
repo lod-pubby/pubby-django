@@ -15,7 +15,7 @@
 
 
     <!-- Description -->
-        {% if wikidata_image_data != None %}
+        {% if wikidata_image_data %}
             <p>Description: {{wikidata_image_data.img_description}}</p>
         {% endif %}
 
@@ -89,7 +89,7 @@
 
     <div class="col-md-0 col-lg-3 col-xl-4">
      <div class="image-fluid mt-4" id="picturemargintop30">
-         {% if wikidata_image_data != None %}
+         {% if wikidata_image_data %}
             <img src="{{wikidata_image_data.img_url}}" class="img-thumbnail img-fluid" alt="Dataset Picture">
      </div>
             <div style="word-wrap: break-word;">
