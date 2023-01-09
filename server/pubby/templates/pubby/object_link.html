@@ -1,6 +1,6 @@
 {% if not object.link %}
       {% for item in object.labels %}
-        <span lang="{{item.language}}">
+        <span lang="{{item.label.language}}">
           {% if item.label %}
            {{item.label|truncatechars:length}}
         {% else %}
@@ -11,7 +11,7 @@
 {% else %}
     <a href="{{object.link}}">
       {% for item in object.labels %}
-        <span lang="{{item.language}}">
+        <span lang="{{item.label.language}}">
           {% if item.label %}
            {{item.label|truncatechars:length}}
         {% else %}
