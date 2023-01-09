@@ -8,7 +8,7 @@ from pubby.config import getconfig
 from SPARQLWrapper import SPARQLWrapper, JSONLD
 from rdflib import URIRef, BNode, Literal, RDFS
 from urllib.parse import unquote
-import re
+import regex as re
 from .gnd import fetch_gnd_id
 import csv
 import requests
