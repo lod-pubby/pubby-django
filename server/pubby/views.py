@@ -254,13 +254,16 @@ def create_quad_by_predicate(uri, resource, result):
     sparql_data = list(quads_by_predicate.values())
     if len(sparql_data) > 0:
         print("Sparql Data: {}".format(list(sparql_data)))
-        sparql_data.sort(key=lambda x: x["labels"][0]["label_or_uri"])
+
+        sparql_data.sort(key=lambda x: x["labels"]["label_or_uri"])
+
+        for value in sparql_data:
+            print("Values: {}".format(value['objects']))
+            value["objects"].sort(key=lambda item: item["labels"]["label_or_uri"])
+            value["num_objects"] = len(value["objects"])
+
     else:
         sparql_data = []
-    for value in sparql_data:
-        print("Values: {}".format(value['objects']))
-        value["objects"].sort(key=lambda item: item["labels"]["label_or_uri"])
-        value["num_objects"] = len(value["objects"])
 
     return sparql_data
 
@@ -383,6 +386,7 @@ def get_labels_for(URI_or_literal, result, resource):
     '''
 
     labels = []
+    '''
     # check if the result has the property preferredLabel
     logging.debug(result)
 
@@ -397,6 +401,8 @@ def get_labels_for(URI_or_literal, result, resource):
             })
         else:
             continue
+    '''
+    print("Result {}".format(result))
     for _, label in preferredLabel(result, URI_or_literal, default=[(None, URI_or_literal)]):
         label_dict = {}
         if isinstance(label, URIRef):
