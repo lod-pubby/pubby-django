@@ -432,7 +432,7 @@ def index(request):
 
 
 
-def cc(primary_resource):
+def img_data(primary_resource):
     # 1. gets the wikidata url for an image from the "Owl Same As" Property with the Value of the wikidata link
 
     try:
