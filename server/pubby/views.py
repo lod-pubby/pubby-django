@@ -258,7 +258,7 @@ def create_quad_by_predicate(uri, resource, result):
     else:
         sparql_data = []
     for value in sparql_data:
-        logging.debug(value['objects'])
+        print("Values: %s".format(value['objects']))
         value["objects"].sort(key=lambda item: item["labels"]["label_or_uri"])
         value["num_objects"] = len(value["objects"])
 
