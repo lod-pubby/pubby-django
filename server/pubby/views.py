@@ -253,7 +253,7 @@ def create_quad_by_predicate(uri, resource, result):
     # sort the predicates and objects so the presentation of the data does not change on a refresh
     sparql_data = quads_by_predicate.values()
     if len(sparql_data) > 0:
-        print("Sparql Data: {}".format(sparql_data))
+        print("Sparql Data: {}".format(list(sparql_data)))
         sparql_data = sorted(sparql_data, key=lambda x: x["labels"]["label_or_uri"])
     else:
         sparql_data = []
