@@ -237,25 +237,20 @@ def create_quad_by_predicate(uri, resource, result):
                  "qname": None,
                  "labels": get_labels_for(object, result, resource)})
 
-    # if label is empty, use the predicate URI
-    for predicate in quads_by_predicate.values():
-        for object in predicate["objects"]:
-            if isinstance(object["labels"], list):
-                if object['labels'] != None:
-                   if len(object["labels"]) == 0:
-                        object["labels"].append({"label_or_uri": object["link"]})
-            else:
-                object["labels"] = [{"label_or_uri": object["link"]}]
-
-
-    print('labels', value["labels"])
-
     # sort the predicates and objects so the presentation of the data does not change on a refresh
-    sparql_data = sorted(quads_by_predicate.values(),
-                         key=lambda item: item["labels"][0]["label_or_uri"])
-    for value in sparql_data:
-        value["objects"].sort(key=lambda item: item["labels"][0]["label_or_uri"])
-        value["num_objects"] = len(value["objects"])
+    sparql_data = list(quads_by_predicate.values())
+    if len(sparql_data) > 0:
+        logging.debug("Sparql Data: {}".format(list(sparql_data)))
+
+        sparql_data.sort(key=lambda x: x["labels"][0]["label_or_uri"])
+
+        for value in sparql_data:
+            logging.debug("Values: {}".format(value['objects']))
+            value["objects"].sort(key=lambda item: item["labels"][0]["label_or_uri"])
+            value["num_objects"] = len(value["objects"])
+
+    else:
+        sparql_data = []
 
     return sparql_data
 
@@ -315,6 +310,49 @@ def calculate_heuristic_label(uri):
     return " ".join([word.capitalize() for word in last_element.split(" ")])
 
 
+
+def preferredLabel(rdf_graph, subject, lang=None, default=None, labelProperties=None):
+    """
+    Find the preferred label for subject.
+
+    By default prefers skos:prefLabels over rdfs:labels. In case at least
+    one prefLabel is found returns those, else returns labels. In case a
+    language string (e.g., 'en', 'de' or even '' for no lang-tagged
+    literals) is given, only such labels will be considered.
+
+    Return a list of (labelProp, label) pairs, where labelProp is either
+    skos:prefLabel or rdfs:label.
+
+    copy from rdflib: https://github.com/RDFLib/rdflib
+    """
+
+    if default is None:
+        default = []
+
+    if labelProperties is None:
+        labelProperties = (URIRef(u'http://www.w3.org/2004/02/skos/core#prefLabel'),
+                           URIRef(u'http://www.w3.org/2004/02/skos/core#altLabel'),
+                           URIRef(u'http://www.w3.org/2000/01/rdf-schema#label'))
+
+    # setup the language filtering
+    if lang is not None:
+        if lang == '':  # we only want not language-tagged literals
+            langfilter = lambda l: l.language is None
+        else:
+            langfilter = lambda l: l.language == lang
+    else:  # we don't care about language tags
+        langfilter = lambda l: True
+
+    for labelProp in labelProperties:
+        labels = list(filter(langfilter, rdf_graph.objects(subject, labelProp)))
+        logging.debug("Labels: {}".format(labels))
+        if len(labels) > 0:
+            return [(labelProp, label) for label in labels]
+        else:
+            continue
+    return default
+
+
 # transfrom the result data into more usable format.
 # since we have predicates which points towards the target and from the target
 # ( stuff -> p_in -> target -> p_out -> stuff ), we need to distinguish them.
@@ -337,21 +375,8 @@ def get_labels_for(URI_or_literal, result, resource):
     '''
 
     labels = []
-    # check if the result has the property preferredLabel
-    logging.debug(result)
-
-    for subject_uri, predicate_uri, object_uri, graph in result.quads():
-        if subject_uri == URI_or_literal and predicate_uri == URIRef("http://www.w3.org/2004/02/skos/core#prefLabel"):
-            labels.append({
-                "label": object_uri,
-                "label_or_uri": object_uri,
-                "uri": None,
-                "qname": None,
-                "heuristic": None
-            })
-        else:
-            continue
-    for _, label in result.preferredLabel(URI_or_literal, default=[(None, URI_or_literal)]):
+    logging.debug("Result {}".format(result))
+    for _, label in preferredLabel(result, URI_or_literal, default=[(None, URI_or_literal)]):
         label_dict = {}
         if isinstance(label, URIRef):
             label_dict["label"] = None
@@ -368,8 +393,8 @@ def get_labels_for(URI_or_literal, result, resource):
             label_dict["dataset_label"] = None
             label_dict["label_or_uri"] = label_dict["label"]
         labels.append(label_dict)
-        print('labels', labels)
-        print('label_dict', label_dict)
+        logging.debug('labels', labels)
+        logging.debug('label_dict', label_dict)
     return sorted(labels, key=lambda label: label["label_or_uri"])
 
 def index(request):
@@ -432,7 +457,6 @@ def img_data(primary_resource):
         image_author = result['query']['pages'][page_id]['imageinfo'][0]['extmetadata']['Artist']['value']
         # removing <div>s from image_author so it's formatted correctly in the template
         if "div" in image_author:
-            import re
             image_author = re.sub("(?s)<div(?: [^>]*)?>", "", image_author)
             image_author = re.sub("<\/div>", "", image_author)
 

@@ -1,23 +1,24 @@
 {% if not object.link %}
-      {% for item in object.labels %}
-        <span lang="{{item.language}}">
-          {% if item.label %}
+    {% for item in object.labels %}
+        {% if item.label %}
+            <span lang="{{item.label.language}}">
            {{item.label|truncatechars:length}}
+          </span>
         {% else %}
-          {{item.heuristic|truncatechars:length}}
+            {{item.heuristic|truncatechars:length}}
         {% endif %}
-        </span>
-      {% endfor %}
+    {% endfor %}
 {% else %}
     <a href="{{object.link}}">
-      {% for item in object.labels %}
-        <span lang="{{item.language}}">
-          {% if item.label %}
+        {% for item in object.labels %}
+            {% if item.label %}
+                <span lang="{{item.label.language}}">
            {{item.label|truncatechars:length}}
-        {% else %}
-          {{item.heuristic|truncatechars:length}}
-        {% endif %}
-        </span>
-      {% endfor %}
+              </span>
+            {% else %}
+                {{item.heuristic|truncatechars:length}}
+            {% endif %}
+            </span>
+        {% endfor %}
     </a>
 {% endif %}
