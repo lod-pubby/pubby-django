@@ -344,6 +344,7 @@ def preferredLabel(rdf_graph, subject, lang=None, default=None, labelProperties=
 
     if labelProperties is None:
         labelProperties = (URIRef(u'http://www.w3.org/2004/02/skos/core#prefLabel'),
+                           URIRef(u'http://www.w3.org/2004/02/skos/core#altLabel'),
                            URIRef(u'http://www.w3.org/2000/01/rdf-schema#label'))
 
     # setup the language filtering
@@ -357,6 +358,7 @@ def preferredLabel(rdf_graph, subject, lang=None, default=None, labelProperties=
 
     for labelProp in labelProperties:
         labels = filter(langfilter, rdf_graph.objects(subject, labelProp))
+        print("Labels: {}".format(labels))
         if labels is not None:
             return [(labelProp, label) for label in labels]
         else:
