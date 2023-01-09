@@ -108,7 +108,7 @@
         conf:useSparqlMapping [
            conf:uriPattern "http://data.judaicalink.org/data/(.*)";
            conf:sparqlQuery '''
-        PREFIX is_label: <http://www.w3.org/2000/01/rdf-schema#label>
+        PREFIX is_label: <http://www.w3.org/2004/02/skos/core#prefLabel>
         CONSTRUCT {
           GRAPH ?graph {
             ?subject ?predicate ?object .
