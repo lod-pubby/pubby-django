@@ -14,7 +14,18 @@
       <form action="https://data.judaicalink.org/sparql/query" method="get">
         <p>General SPARQL query : input query, set any options and press "Get Results"</p>
         <p>
-	<textarea name="query" cols="70" rows="20">SELECT * WHERE {?s ?p ?o} LIMIT 10</textarea>
+	<textarea name="query" cols="70" rows="20">
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        PREFIX gndo: <http://d-nb.info/standards/elementset/gnd#>
+        PREFIX jl: <http://data.judaicalink.org/ontology/>
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        PREFIX dcterms: <http://purl.org/dc/terms/>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+
+        SELECT * WHERE {?s ?p ?o} LIMIT 10</textarea>
           <br/>
           Target graph URI (or use <code>FROM</code> in the query)
           <input name="default-graph-uri" size="25" value="" />
