@@ -4,19 +4,6 @@ $('#sidebarCollapse').click(function(){
    $('#sidebarCollapse > svg').toggleClass('fa-bars fa-xmark')
 });
 
-/*-------------------SIDEBAR-------------------------*/
-$(document).ready(function () {
-            $("#sidebar").mCustomScrollbar({
-                theme: "minimal"
-            });
-
-            $('#sidebarCollapse').on('click', function () {
-                $('#sidebar, #content').toggleClass('active');
-                $('.collapse.in').toggleClass('in');
-                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
-            });
-        });
-
 /*------------Sidebar active page highlighting---------------*/
 
 $(document).ready(function ($) {
@@ -31,4 +18,15 @@ $(document).ready(function ($) {
     target.addClass('active');
     });
 
-/*---------------------------------------------------*/
+/*-------------------FAB-------------------------*/
+$(document).ready(function () {
+        $('#fab-button').click(function () {
+            $('#issue-sidebar').toggleClass('d-none');
+            $(this).toggleClass('d-none');
+        });
+
+        $('#fab-cancel').click(function () {
+            $('#issue-sidebar').toggleClass('d-none');
+            $('#fab-button').toggleClass('d-none');
+        });
+    });

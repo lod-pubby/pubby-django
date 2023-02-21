@@ -19,7 +19,7 @@
 	<div class="col-12 col-sm-12 col-md-12 col-lg-9 col-xl-8">
 
         {# Begin Title #}
-        <div style="word-wrap: break-word;">
+        <div>
             <h1 class="text-center text-md-left">{{resource_label}} <span class="badge bg-info">{{dataset_main_label}}</span></h1>
         </div>
         {#  End Title #}
@@ -48,7 +48,14 @@
 
     <div class="table-responsive">
     <table class="table table-light table-striped">
-      <tr><th scope="col" style="width: 35%">Property</th><th scope="col">Value</th><th>Label</th></tr>
+        <thead class="table-info">
+          <tr>
+              <th scope="col" style="width: 35%">Property</th>
+              <th scope="col">Value</th>
+              <th scope="col">Label</th>
+          </tr>
+        </thead>
+    <tbody  class="table-group-divider">
       {% for predicate in primary_resource %}
       <tr>
         <td>
@@ -94,6 +101,7 @@
       </tr>
 
       {% endfor %}
+    </tbody>
 
     </table>
 
