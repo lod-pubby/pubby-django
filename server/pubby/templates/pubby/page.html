@@ -3,35 +3,48 @@
 {% load static %}
 
 
-<!--content-->
+<div class="row">
+
+{#  for the isse sidebar #}
+{% if user.is_authenticated %}
+<div class="col-8">
+{% endif %}
+
+
+{# Header #}
     {% include "pubby/header.html" %}
+
+{#  Begin content #}
 <main class="row">
 	<div class="col-12 col-sm-12 col-md-12 col-lg-9 col-xl-8">
 
-    <!-- Title -->
+        {# Begin Title #}
         <div style="word-wrap: break-word;">
-    <h1 class="text-center text-md-left">{{resource_label}} <button type="button" class="btn btn-dark btn-sm" disabled>{{dataset_main_label}}</button></h1>
+            <h1 class="text-center text-md-left">{{resource_label}} <span class="badge bg-info">{{dataset_main_label}}</span></h1>
         </div>
+        {#  End Title #}
 
-
-    <!-- Description -->
+        {#  Begin Description #}
         {% if wikidata_image_data %}
             <p>Description: {{wikidata_image_data.img_description}}</p>
         {% endif %}
+        {#  End Description #}
 
+        {#  Begin URI #}
+        {# <div style="word-wrap: break-word;"> #}
+            {# <p class="text-center text-md-left">URI: #}
+                {# <a href="{{resource_uri}}">{{resource_uri}}</a> #}
+            {# </p> #}
+        {# </div> #}
+    {# End URI #}
 
-    <!-- URI -->
-<!--        <div style="word-wrap: break-word;">-->
-<!--    <p class="text-center text-md-left">URI:-->
-<!--        <a href="{{resource_uri}}">{{resource_uri}}</a>-->
-<!--    </p>-->
-<!--        </div>-->
-
-    <!-- FID-Link -->
+    {#  Begin FID-Link #}
     {% if fid_link != None %}
     <a class="text-center text-md-left btn btn-info" href="{{fid_link}}" target="_blank">see FID Datasets</a>
     <br><br>
     {% endif %}
+
+    {#  End FID-Link #}
 
     <div class="table-responsive">
     <table class="table table-light table-striped">
@@ -45,6 +58,7 @@
           is {% include "pubby/predicate_link.html" with predicate=predicate %} of
           {% endif %}
         </td>
+
         <td>
           {% if predicate.num_objects == 1 %}
           {% include "pubby/object_link.html" with object=predicate.objects.0 length=10000 %}
@@ -59,11 +73,8 @@
                       <span class="graph badge badge-info float-right">
                         {{item.dataset_label}}
                       </span>
-
                       {% endif %}
                     {% endfor %}
-
-                
             </li>
             {% endfor %}
           </ul>
@@ -72,21 +83,25 @@
 
         <td>
           {% if predicate.graph.link %}
-          <a class="graph badge badge-secondary" href="{{predicate.graph.link}}">
-            {{predicate.graph.label}}
+          <a class="graph" href="{{predicate.graph.link}}">
+              <span class="badge bg-secondary">
+                {{predicate.graph.label}}
+                  </span>
           </a>
           {% endif %}
         </td>
-      </tr>
-      {% endfor %}
-    </table>
-    </div>
 
+      </tr>
+
+      {% endfor %}
+
+    </table>
+
+    </div>
 
 </div>
 
-
-
+    {# begin Image #}
     <div class="col-md-0 col-lg-3 col-xl-4">
      <div class="image-fluid mt-4" id="picturemargintop30">
          {% if wikidata_image_data %}
@@ -100,17 +115,25 @@
          {% endif %}
 
 
-</div>
     </div>
-
+    {# end Image #}
 
 </main>
+</div>
+{% if user.is_authenticated %}
+    <div class="col-4 bg-light" >
+        {% include "issuetracker/issue_form.html" %}
+    </div>
 
-
+</div>
+{% endif %}
 <!--footer-->
+    {% if user.is_authenticated %}
+        {% include 'issuetracker/fab.html' %}
+    {% endif %}
 
 {% include "pubby/footer.html" %}
 
-<!--footer-->
 
+<!--footer-->
 {% endblock content %}

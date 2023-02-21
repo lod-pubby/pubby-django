@@ -1,0 +1,37 @@
+html { font-family: sans-serif; background: hsl(0, 0%, 95%); color: hsl(0, 0%, 10%);
+  margin: 0; padding: 25px 50px; }
+body { background: white; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  margin: 0; padding: 20px; position: relative; }
+
+h1 { font-size: 35px; margin: 0; padding: 10px 0 20px 10px; }
+a { color: hsl(210, 60%, 50%); text-decoration: none; }
+a:hover, a:focus, a:active { color: hsl(210, 60%, 25%); text-decoration: underline; }
+
+table { border-spacing: 0; box-sizing: border-box; width: 100%;  }
+table th { text-align: left; padding: 10px; }
+table td { vertical-align: top; padding: 10px; }
+table td ul { margin: 0; padding: 0; list-style: outside; column-width: 400px; }
+table td ul > li { margin: 3px 0; break-inside: avoid; }
+table tr:nth-of-type(even) td { background: hsl(0, 0%, 90%); }
+table tr td:nth-of-type(1) { width: 200px; }
+/* table td span { white-space: pre-line; } */
+
+span.count { color: gray; font-size: 0.77em; }
+span[lang]::after { content: attr(lang); color: gray; font-size: 0.77em; padding-left: 3px; }
+a[lang]::after { padding-left: 3px; }
+h1 span[lang]::after { content: none; }
+
+nav { position: absolute; top: 0; right: 0; margin: 0; padding: 0.5em 1em; }
+nav a { margin-left: 1em; }
+nav span.languages { margin-right: 1em; }
+
+html:not(.dark-mode) nav a.switch-mode span.text-for-light { display: none; }
+html.dark-mode nav a.switch-mode span.text-for-dark { display: none; }
+
+html.dark-mode { background: hsl(0, 0%, 16%); color: hsl(0, 0%, 85%); }
+html.dark-mode body { background: hsl(0, 0%, 5%); box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); color: hsl(0, 0%, 85%)}
+html.dark-mode a { color: hsl(210, 45%, 60%);  }
+html.dark-mode a:hover, html.dark-mode a:focus, html.dark-mode a:active { color: hsl(210, 100%, 50%); }
+html.dark-mode table tr:nth-of-type(even) td { background: hsl(0, 0%, 7.5%); }
+html.dark-mode a.graph, html.dark-mode span.count { background-color: hsl(210, 30%, 20%) !important; color: gray; }
+html.dark-mode a.graph:hover, html.dark-mode a.graph:focus, html.dark-mode a.graph:active { color: hsl(210, 100%, 50%) !important; }

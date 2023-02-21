@@ -1,0 +1,20 @@
+{% extends "pubby/base.html" %}
+
+
+{% block content %}
+  <h1>Login</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+      <p>Please log in using one of the following services:</p>
+<div class="row">
+  <div class="col-3">
+    <a href="{% url 'social:begin' 'github' %}" class="btn btn-block text-white" style="background-color:#24292e;"><i class="bi bi-github"></i> Sign in with GitHub</a>
+  </div>
+  <div class="col-3">
+    <a href="{% url 'social:begin' 'orcid' %}" class="btn btn-block text-white" style="background-color: #A6CE39;"><i class="bi bi-orcid"></i> Sign in with ORCID</a>
+  </div>
+</div>
+    <button class="btn btn-primary" type="submit"><i class="bi bi-unlock"></i> Login</button>
+  </form>
+{% endblock %}

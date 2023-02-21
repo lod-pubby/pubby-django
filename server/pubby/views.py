@@ -1,4 +1,7 @@
+import json
 import logging
+from html import escape
+from uuid import uuid4
 
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound, Http404
 from django.contrib.sitemaps import Sitemap
@@ -13,7 +16,9 @@ from .gnd import fetch_gnd_id
 import csv
 import requests
 import hashlib
-
+import social_core
+from github import Github
+from django.conf import settings
 
 
 # Create your views here.
@@ -130,6 +135,10 @@ def rewrite_URL(URL, dataset_base, web_base):
 
 
 def get(request, URI):
+    '''
+    This is the main view function. It is called for every request.
+
+    '''
     logging.debug("____________")
     resource = Resource(request, URI)
 
@@ -195,6 +204,8 @@ def get(request, URI):
     context["wikidata_image_data"] = img_data(primary_resource)
     context["dataset_main_label"] = dataset_main_label(resource.resource_uri)
     # print (primary_resource)
+    print('Context')
+    print(json.dumps(context, indent=4, sort_keys=True))
 
     return render(request, "pubby/page.html", context)
 
@@ -405,6 +416,10 @@ def index(request):
 
 
 def img_data(primary_resource):
+    '''
+    G ets the wikidata url for an image from the "Owl Same As" Property with the Value of the wikidata link
+
+    '''
     # 1. gets the wikidata url for an image from the "Owl Same As" Property with the Value of the wikidata link
 
     try:
@@ -485,7 +500,9 @@ def img_data(primary_resource):
 
 # to create a FID link from the gnd-ID
 def get_fid_link(primary_resource, gnd_id):
-
+    '''
+    Gets the FID link from the gnd-ID
+    '''
 
     try:
 
@@ -559,6 +576,9 @@ def test_error_page(request):
 
 
 class SitemapGenerator(Sitemap):
+    '''
+    Generates the sitemap.xml
+    '''
     changefreq = "never"
     priority = 0.5
 
@@ -567,3 +587,51 @@ class SitemapGenerator(Sitemap):
 
     def lastmod(self, obj):
         return obj.pub_date
+
+
+def create_issue(request):
+    '''
+    Creates an issue on github.
+    '''
+    if request.method == 'POST':
+        uri = request.POST.get('resource_uri')
+        print(uri)
+        description = escape(request.POST.get('description'))
+        triple_property = escape(request.POST.get('triple_property'))
+
+        print(description)
+        print(triple_property)
+
+
+        # TODO: create github issue.
+        # create uuid for issue
+
+        uuid = str(uuid4())
+
+        # get the user if the user is logged in with github
+        try:
+            user_social_auth = request.user.social_auth.get(provider='github')
+            github_username = user_social_auth.extra_data['login']
+            #github_token = user_social_auth.extra_data['access_token']
+        except:
+            # get the django user
+            user = request.user
+            if user.username == 'admin':
+                github_username = 'bsesic'
+            else:
+                github_username = user.username
+        #print(user.username)
+        #print(github_username)
+        #print(github_token)
+
+        # create issue in github
+        g = Github(settings.GITHUB_TOKEN)
+
+        repo = g.get_repo(settings.GITHUB_REPO)
+        body = f"<description>{description}</description>\n" \
+               f"<user>@{github_username}</user>\n"\
+               f"<property>{triple_property}</property>\n" \
+               f"<ressource-uri>{uri}</ressource-uri>"
+        repo.create_issue(title="Issue: " + uuid, body=body, assignees=["bsesic"], labels=["rdf-star"])
+
+        return redirect(uri)

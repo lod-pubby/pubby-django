@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'pubby.apps.PubbyConfig',
     'sparql.apps.SparqlConfig',
+    'pubbyauth',
+    'social_django',
+    'issuetracker',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +55,20 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     #'django.contrib.sitemaps',
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.orcid.ORCIDOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+
+SOCIAL_AUTH_GITHUB_KEY = '6ea53ca13a9295b7ef63'
+SOCIAL_AUTH_GITHUB_SECRET = 'ced9c643f87f77e7f3709703b5063a062c6e43f4'
+
+SOCIAL_AUTH_ORCID_KEY = 'APP-D200THCB9LWV6LOH'
+SOCIAL_AUTH_ORCID_SECRET = '4af998a2-843b-49ab-9192-06ee85abe312'
+SOCIAL_AUTH_ORCID_SCOPE = ['openid','email','profile','work','funding','affiliations']
 
 ROOT_URLCONF = 'server.urls'
 
@@ -143,6 +160,7 @@ USE_X_FORWARDED_PORT = True
 if os.path.isfile("server/localsettings.py"):
     from .localsettings import *
 
+STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
@@ -165,13 +183,13 @@ LOGGING = {
     },
     'handlers': {
         'file': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': 'pubby.log',
             'formatter': 'verbose'
         },
         'console': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
@@ -180,7 +198,7 @@ LOGGING = {
         'django': {
             'handlers': ['file'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
-            'propagate': True,
+            'propagate': False,
         },
     },
 }

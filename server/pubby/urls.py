@@ -8,6 +8,7 @@ app_name = "pubby"
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('create_issue', views.create_issue, name='create_issue'),
     path("<path:URI>", views.get, name="get"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

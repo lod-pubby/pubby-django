@@ -27,13 +27,19 @@ sitemaps = {'generic': SitemapGenerator}
 
 urlpatterns = [
     path('pubby/', include('pubby.urls', namespace="pubby")),
-    path('pubby2/', include('pubby.urls', namespace="pubby2")),
+    #path('pubby2/', include('pubby.urls', namespace="pubby2")),
     path('admin/', admin.site.urls),
     path('sparql/', include('sparql.urls')),
     path('sparql.html', include('sparql.urls')),
     path('data/', include('pubby.urls', namespace="data")),
     path('datasets/', include('pubby.urls', namespace="datasets")),
     path('ontology/', include('pubby.urls', namespace="ontology")),
+    # For the accounts
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('pubbyauth/', include('pubbyauth.urls', namespace='pubbyauth')),
+    path('social/', include('social_django.urls', namespace='social')),
+    path('issues/', include('issuetracker.urls', namespace='issuetracker')),
+
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
     path('sitemap.xml', sitemap,
          {'sitemaps': {'data' : SitemapGenerator}},

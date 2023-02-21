@@ -1,0 +1,15 @@
+{% extends 'search/base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Login</h2>
+<p>Please log in using one of the following services:</p>
+<div class="row">
+  <div class="col">
+    <a href="{% url 'social:begin' 'github' %}" class="btn btn-block btn-github"><i class="fa fa-github"></i> Sign in with GitHub</a>
+  </div>
+  <div class="col">
+    <a href="{% url 'social:begin' 'orcid' %}" class="btn btn-block btn-orcid" style="color: #A6CE39;"><i class="fa fa-orcid"></i> Sign in with ORCID</a>
+  </div>
+</div>
+{% endblock %}

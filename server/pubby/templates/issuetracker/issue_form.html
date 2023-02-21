@@ -1,0 +1,35 @@
+{% block sidebar %}
+<div class="row d-none" id="issue-sidebar">
+<div class="mb-3">
+        <h1>Create new Issue</h1>
+</div>
+         <form method="post" action="{% url 'pubby:create_issue' %}">
+            {% csrf_token %}
+         <input type="hidden" name="resource_uri" value="{{ resource_uri }}">
+            <div class="input-group mb-3">
+                <span class="input-group-text" >Description</span>
+                <input type="text" class="form-control" name="description" />
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">Triple</span>
+                <select class="form-select" name="triple_property">
+                    {% for predicate in primary_resource %}
+                            {%  for item in predicate.labels %}
+                    <option value="{{ item.uri }}">{{ item.heuristic }}</option>
+                                {% endfor %}
+                    {% endfor %}
+                </select>
+            </div>
+         <div class="row mt-3">
+             <div class="col-6">
+                <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane"></i> Submit</button>
+             </div>
+             </div>
+        </form>
+            <div class="row mt-3">
+                <div class="col-6">
+                <button href="" class="btn btn-secondary" id="fab-cancel" >Cancel</button>
+            </div>
+             </div>
+</div>
+{% endblock %}
