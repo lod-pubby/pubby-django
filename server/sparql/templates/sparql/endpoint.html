@@ -1,70 +1,150 @@
 {% extends 'pubby/base.html' %}
 {% block content %}
-{% load static %}
+    {% load static %}
 
 
-<!--content-->
+    <!--content-->
     {% include "pubby/header.html" %}
-<main class="row">
-	<div class="col-12 col-sm-12 col-md-12 col-lg-9 col-xl-8">
-    <h1>SPARQLer - General purpose processor</h1>
+    <main class="row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-9 col-xl-8">
+            <div class="row">
+                <h1>SPARQLer - General purpose processor</h1>
+            </div>
 
-    <div class="moreindent">
+            <div class="row">
 
-      <form action="https://data.judaicalink.org/sparql/query" method="get">
-        <p>General SPARQL query : input query, set any options and press "Get Results"</p>
-        <p>
+                <form action="https://data.judaicalink.org/sparql/query" method="get">
+                    <div class="row">
+                        <p>General SPARQL query : input query, set any options and press "Get Results"</p>
+                    </div>
+                    <div class="row">
 	<textarea name="query" cols="70" rows="20">
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        PREFIX owl: <http://www.w3.org/2002/07/owl#>
-        PREFIX gndo: <http://d-nb.info/standards/elementset/gnd#>
-        PREFIX jl: <http://data.judaicalink.org/ontology/>
-        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-        PREFIX dcterms: <http://purl.org/dc/terms/>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX gndo: <http://d-nb.info/standards/elementset/gnd#>
+PREFIX jl: <http://data.judaicalink.org/ontology/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 
-        SELECT * WHERE {?s ?p ?o} LIMIT 10</textarea>
-          <br/>
-          Target graph URI (or use <code>FROM</code> in the query)
-          <input name="default-graph-uri" size="25" value="" />
-          <br/>
+SELECT *
+        WHERE {?s ?p ?o}
+LIMIT 10
+    </textarea>
+                        <div class="row mt-3">
+                            <div class="input-group">
+                  <span class="input-group-text">Query
+                  Target graph URI (or use <code>FROM</code> in the query)</span>
+                                <select class="form-select" name="default-graph-uri">
+                                    <option value="" selected>All</option>
+                                    <option value="http://data.judaicalink.org/data/gba">Gidal Image Archive</option>
+                                    <option value="http://data.judaicalink.org/data/sosy">Soundscape Synagogue</option>
+                                    <option value="http://data.judaicalink.org/data/epi">Epidat</option>
+                                    <option value="http://data.judaicalink.org/data/ep">Entity Pages</option>
+                                    <option value="http://data.judaicalink.org/data/compact-memory">Linking Compact
+                                        Memory - Pages
+                                    </option>
+                                    <option value="http://data.judaicalink.org/data/cm-tagme">Linking Compact Memory -
+                                        Resources and References
+                                    </option>
+                                    <option value="http://data.judaicalink.org/data/dbp-wiki-geo-links">DBpedia and
+                                        Wikipedia Geographical External Links
+                                    </option>
+                                    <option value="http://data.judaicalink.org/datasets/yivo">Yivo Encyclopedia</option>
+                                    <option value="http://data.judaicalink.org/datasets/rujen-translation">Translations
+                                        for Rujen
+                                    </option>
+                                    <option value="http://data.judaicalink.org/datasets/rujen">Encyclopedia of Russian
+                                        Jewry
+                                    </option>
+                                    <option value="http://data.judaicalink.org/data/date-enriched">Enrichment of Birth-
+                                        and Deathdates
+                                    </option>
+                                    <option value="http://data.judaicalink.org/data/geo-enriched">Geographic
+                                        Enrichment
+                                    </option>
+                                    <option value="http://data.judaicalink.org/data/jre">Resources on German-Jewish
+                                        Education and Religion
+                                    </option>
+                                    <option value="http://data.judaicalink.org/data/haskala">The Library of Haskala
+                                    </option>
+                                    <option value="http://data.judaicalink.org/data/nli">Persons from NLI</option>
+                                    <option value="http://data.judaicalink.org/data/ubffm">Persons from ubffm</option>
+                                    <option value="http://data.judaicalink.org/data/stolpersteine">Stolpersteine in
+                                        Mainz
+                                    </option>
+                                    <option value="http://data.judaicalink.org/data/dbpedia-persons">Persons from
+                                        DBPedia
+                                    </option>
+                                    <option value="http://data.judaicalink.org/data/hirsch">Eine Jüdische Familie aus
+                                        Aschaffenburg
+                                    </option>
+                                    <option value="http://data.judaicalink.org/data/geo-coor">Geographical Coordinates
+                                    </option>
+                                    <option value="http://data.judaicalink.org/data/gnd-persons">Persons from GND
+                                    </option>
+                                    <option value="http://data.judaicalink.org/data/interlinks">Encyclopedia
+                                        Interlinks
+                                    </option>
+                                    <option value="http://data.judaicalink.org/data/bhr">Biographisches Handbuch der
+                                        Rabbiner
+                                    </option>
+                                    <option value="http://data.judaicalink.org/data/djh">Das Jüdische Hamburg</option>
+                                    <option value="http://data.judaicalink.org/data/2014links">Links to external
+                                        sources
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group">
+                                <span class="input-group-text"> Output</span>
+                                <select class="form-control" name="output">
+                                    <option value="json">JSON</option>
+                                    <option value="xml">XML</option>
+                                    <option value="text">Text</option>
+                                    <option value="csv">CSV</option>
+                                    <option value="tsv">TSV</option>
+                                </select>
+                            </div>
 
-          Output: <select name="output">
-            <option value="json">JSON</option>
-            <option value="xml">XML</option>
-            <option value="text">Text</option>
-            <option value="csv">CSV</option>
-            <option value="tsv">TSV</option>
-          </select>
-          <br/>
-         If XML output, XSLT style sheet (blank for none):
-          <select name="stylesheet">
-            <option value=""></option>
-            <option value="/xml-to-html.xsl">xml-to-html</option>
-            <option value="/xml-to-html-links.xsl">xml-to-html-links</option>
-            <option value="/xml-to-html-plain.xsl">xml-to-html-plain</option>
-          </select>
-          <br/>
-          <input type="checkbox" name="force-accept" value="text/plain"/>
-          Force the accept header to <tt>text/plain</tt> regardless
-          <br/>
-          <input type="submit" value="Get Results" />
-        </p>
-      </form>
-    </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group">
+                                <span class="input-group-text">If XML output, XSLT style sheet (blank for none)</span>
 
-    </div>
+                                <select name="stylesheet" class="form-control">
+                                    <option value=""></option>
+                                    <option value="/xml-to-html.xsl">xml-to-html</option>
+                                    <option value="/xml-to-html-links.xsl">xml-to-html-links</option>
+                                    <option value="/xml-to-html-plain.xsl">xml-to-html-plain</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="force-accept" value="text/plain"/>
+                                <label class="form-check-label">Force the accept header to <tt>text/plain</tt>
+                                    regardless</label>
+                            </div>
+                        </div>
 
+                        <input class="btn btn-primary" type="submit" value="Get Results"/>
+                </form>
+            </div>
 
-</main>
+        </div>
 
 
-<!--footer-->
+    </main>
 
-{% include "pubby/footer.html" %}
 
-<!--footer-->
+    <!--footer-->
+
+    {% include "pubby/footer.html" %}
+
+    <!--footer-->
 
 {% endblock content %}
