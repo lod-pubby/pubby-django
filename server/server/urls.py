@@ -25,6 +25,8 @@ from pubby.views import SitemapGenerator
 
 sitemaps = {'generic': SitemapGenerator}
 
+app_name = 'server'
+
 urlpatterns = [
     path('pubby/', include('pubby.urls', namespace="pubby")),
     path('pubby2/', include('pubby.urls', namespace="pubby2")),
