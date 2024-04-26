@@ -16,7 +16,9 @@
                 <form action="https://data.judaicalink.org/sparql/query" method="get" name="form" id="form">
                     <div class="row">
                         <p class="lead">General SPARQL query : input query, set any options and press "Get Results"</p>
-                        <p class="lead">You can find the Ontology here: <a href="https://ontology.judaicalink.org/judaicalink-ontology" target="_blank">https://ontology.judaicalink.org/judaicalink-ontology</a>.</p>
+                        <p class="lead">You can find the Ontology here: <a
+                                href="https://ontology.judaicalink.org/judaicalink-ontology" target="_blank">https://ontology.judaicalink.org/judaicalink-ontology</a>.
+                        </p>
                     </div>
                     <div class="row">
 	<textarea name="query" id="query" cols="70" rows="20" class="shadow-sm">
@@ -103,7 +105,7 @@ LIMIT 10</textarea>
                                 <span class="input-group-text"> Output</span>
                                 <select class="form-control" name="output" id="output">
                                     <option value="json">JSON</option>
-                                    <option value="xml">XML</option>
+                                    <option value="xml" selected>XML</option>
                                     <option value="text">Text</option>
                                     <option value="csv">CSV</option>
                                     <option value="tsv">TSV</option>
@@ -125,7 +127,8 @@ LIMIT 10</textarea>
                         </div>
                         <div class="row">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="force-accept" id="force-accept" value="text/plain"/>
+                                <input class="form-check-input" type="checkbox" name="force-accept" id="force-accept"
+                                       value="text/plain"/>
                                 <label class="form-check-label">Force the accept header to <tt>text/plain</tt>
                                     regardless</label>
                             </div>
@@ -134,16 +137,14 @@ LIMIT 10</textarea>
                         <input class="btn btn-primary shadow" type="submit" value="Get Results"/>
                 </form>
             </div>
-        <div class="col-12">
-    <div class="row">
-        <h1>Results</h1>
-    </div>
-    <div class="row">
-        <textarea name="results" cols="70" rows="20" id="results">
-
-    </textarea>
-    </div>
-</div>
+            <div class="col-12">
+                <div class="row">
+                    <h1>Results</h1>
+                </div>
+                <div class="row">
+                    <textarea name="results" cols="70" rows="20" id="results"></textarea>
+                </div>
+            </div>
 
         </div>
 
@@ -162,31 +163,31 @@ LIMIT 10</textarea>
 {% block scripts %}
 
     <script>
-    $(document).ready(function() {
-  $('form').submit(function(event) {
-    event.preventDefault();
+        $(document).ready(function () {
+            $('form').submit(function (event) {
+                event.preventDefault();
 
-    // Get form values
-    var graphUri = encodeURI($('#default-graph-uri').val());
-    var output = $('#output').val();
-    var stylesheet = encodeURI($('#stylesheet').val());
-    var forceAccept = encodeURI($('#force-accept').val());
-    var query = encodeURIComponent($('#query').val());
-    var url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&default-graph-uri=' + graphUri + '&output=' + output + '&stylesheet=' + stylesheet + '&force-accept=' + forceAccept;
-    console.log(url);
-    // Send GET request and display response
-    $.get(url, function(data) {
-        console.log(data);
-      $('#results').val(data);
-      $("#results").each(function () {
-          this.style.height = 'auto'; // reset height to auto to calculate new height
-  this.style.width = 'auto'; // reset width to auto to calculate new width
-  this.style.height = this.scrollHeight + 10 + 'px'; // set height to calculated height
-  this.style.width = this.scrollWidth + 10 + 'px'; // set width to calculated width
-      });
-    });
-  });
-});
+                // Get form values
+                var graphUri = encodeURI($('#default-graph-uri').val());
+                var output = $('#output').val();
+                var stylesheet = encodeURI($('#stylesheet').val());
+                var forceAccept = encodeURI($('#force-accept').val());
+                var query = encodeURIComponent($('#query').val());
+                var url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&default-graph-uri=' + graphUri + '&output=' + output + '&stylesheet=' + stylesheet + '&force-accept=' + forceAccept;
+                console.log(url);
 
+                // Send GET request and display response
+                $.get(url, function (data) {
+                    console.log(data);
+                    $('#results').val(data);
+                    $("#results").each(function () {
+                        this.style.height = 'auto'; // reset height to auto to calculate new height
+                        this.style.width = 'auto'; // reset width to auto to calculate new width
+                        this.style.height = this.scrollHeight + 10 + 'px'; // set height to calculated height
+                        this.style.width = this.scrollWidth + 10 + 'px'; // set width to calculated width
+                    });
+                });
+            });
+        });
     </script>
 {% endblock %}
