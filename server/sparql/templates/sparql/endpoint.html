@@ -214,12 +214,13 @@ LIMIT 10</textarea>
                     //const formattedXml = formatXml(data, true, '  ');
                     // Update the textarea with the XML data
                     document.getElementById('results').innerHTML = data;
-                    $("#results").each(function () {
-                        this.style.height = 'auto'; // reset height to auto to calculate new height
-                        this.style.width = 'auto'; // reset width to auto to calculate new width
-                        this.style.height = this.scrollHeight + 10 + 'px'; // set height to calculated height
-                        this.style.width = this.scrollWidth + 10 + 'px'; // set width to calculated width
-                    });
+                    document.getElementById('results').style.whiteSpace = 'pre-wrap';
+                    document.getElementById('results').style.overflow = 'auto';
+                    // Resize the textarea to fit the content
+                    document.getElementById('results').style.height = 'auto';
+                    document.getElementById('results').style.width = 'auto';
+                    document.getElementById('results').style.height = document.getElementById('results').scrollHeight + 10 + 'px';
+                    document.getElementById('results').style.width = document.getElementById('results').scrollWidth + 10 + 'px';
                 })
                 .catch(error => {
                     console.error('Error fetching XML:', error);
