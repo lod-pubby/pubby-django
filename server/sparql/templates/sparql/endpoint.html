@@ -211,9 +211,9 @@ LIMIT 10</textarea>
                 .then(response => response.text())
                 .then(data => {
                     console.log(data);
-                    const formattedXml = formatXml(data, true, '  ');
+                    //const formattedXml = formatXml(data, true, '  ');
                     // Update the textarea with the XML data
-                    document.getElementById('results').innerHTML = formattedXml;
+                    document.getElementById('results').innerHTML = data;
                     $("#results").each(function () {
                         this.style.height = 'auto'; // reset height to auto to calculate new height
                         this.style.width = 'auto'; // reset width to auto to calculate new width
