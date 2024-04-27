@@ -162,7 +162,7 @@ LIMIT 10</textarea>
 {% endblock content %}
 
 {% block scripts %}
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xml-formatter-js/1.0.6/xml-formatter.min.js"></script>
     <script>
         function fetchSPARQL() {
                 // Get form values
@@ -178,8 +178,10 @@ LIMIT 10</textarea>
                 fetch('https://services.dnb.de/sru/zdb?operation=explain&version=1.1')
                     .then(response => response.text())
                     .then(data => {
+                        var formatter = new XMLFormatter();
+var formattedXml = formatter.format(data);
                         // Update the textarea with the XML data
-                        document.getElementById('results').value = data;
+                        document.getElementById('results').value = formattedXml;
                     })
                     .catch(error => {
                         console.error('Error fetching XML:', error);
