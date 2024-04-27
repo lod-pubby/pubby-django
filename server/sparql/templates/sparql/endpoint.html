@@ -198,6 +198,7 @@ LIMIT 10</textarea>
                 fetch(url)
                     .then(response => response.text())
                     .then(data => {
+                        console.log(data);
                         var formattedXml = formatXml(data, true, '  ')
                         // Update the textarea with the XML data
                         document.getElementById('results').value = formattedXml;
@@ -212,20 +213,5 @@ LIMIT 10</textarea>
                         console.error('Error fetching XML:', error);
                     });
             }
-
-        $(document).ready(function () {
-
-            function test(){
-
-
-                // Send GET request and display response
-                $.get(url, function (data) {
-                    console.log(data);
-                    $('#results').val(data);
-
-                });
-            }
-        });
-
     </script>
 {% endblock %}
