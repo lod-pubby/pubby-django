@@ -26,12 +26,11 @@ def index(request):
                 lines = f.readlines()
                 for line in lines:
                     if line.startswith("title ="):
-                        # remove the title = from the line, withspaces and "
                         title = line.split("=")[1].strip().replace("\"", "")
                     if line.startswith("graph ="):
                         uri = line.split("=")[1].strip().replace("\"", "")
                 graphs[title] = uri
-                print("title: ", title, "graph: ", uri)
+                logging.log("title: ", title, "graph: ", uri)
     if graphs:
         return render(request, 'sparql/endpoint.html', {'graphs': graphs})
     else:
