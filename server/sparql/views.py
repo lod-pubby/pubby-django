@@ -31,7 +31,7 @@ def index(request):
                     if line.startswith("graph ="):
                         uri = line.split("=")[1].strip().replace("\"", "")
                 graphs[title] = uri
-                # logging.debug("title: ", title, "graph: ", uri)
+                print("title: ", title, "graph: ", uri)
     if graphs:
         return render(request, 'sparql/endpoint.html', {'graphs': graphs})
     else:
