@@ -30,7 +30,7 @@ def index(request):
                         title = line.split("=")[1].strip().replace("\"", "")
                     if line.startswith("graph ="):
                         uri = line.split("=")[1].strip().replace("\"", "")
-                    if line == "loaded = true":
+                    if line.startswith("loaded = true"):
                         loaded = True
 
                 if loaded:
