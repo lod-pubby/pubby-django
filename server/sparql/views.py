@@ -29,10 +29,15 @@ def index(request):
                         title = line.split("=")[1].strip().replace("\"", "")
                     if line.startswith("graph ="):
                         uri = line.split("=")[1].strip().replace("\"", "")
-                graphs[title] = uri
+                    if line == "loaded = true":
+                        loaded = True
+
+                if loaded:
+                    graphs[title] = uri
                 logging.info(msg=f'title: {title} graph: {uri}\n')
 
     if graphs:
+        graphs = {i: graphs[i] for i in list(graphs.keys())}
         return render(request, 'sparql/endpoint.html', {'graphs': graphs})
     else:
         return render(request, 'sparql/endpoint.html', {})
