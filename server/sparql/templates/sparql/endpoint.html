@@ -36,106 +36,107 @@ SELECT *
         WHERE {?s ?p ?o}
 LIMIT 10</textarea>
                     </div>
-                        <div class="row mt-3 col-xl-12">
-                            <div class="input-group">
+                    <div class="row mt-3 col-xl-12">
+                        <div class="input-group">
                   <span class="input-group-text">Query
                   Target graph URI (or use <code>FROM</code> in the query)</span>
-                                <select class="form-control" name="default-graph-uri" id="default-graph-uri">
-                                    <option value="" selected>All</option>
-                                    <option value="http://data.judaicalink.org/data/gba">Gidal Image Archive</option>
-                                    <option value="http://data.judaicalink.org/data/sosy">Soundscape Synagogue</option>
-                                    <option value="http://data.judaicalink.org/data/epi">Epidat</option>
-                                    <option value="http://data.judaicalink.org/data/ep">Entity Pages</option>
-                                    <option value="http://data.judaicalink.org/data/compact-memory">Linking Compact
-                                        Memory - Pages
-                                    </option>
-                                    <option value="http://data.judaicalink.org/data/cm-tagme">Linking Compact Memory -
-                                        Resources and References
-                                    </option>
-                                    <option value="http://data.judaicalink.org/data/dbp-wiki-geo-links">DBpedia and
-                                        Wikipedia Geographical External Links
-                                    </option>
-                                    <option value="http://data.judaicalink.org/datasets/yivo">Yivo Encyclopedia</option>
-                                    <option value="http://data.judaicalink.org/datasets/rujen-translation">Translations
-                                        for Rujen
-                                    </option>
-                                    <option value="http://data.judaicalink.org/datasets/rujen">Encyclopedia of Russian
-                                        Jewry
-                                    </option>
-                                    <option value="http://data.judaicalink.org/data/date-enriched">Enrichment of Birth-
-                                        and Deathdates
-                                    </option>
-                                    <option value="http://data.judaicalink.org/data/geo-enriched">Geographic
-                                        Enrichment
-                                    </option>
-                                    <option value="http://data.judaicalink.org/data/jre">Resources on German-Jewish
-                                        Education and Religion
-                                    </option>
-                                    <option value="http://data.judaicalink.org/data/haskala">The Library of Haskala
-                                    </option>
-                                    <option value="http://data.judaicalink.org/data/nli">Persons from NLI</option>
-                                    <option value="http://data.judaicalink.org/data/ubffm">Persons from ubffm</option>
-                                    <option value="http://data.judaicalink.org/data/stolpersteine">Stolpersteine in
-                                        Mainz
-                                    </option>
-                                    <option value="http://data.judaicalink.org/data/dbpedia-persons">Persons from
-                                        DBPedia
-                                    </option>
-                                    <option value="http://data.judaicalink.org/data/hirsch">Eine Jüdische Familie aus
-                                        Aschaffenburg
-                                    </option>
-                                    <option value="http://data.judaicalink.org/data/geo-coor">Geographical Coordinates
-                                    </option>
-                                    <option value="http://data.judaicalink.org/data/gnd-persons">Persons from GND
-                                    </option>
-                                    <option value="http://data.judaicalink.org/data/interlinks">Encyclopedia
-                                        Interlinks
-                                    </option>
-                                    <option value="http://data.judaicalink.org/data/bhr">Biographisches Handbuch der
-                                        Rabbiner
-                                    </option>
-                                    <option value="http://data.judaicalink.org/data/djh">Das Jüdische Hamburg</option>
-                                    <option value="http://data.judaicalink.org/data/2014links">Links to external
-                                        sources
-                                    </option>
-                                </select>
-                            </div>
+                            <select class="form-control" name="default-graph-uri" id="default-graph-uri">
+                                <option value="" selected>All</option>
+                                <option value="http://data.judaicalink.org/data/gba">Gidal Image Archive</option>
+                                <option value="http://data.judaicalink.org/data/sosy">Soundscape Synagogue</option>
+                                <option value="http://data.judaicalink.org/data/epi">Epidat</option>
+                                <option value="http://data.judaicalink.org/data/ep">Entity Pages</option>
+                                <option value="http://data.judaicalink.org/data/compact-memory">Linking Compact
+                                    Memory - Pages
+                                </option>
+                                <option value="http://data.judaicalink.org/data/cm-tagme">Linking Compact Memory -
+                                    Resources and References
+                                </option>
+                                <option value="http://data.judaicalink.org/data/dbp-wiki-geo-links">DBpedia and
+                                    Wikipedia Geographical External Links
+                                </option>
+                                <option value="http://data.judaicalink.org/datasets/yivo">Yivo Encyclopedia</option>
+                                <option value="http://data.judaicalink.org/datasets/rujen-translation">Translations
+                                    for Rujen
+                                </option>
+                                <option value="http://data.judaicalink.org/datasets/rujen">Encyclopedia of Russian
+                                    Jewry
+                                </option>
+                                <option value="http://data.judaicalink.org/data/date-enriched">Enrichment of Birth-
+                                    and Deathdates
+                                </option>
+                                <option value="http://data.judaicalink.org/data/geo-enriched">Geographic
+                                    Enrichment
+                                </option>
+                                <option value="http://data.judaicalink.org/data/jre">Resources on German-Jewish
+                                    Education and Religion
+                                </option>
+                                <option value="http://data.judaicalink.org/data/haskala">The Library of Haskala
+                                </option>
+                                <option value="http://data.judaicalink.org/data/nli">Persons from NLI</option>
+                                <option value="http://data.judaicalink.org/data/ubffm">Persons from ubffm</option>
+                                <option value="http://data.judaicalink.org/data/stolpersteine">Stolpersteine in
+                                    Mainz
+                                </option>
+                                <option value="http://data.judaicalink.org/data/dbpedia-persons">Persons from
+                                    DBPedia
+                                </option>
+                                <option value="http://data.judaicalink.org/data/hirsch">Eine Jüdische Familie aus
+                                    Aschaffenburg
+                                </option>
+                                <option value="http://data.judaicalink.org/data/geo-coor">Geographical Coordinates
+                                </option>
+                                <option value="http://data.judaicalink.org/data/gnd-persons">Persons from GND
+                                </option>
+                                <option value="http://data.judaicalink.org/data/interlinks">Encyclopedia
+                                    Interlinks
+                                </option>
+                                <option value="http://data.judaicalink.org/data/bhr">Biographisches Handbuch der
+                                    Rabbiner
+                                </option>
+                                <option value="http://data.judaicalink.org/data/djh">Das Jüdische Hamburg</option>
+                                <option value="http://data.judaicalink.org/data/2014links">Links to external
+                                    sources
+                                </option>
+                            </select>
                         </div>
-                        <div class="row col-xl-12">
-                            <div class="input-group">
-                                <span class="input-group-text"> Output</span>
-                                <select class="form-control" name="output" id="output">
-                                    <option value="json">JSON</option>
-                                    <option value="xml" selected>XML</option>
-                                    <option value="text">Text</option>
-                                    <option value="csv">CSV</option>
-                                    <option value="tsv">TSV</option>
-                                </select>
-                            </div>
-
-                        </div>
-                        <div class="row col-xl-12">
-                            <div class="input-group">
-                                <span class="input-group-text">If XML output, XSLT style sheet (blank for none)</span>
-
-                                <select name="stylesheet" class="form-control" id="stylesheet">
-                                    <option value=""></option>
-                                    <option value="/xml-to-html.xsl">xml-to-html</option>
-                                    <option value="/xml-to-html-links.xsl">xml-to-html-links</option>
-                                    <option value="/xml-to-html-plain.xsl">xml-to-html-plain</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row col-xl-12">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="force-accept" id="force-accept"
-                                       value="text/plain"/>
-                                <label class="form-check-label">Force the accept header to <tt>text/plain</tt>
-                                    regardless</label>
-                            </div>
+                    </div>
+                    <div class="row col-xl-12">
+                        <div class="input-group">
+                            <span class="input-group-text"> Output</span>
+                            <select class="form-control" name="output" id="output">
+                                <option value="json">JSON</option>
+                                <option value="xml" selected>XML</option>
+                                <option value="text">Text</option>
+                                <option value="csv">CSV</option>
+                                <option value="tsv">TSV</option>
+                            </select>
                         </div>
 
-                        <button class="btn btn-primary shadow" type="button" onclick="fetchSPARQL()" />Get Results</button>
+                    </div>
+                    <div class="row col-xl-12">
+                        <div class="input-group">
+                            <span class="input-group-text">If XML output, XSLT style sheet (blank for none)</span>
+
+                            <select name="stylesheet" class="form-control" id="stylesheet">
+                                <option value=""></option>
+                                <option value="/xml-to-html.xsl">xml-to-html</option>
+                                <option value="/xml-to-html-links.xsl">xml-to-html-links</option>
+                                <option value="/xml-to-html-plain.xsl">xml-to-html-plain</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row col-xl-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="force-accept" id="force-accept"
+                                   value="text/plain"/>
+                            <label class="form-check-label">Force the accept header to <code>text/plain</code>
+                                regardless</label>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary shadow" type="button" onclick="fetchSPARQL()"/>
+                    Get Results</button>
                 </form>
             </div>
             <div class="col-12">
@@ -162,56 +163,60 @@ LIMIT 10</textarea>
 {% endblock content %}
 
 {% block scripts %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xml-formatter-js/1.0.6/xml-formatter.min.js"></script>
     <script>
-        function formatXml(xml,colorize,indent) {
-  function esc(s){return s.replace(/[-\/&<> ]/g,function(c){         // Escape special chars
-    return c==' '?'&nbsp;':'&#'+c.charCodeAt(0)+';';});}
-  var sm='<div class="xmt">',se='<div class="xel">',sd='<div class="xdt">',
-      sa='<div class="xat">',tb='<div class="xtb">',tc='<div class="xtc">',
-      ind=indent||'  ',sz='</div>',tz='</div>',re='',is='',ib,ob,at,i;
-  if (!colorize) sm=se=sd=sa=sz='';
-  xml.match(/(?<=<).*(?=>)|$/s)[0].split(/>\s*</).forEach(function(nd){
-    ob=('<'+nd+'>').match(/^(<[!?\/]?)(.*?)([?\/]?>)$/s);             // Split outer brackets
-    ib=ob[2].match(/^(.*?)>(.*)<\/(.*)$/s)||['',ob[2],''];            // Split inner brackets
-    at=ib[1].match(/^--.*--$|=|('|").*?\1|[^\t\n\f \/>"'=]+/g)||['']; // Split attributes
-    if (ob[1]=='</') is=is.substring(ind.length);                     // Decrease indent
-    re+=tb+tc+esc(is)+tz+tc+sm+esc(ob[1])+sz+se+esc(at[0])+sz;
-    for (i=1;i<at.length;i++) re+=(at[i]=="="?sm+"="+sz+sd+esc(at[++i]):sa+' '+at[i])+sz;
-    re+=ib[2]?sm+esc('>')+sz+sd+esc(ib[2])+sz+sm+esc('</')+sz+se+ib[3]+sz:'';
-    re+=sm+esc(ob[3])+sz+tz+tz;
-    if (ob[1]+ob[3]+ib[2]=='<>') is+=ind;                             // Increase indent
-  });
-  return re;
-}
+        function formatXml(xml, colorize, indent) {
+            function esc(s) {
+                return s.replace(/[-\/&<> ]/g, function (c) {         // Escape special chars
+                    return c == ' ' ? '&nbsp;' : '&#' + c.charCodeAt(0) + ';';
+                });
+            }
+
+            var sm = '<div class="xmt">', se = '<div class="xel">', sd = '<div class="xdt">',
+                sa = '<div class="xat">', tb = '<div class="xtb">', tc = '<div class="xtc">',
+                ind = indent || '  ', sz = '</div>', tz = '</div>', re = '', is = '', ib, ob, at, i;
+            if (!colorize) sm = se = sd = sa = sz = '';
+            xml.match(/(?<=<).*(?=>)|$/s)[0].split(/>\s*</).forEach(function (nd) {
+                ob = ('<' + nd + '>').match(/^(<[!?\/]?)(.*?)([?\/]?>)$/s);             // Split outer brackets
+                ib = ob[2].match(/^(.*?)>(.*)<\/(.*)$/s) || ['', ob[2], ''];            // Split inner brackets
+                at = ib[1].match(/^--.*--$|=|('|").*?\1|[^\t\n\f \/>"'=]+/g) || ['']; // Split attributes
+                if (ob[1] == '</') is = is.substring(ind.length);                     // Decrease indent
+                re += tb + tc + esc(is) + tz + tc + sm + esc(ob[1]) + sz + se + esc(at[0]) + sz;
+                for (i = 1; i < at.length; i++) re += (at[i] == "=" ? sm + "=" + sz + sd + esc(at[++i]) : sa + ' ' + at[i]) + sz;
+                re += ib[2] ? sm + esc('>') + sz + sd + esc(ib[2]) + sz + sm + esc('</') + sz + se + ib[3] + sz : '';
+                re += sm + esc(ob[3]) + sz + tz + tz;
+                if (ob[1] + ob[3] + ib[2] == '<>') is += ind;                             // Increase indent
+            });
+            return re;
+        }
+
         function fetchSPARQL() {
-                // Get form values
+            // Get form values
             const graphUri = encodeURI($('#default-graph-uri').val());
             const output = $('#output').val();
-                const stylesheet = encodeURI($('#stylesheet').val());
-                const forceAccept = encodeURI($('#force-accept').val());
-                const query = encodeURIComponent($('#query').val());
-                const url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&default-graph-uri=' + graphUri + '&output=' + output + '&stylesheet=' + stylesheet + '&force-accept=' + forceAccept;
-                console.log(url);
+            const stylesheet = encodeURI($('#stylesheet').val());
+            const forceAccept = encodeURI($('#force-accept').val());
+            const query = encodeURIComponent($('#query').val());
+            const url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&default-graph-uri=' + graphUri + '&output=' + output + '&stylesheet=' + stylesheet + '&force-accept=' + forceAccept;
+            console.log(url);
 
-                // Perform a GET request to fetch the XML data
-                fetch(url)
-                    .then(response => response.text())
-                    .then(data => {
-                        console.log(data);
-                        var formattedXml = formatXml(data, true, '  ')
-                        // Update the textarea with the XML data
-                        document.getElementById('results').value = formattedXml;
-                        $("#results").each(function () {
-                            this.style.height = 'auto'; // reset height to auto to calculate new height
-                            this.style.width = 'auto'; // reset width to auto to calculate new width
-                            this.style.height = this.scrollHeight + 10 + 'px'; // set height to calculated height
-                            this.style.width = this.scrollWidth + 10 + 'px'; // set width to calculated width
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error fetching XML:', error);
+            // Perform a GET request to fetch the XML data
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                    const formattedXml = formatXml(data, true, '  ');
+                    // Update the textarea with the XML data
+                    document.getElementById('results').innerHTML = formattedXml;
+                    $("#results").each(function () {
+                        this.style.height = 'auto'; // reset height to auto to calculate new height
+                        this.style.width = 'auto'; // reset width to auto to calculate new width
+                        this.style.height = this.scrollHeight + 10 + 'px'; // set height to calculated height
+                        this.style.width = this.scrollWidth + 10 + 'px'; // set width to calculated width
                     });
-            }
+                })
+                .catch(error => {
+                    console.error('Error fetching XML:', error);
+                });
+        }
     </script>
 {% endblock %}
