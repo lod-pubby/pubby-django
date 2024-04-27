@@ -166,18 +166,18 @@ LIMIT 10</textarea>
     <script>
         function fetchSPARQL() {
             // Get form values
-            const graphURI = encodeURI($('#default-graph-uri').val());
+            let graphURI = encodeURI($('#default-graph-uri').val());
             const output = $('#output').val();
             const stylesheet = encodeURI($('#stylesheet').val());
             const forceAccept = encodeURI($('#force-accept').val());
             const query = encodeURIComponent($('#query').val());
 
             let url = "";
-            if (graphURI == "") {
-                url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&output=' + output + '&stylesheet=' + stylesheet + '&force-accept=' + forceAccept;
-            } else {
-                url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&default-graph-uri=' + graphURI + '&output=' + output + '&stylesheet=' + stylesheet + '&force-accept=' + forceAccept;
+            if (graphURI === "") {
+                graphURI = "urn:x-arq:UnionGraph";
             }
+
+            url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&default-graph-uri=' + graphURI + '&output=' + output + '&stylesheet=' + stylesheet + '&force-accept=' + forceAccept;
 
             console.log(url);
 
