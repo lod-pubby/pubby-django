@@ -33,6 +33,6 @@ def index(request):
                 graphs[title] = uri
                 logging.debug("title: ", title, "graph: ", uri)
     if graphs:
-        return render(request, 'sparql/sparql_endpoint.html', {'graphs': graphs})
+        return render(request, 'sparql/endpoint.html', {'graphs': graphs})
     else:
-        return render(request, 'sparql/sparql_endpoint.html', {})
+        return render(request, 'sparql/endpoint.html', {})
