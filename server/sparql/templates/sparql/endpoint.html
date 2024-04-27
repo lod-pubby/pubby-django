@@ -42,62 +42,9 @@ LIMIT 10</textarea>
                   Target graph URI (or use <code>FROM</code> in the query)</span>
                             <select class="form-control" name="default-graph-uri" id="default-graph-uri">
                                 <option value="" selected>All</option>
-                                <option value="http://data.judaicalink.org/data/gba">Gidal Image Archive</option>
-                                <option value="http://data.judaicalink.org/data/sosy">Soundscape Synagogue</option>
-                                <option value="http://data.judaicalink.org/data/epi">Epidat</option>
-                                <option value="http://data.judaicalink.org/data/ep">Entity Pages</option>
-                                <option value="http://data.judaicalink.org/data/compact-memory">Linking Compact
-                                    Memory - Pages
-                                </option>
-                                <option value="http://data.judaicalink.org/data/cm-tagme">Linking Compact Memory -
-                                    Resources and References
-                                </option>
-                                <option value="http://data.judaicalink.org/data/dbp-wiki-geo-links">DBpedia and
-                                    Wikipedia Geographical External Links
-                                </option>
-                                <option value="http://data.judaicalink.org/datasets/yivo">Yivo Encyclopedia</option>
-                                <option value="http://data.judaicalink.org/datasets/rujen-translation">Translations
-                                    for Rujen
-                                </option>
-                                <option value="http://data.judaicalink.org/datasets/rujen">Encyclopedia of Russian
-                                    Jewry
-                                </option>
-                                <option value="http://data.judaicalink.org/data/date-enriched">Enrichment of Birth-
-                                    and Deathdates
-                                </option>
-                                <option value="http://data.judaicalink.org/data/geo-enriched">Geographic
-                                    Enrichment
-                                </option>
-                                <option value="http://data.judaicalink.org/data/jre">Resources on German-Jewish
-                                    Education and Religion
-                                </option>
-                                <option value="http://data.judaicalink.org/data/haskala">The Library of Haskala
-                                </option>
-                                <option value="http://data.judaicalink.org/data/nli">Persons from NLI</option>
-                                <option value="http://data.judaicalink.org/data/ubffm">Persons from ubffm</option>
-                                <option value="http://data.judaicalink.org/data/stolpersteine">Stolpersteine in
-                                    Mainz
-                                </option>
-                                <option value="http://data.judaicalink.org/data/dbpedia-persons">Persons from
-                                    DBPedia
-                                </option>
-                                <option value="http://data.judaicalink.org/data/hirsch">Eine Jüdische Familie aus
-                                    Aschaffenburg
-                                </option>
-                                <option value="http://data.judaicalink.org/data/geo-coor">Geographical Coordinates
-                                </option>
-                                <option value="http://data.judaicalink.org/data/gnd-persons">Persons from GND
-                                </option>
-                                <option value="http://data.judaicalink.org/data/interlinks">Encyclopedia
-                                    Interlinks
-                                </option>
-                                <option value="http://data.judaicalink.org/data/bhr">Biographisches Handbuch der
-                                    Rabbiner
-                                </option>
-                                <option value="http://data.judaicalink.org/data/djh">Das Jüdische Hamburg</option>
-                                <option value="http://data.judaicalink.org/data/2014links">Links to external
-                                    sources
-                                </option>
+                                {% for graph in graphs %}
+                                    <option value="{{ graph.uri }}">{{ graph.title }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                     </div>
