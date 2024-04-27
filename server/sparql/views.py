@@ -23,6 +23,7 @@ def index(request):
         if file.endswith(".md"):
             # in the markdown file get the title and the graph
             with open(path + "/" + file, 'r') as f:
+                loaded = False
                 lines = f.readlines()
                 for line in lines:
                     if line.startswith("title ="):
