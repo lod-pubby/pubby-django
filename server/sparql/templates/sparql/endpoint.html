@@ -134,7 +134,8 @@ LIMIT 10</textarea>
                             </div>
                         </div>
 
-                        <input class="btn btn-primary shadow" type="submit" value="Get Results"/>
+                        <button class="btn btn-primary shadow" type="submit" value="Get Results"
+                               onclick="fetchSPARQL()" />
                 </form>
             </div>
             <div class="col-12">
@@ -163,18 +164,32 @@ LIMIT 10</textarea>
 {% block scripts %}
 
     <script>
-        $(document).ready(function () {
-            $('form').submit(function (event) {
-                event.preventDefault();
-
+        function fetchSPARQL() {
                 // Get form values
-                var graphUri = encodeURI($('#default-graph-uri').val());
-                var output = $('#output').val();
-                var stylesheet = encodeURI($('#stylesheet').val());
-                var forceAccept = encodeURI($('#force-accept').val());
-                var query = encodeURIComponent($('#query').val());
-                var url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&default-graph-uri=' + graphUri + '&output=' + output + '&stylesheet=' + stylesheet + '&force-accept=' + forceAccept;
+            const graphUri = encodeURI($('#default-graph-uri').val());
+            const output = $('#output').val();
+                const stylesheet = encodeURI($('#stylesheet').val());
+                const forceAccept = encodeURI($('#force-accept').val());
+                const query = encodeURIComponent($('#query').val());
+                const url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&default-graph-uri=' + graphUri + '&output=' + output + '&stylesheet=' + stylesheet + '&force-accept=' + forceAccept;
                 console.log(url);
+
+                // Perform a GET request to fetch the XML data
+                fetch('https://services.dnb.de/sru/zdb?operation=explain&version=1.1')
+                    .then(response => response.text())
+                    .then(data => {
+                        // Update the textarea with the XML data
+                        document.getElementById('xmlTextarea').value = data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching XML:', error);
+                    });
+            }
+
+        $(document).ready(function () {
+
+            function test(){
+
 
                 // Send GET request and display response
                 $.get(url, function (data) {
