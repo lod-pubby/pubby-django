@@ -191,12 +191,19 @@ LIMIT 10</textarea>
 
         function fetchSPARQL() {
             // Get form values
-            const graphUri = encodeURI($('#default-graph-uri').val());
+            const graphURI = encodeURI($('#default-graph-uri').val());
             const output = $('#output').val();
             const stylesheet = encodeURI($('#stylesheet').val());
             const forceAccept = encodeURI($('#force-accept').val());
             const query = encodeURIComponent($('#query').val());
-            const url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&default-graph-uri=' + graphUri + '&output=' + output + '&stylesheet=' + stylesheet + '&force-accept=' + forceAccept;
+
+            let url = "";
+            if (graphURI == "") {
+                url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&output=' + output + '&stylesheet=' + stylesheet + '&force-accept=' + forceAccept;
+            } else {
+                url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&default-graph-uri=' + graphURI + '&output=' + output + '&stylesheet=' + stylesheet + '&force-accept=' + forceAccept;
+            }
+
             console.log(url);
 
             // Perform a GET request to fetch the XML data
