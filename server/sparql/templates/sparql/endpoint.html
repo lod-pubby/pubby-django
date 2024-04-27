@@ -35,11 +35,11 @@ PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 SELECT *
         WHERE {?s ?p ?o}
 LIMIT 10</textarea>
-                        <div class="row mt-3">
+                        <div class="row mt-3 col-xl-12">
                             <div class="input-group">
                   <span class="input-group-text">Query
                   Target graph URI (or use <code>FROM</code> in the query)</span>
-                                <select class="form-select" name="default-graph-uri" id="default-graph-uri">
+                                <select class="form-control" name="default-graph-uri" id="default-graph-uri">
                                     <option value="" selected>All</option>
                                     <option value="http://data.judaicalink.org/data/gba">Gidal Image Archive</option>
                                     <option value="http://data.judaicalink.org/data/sosy">Soundscape Synagogue</option>
@@ -100,7 +100,7 @@ LIMIT 10</textarea>
                                 </select>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row col-xl-12">
                             <div class="input-group">
                                 <span class="input-group-text"> Output</span>
                                 <select class="form-control" name="output" id="output">
@@ -113,7 +113,7 @@ LIMIT 10</textarea>
                             </div>
 
                         </div>
-                        <div class="row">
+                        <div class="row col-xl-12">
                             <div class="input-group">
                                 <span class="input-group-text">If XML output, XSLT style sheet (blank for none)</span>
 
@@ -125,7 +125,7 @@ LIMIT 10</textarea>
                                 </select>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row col-xl-12">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="force-accept" id="force-accept"
                                        value="text/plain"/>
