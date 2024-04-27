@@ -129,13 +129,13 @@ LIMIT 10</textarea>
                 url += '&force-accept=' + forceAccept;
             }
 
-            console.log(url);
+            //console.log(url);
 
             // Perform a GET request to fetch the XML data
             fetch(url)
                 .then(response => response.text())
                 .then(data => {
-                    console.log(data);
+                    //console.log(data);
                     // Update the textarea with the XML data
                     document.getElementById('results').innerHTML = data;
                     document.getElementById('results').style.whiteSpace = 'pre-wrap';
