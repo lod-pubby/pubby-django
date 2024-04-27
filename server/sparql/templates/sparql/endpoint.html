@@ -179,7 +179,7 @@ LIMIT 10</textarea>
                     .then(response => response.text())
                     .then(data => {
                         // Update the textarea with the XML data
-                        document.getElementById('xmlTextarea').value = data;
+                        document.getElementById('results').value = data;
                     })
                     .catch(error => {
                         console.error('Error fetching XML:', error);
