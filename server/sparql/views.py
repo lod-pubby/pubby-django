@@ -38,7 +38,7 @@ def index(request):
                 logging.info(msg=f'title: {title} graph: {uri}\n')
 
     if graphs:
-        graphs = {i: graphs[i] for i in list(graphs.keys())}
+        graphs = dict(sorted(graphs.items()))
         return render(request, 'sparql/endpoint.html', {'graphs': graphs})
     else:
         return render(request, 'sparql/endpoint.html', {})
