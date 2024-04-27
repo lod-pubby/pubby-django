@@ -195,12 +195,18 @@ LIMIT 10</textarea>
                 console.log(url);
 
                 // Perform a GET request to fetch the XML data
-                fetch('https://services.dnb.de/sru/zdb?operation=explain&version=1.1')
+                fetch(url)
                     .then(response => response.text())
                     .then(data => {
                         var formattedXml = formatXml(data, true, '  ')
                         // Update the textarea with the XML data
                         document.getElementById('results').value = formattedXml;
+                        $("#results").each(function () {
+                            this.style.height = 'auto'; // reset height to auto to calculate new height
+                            this.style.width = 'auto'; // reset width to auto to calculate new width
+                            this.style.height = this.scrollHeight + 10 + 'px'; // set height to calculated height
+                            this.style.width = this.scrollWidth + 10 + 'px'; // set width to calculated width
+                        });
                     })
                     .catch(error => {
                         console.error('Error fetching XML:', error);
@@ -216,12 +222,7 @@ LIMIT 10</textarea>
                 $.get(url, function (data) {
                     console.log(data);
                     $('#results').val(data);
-                    $("#results").each(function () {
-                        this.style.height = 'auto'; // reset height to auto to calculate new height
-                        this.style.width = 'auto'; // reset width to auto to calculate new width
-                        this.style.height = this.scrollHeight + 10 + 'px'; // set height to calculated height
-                        this.style.width = this.scrollWidth + 10 + 'px'; // set width to calculated width
-                    });
+
                 });
             }
         });
