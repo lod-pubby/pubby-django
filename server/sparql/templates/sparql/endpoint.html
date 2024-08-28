@@ -41,7 +41,7 @@ LIMIT 10</textarea>
                   <span class="input-group-text">Query
                   Target graph URI (or use <code>FROM</code> in the query)</span>
                             <select class="form-control" name="default-graph-uri" id="default-graph-uri">
-                                <option value="ALL" selected>All</option>
+                                <option value="" selected>All</option>
                                 {% for title, uri in graphs.items %}
                                     <option value="{{ uri }}">{{ title }}</option>
                                 {% endfor %}
@@ -120,16 +120,17 @@ LIMIT 10</textarea>
             const query = encodeURIComponent($('#query').val());
 
             let url = "";
-            if (graphURI === "ALL") {
-                graphURI = "urn:x-arq:UnionGraph";
+            if (graphURI === "") {
+                url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&output=' + output + '&stylesheet=' + stylesheet;
+            } else {
+                url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&default-graph-uri=' + graphURI + '&output=' + output + '&stylesheet=' + stylesheet;
             }
 
-            url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&default-graph-uri=' + graphURI + '&output=' + output + '&stylesheet=' + stylesheet;
             if (forceAccept !== "") {
                 url += '&force-accept=' + forceAccept;
             }
 
-            //console.log(url);
+            console.log(url);
 
             // Perform a GET request to fetch the XML data
             fetch(url)
