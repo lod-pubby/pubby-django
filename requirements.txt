@@ -12,3 +12,4 @@ six==1.16.0
 SPARQLWrapper==2.0.0
 sqlparse==0.4.4
 urllib3==2.1.0
+gunicorn>=23.0.0
