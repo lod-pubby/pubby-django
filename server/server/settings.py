@@ -168,7 +168,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': 'pubby.log',
+            'filename': os.getenv('DJANGO_LOG_FILE', 'pubby.log'),
             'formatter': 'verbose'
         },
         'console': {
