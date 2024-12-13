@@ -120,7 +120,7 @@ LIMIT 10</textarea>
             const query = encodeURIComponent($('#query').val());
 
             let url = "";
-            if (graphURI === "") {
+            if (graphURI === "ALL") {
                 url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&output=' + output + '&stylesheet=' + stylesheet;
             } else {
                 url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&default-graph-uri=' + graphURI + '&output=' + output + '&stylesheet=' + stylesheet;
