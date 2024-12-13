@@ -41,9 +41,11 @@ LIMIT 10</textarea>
                   <span class="input-group-text">Query
                   Target graph URI (or use <code>FROM</code> in the query)</span>
                             <select class="form-control" name="default-graph-uri" id="default-graph-uri">
-                                <option value="" selected>All</option>
+                                <option value="ALL" selected>All</option>
                                 {% for title, uri in graphs.items %}
-                                    <option value="{{ uri }}">{{ title }}</option>
+                                    {% if uri %}
+                                        <option value="{{ uri }}">{{ title }}</option>
+                                    {% endif %}
                                 {% endfor %}
                             </select>
                         </div>
