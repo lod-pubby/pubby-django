@@ -154,3 +154,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 runserver.sh
+/server/static/
+/server/static/img/
+/server/static/admin/
+/server/static/pubby/
+/server/static/django_extensions
