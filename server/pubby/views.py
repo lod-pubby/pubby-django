@@ -133,8 +133,14 @@ def get(request, URI):
     logging.debug("____________")
     resource = Resource(request, URI)
 
-    accept = request.META.get("HTTP_ACCEPT").lower()
-    logging.debug("Accept: %s", accept)
+    # Content negotiation
+    try:
+        accept = request.META.get("HTTP_ACCEPT").lower()
+        logging.debug("Accept: %s", accept)
+    except:
+        accept = "text/html"
+        logging.debug("No Accept header, using %s", accept)
+
     serialization = "html"
 
     # Not a real content negotiation, simply the first match
