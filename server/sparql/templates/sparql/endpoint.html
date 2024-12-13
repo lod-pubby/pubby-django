@@ -115,43 +115,52 @@ LIMIT 10</textarea>
     <script>
         function fetchSPARQL() {
             // Get form values
-            let graphURI = encodeURI($('#default-graph-uri').val());
+            let graphURI = $('#default-graph-uri').val();
             const output = $('#output').val();
-            const stylesheet = encodeURI($('#stylesheet').val());
-            const forceAccept = encodeURI($('#force-accept').val());
-            const query = encodeURIComponent($('#query').val());
+            const stylesheet = encodeURIComponent($('#stylesheet').val());
+            const forceAccept = $('#force-accept').is(':checked') ? 'text/plain' : '';
+            let query = $('#query').val();
 
-            let url = "";
+            let url = "https://data.judaicalink.org/sparql/query/?";
+
             if (graphURI === "ALL") {
-                url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&output=' + output + '&stylesheet=' + stylesheet;
-            } else {
-                url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&default-graph-uri=' + graphURI + '&output=' + output + '&stylesheet=' + stylesheet;
+                // Update the query for all graphs
+                query = `
+            SELECT *
+            WHERE {
+                { ?s ?p ?o }
+                UNION
+                { GRAPH ?g { ?s ?p ?o } }
+            }
+            LIMIT 10
+            `;
             }
 
-            if (forceAccept !== "") {
+            url += 'query=' + encodeURIComponent(query) + '&output=' + output + '&stylesheet=' + stylesheet;
+
+            if (forceAccept) {
                 url += '&force-accept=' + forceAccept;
             }
 
-            console.log(url);
+            console.log("Query URL:", url);
 
-            // Perform a GET request to fetch the XML data
+            // Perform the GET request to fetch the results
             fetch(url)
                 .then(response => response.text())
                 .then(data => {
-                    //console.log(data);
-                    // Update the textarea with the XML data
-                    document.getElementById('results').innerHTML = data;
-                    document.getElementById('results').style.whiteSpace = 'pre-wrap';
-                    document.getElementById('results').style.overflow = 'auto';
-                    document.getElementById('results').style.resize = 'both';
-                    // Resize the textarea to fit the content
-                    document.getElementById('results').style.height = 'auto';
-                    document.getElementById('results').style.width = 'auto';
-                    document.getElementById('results').style.height = document.getElementById('results').scrollHeight + 10 + 'px';
-                    document.getElementById('results').style.width = document.getElementById('results').scrollWidth + 10 + 'px';
+                    // Display results in the textarea
+                    const resultsBox = document.getElementById('results');
+                    resultsBox.innerHTML = data;
+                    resultsBox.style.whiteSpace = 'pre-wrap';
+                    resultsBox.style.overflow = 'auto';
+                    resultsBox.style.resize = 'both';
+                    resultsBox.style.height = 'auto';
+                    resultsBox.style.width = 'auto';
+                    resultsBox.style.height = resultsBox.scrollHeight + 10 + 'px';
+                    resultsBox.style.width = resultsBox.scrollWidth + 10 + 'px';
                 })
                 .catch(error => {
-                    console.error('Error fetching XML:', error);
+                    console.error('Error fetching SPARQL results:', error);
                 });
         }
     </script>
