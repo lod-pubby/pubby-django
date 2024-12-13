@@ -40,7 +40,7 @@ LIMIT 10</textarea>
                         <div class="input-group">
                   <span class="input-group-text">Query
                   Target graph URI (or use <code>FROM</code> in the query)</span>
-                            <select class="form-control" name="default-graph-uri" id="default-graph-uri">
+                            <select class="form-control" name="default-graph-uri" id="default-graph-uri" onchange="updateQuery()">
                                 <option value="ALL" selected>All</option>
                                 {% for title, uri in graphs.items %}
                                     {% if uri %}
@@ -188,6 +188,50 @@ LIMIT 10
                     console.error('Error fetching SPARQL results:', error);
                 });
         }
+
+        function updateQuery() {
+        const graphURI = $('#default-graph-uri').val();
+        const prefixes = `
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX gndo: <http://d-nb.info/standards/elementset/gnd#>
+PREFIX jl: <http://data.judaicalink.org/ontology/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+`;
+
+        let query = prefixes; // Start with prefixes
+
+        if (graphURI === "ALL") {
+            // Query for all graphs
+            query += `
+SELECT *
+WHERE {
+    { ?s ?p ?o }
+    UNION
+    { GRAPH ?g { ?s ?p ?o } }
+}
+LIMIT 10
+`;
+        } else {
+            // Query for a specific graph
+            query += `
+SELECT *
+WHERE {
+    GRAPH <${graphURI}> {
+        ?s ?p ?o
+    }
+}
+LIMIT 10
+`;
+        }
+
+        // Update the query textarea
+        $('#query').val(query.trim());
+    }
     </script>
 
 {% endblock %}
