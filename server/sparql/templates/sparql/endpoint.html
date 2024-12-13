@@ -119,24 +119,49 @@ LIMIT 10</textarea>
             const output = $('#output').val();
             const stylesheet = encodeURIComponent($('#stylesheet').val());
             const forceAccept = $('#force-accept').is(':checked') ? 'text/plain' : '';
-            let query = $('#query').val();
+            const prefixes = `
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX gndo: <http://d-nb.info/standards/elementset/gnd#>
+PREFIX jl: <http://data.judaicalink.org/ontology/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+`;
 
+            let query = prefixes; // Start with prefixes
             let url = "https://data.judaicalink.org/sparql/query/?";
 
             if (graphURI === "ALL") {
-                // Update the query for all graphs
-                query = `
-            SELECT *
-            WHERE {
-                { ?s ?p ?o }
-                UNION
-                { GRAPH ?g { ?s ?p ?o } }
-            }
-            LIMIT 10
-            `;
+                // Query for all graphs
+                query += `
+SELECT *
+WHERE {
+    { ?s ?p ?o }
+    UNION
+    { GRAPH ?g { ?s ?p ?o } }
+}
+LIMIT 10
+`;
+            } else {
+                // Query for a specific graph
+                query += `
+SELECT *
+WHERE {
+    GRAPH <${graphURI}> {
+        ?s ?p ?o
+    }
+}
+LIMIT 10
+`;
             }
 
-            url += 'query=' + encodeURIComponent(query) + '&output=' + output + '&stylesheet=' + stylesheet;
+            // Update the query textarea for user clarity
+            $('#query').val(query.trim());
+
+            url += 'query=' + encodeURIComponent(query.trim()) + '&output=' + output + '&stylesheet=' + stylesheet;
 
             if (forceAccept) {
                 url += '&force-accept=' + forceAccept;
@@ -164,4 +189,5 @@ LIMIT 10</textarea>
                 });
         }
     </script>
+
 {% endblock %}
