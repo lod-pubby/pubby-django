@@ -539,23 +539,23 @@ def get_fid_link(primary_resource, gnd_id):
 # Error pages
 # Not found
 def custom_error_404(request, exception):
-    return render(request, 'pubby/404.html', context={}, content_type='text/html', status=404)
+    return render(request, 'pubby/templates/errors/404.html', context={}, content_type='text/html', status=404)
 
 # Server error
 def custom_error_500(request, exception=None):
-    return render(request, 'pubby/500.html', context={}, content_type='text/html', status=500)
+    return render(request, 'pubby/templates/errors/500.html', context={}, content_type='text/html', status=500)
 
 # Bad request
 def custom_error_400(request, exception=None):
-    return render(request, 'pubby/400.html', context={}, content_type='text/html', status=400)
+    return render(request, 'pubby/templates/errors/400.html', context={}, content_type='text/html', status=400)
 
 # Forbidden
 def custom_error_403(request, exception=None):
-    return render(request, 'pubby/403.html', context={}, content_type='text/html', status=403)
+    return render(request, 'pubby/templates/errors/403.html', context={}, content_type='text/html', status=403)
 
 
 def test_error_page(request):
-    return render(request, 'pubby/404.html', context={}, content_type='text/html', status=404)
+    return render(request, 'pubby/templates/errors/404.html', context={}, content_type='text/html', status=404)
 
 
 class SitemapGenerator(Sitemap):

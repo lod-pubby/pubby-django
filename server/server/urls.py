@@ -36,7 +36,6 @@ urlpatterns = [
     path('data/', include('pubby.urls', namespace="data")),
     path('datasets/', include('pubby.urls', namespace="datasets")),
     path('ontology/', include('pubby.urls', namespace="ontology")),
-    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
     path('sitemap.xml', sitemap,
          {'sitemaps': {'data' : SitemapGenerator}},
          name='django.contrib.sitemaps.views.sitemap')
