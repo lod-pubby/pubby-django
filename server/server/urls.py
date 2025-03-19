@@ -31,6 +31,7 @@ app_name = 'server'
 
 urlpatterns = [
     path('pubby/', include('pubby.urls', namespace="pubby")),
+    path('pubby2/', include('pubby.urls', namespace="pubby2")),
     path('admin/', admin.site.urls),
     path('sparql/', include('sparql.urls'), name="sparql"),
     path('sparql.html', sparql.views.index, name="index"),
