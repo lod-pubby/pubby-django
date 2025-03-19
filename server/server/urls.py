@@ -34,7 +34,7 @@ urlpatterns = [
     path('pubby2/', include('pubby.urls', namespace="pubby2")),
     path('admin/', admin.site.urls),
     path('sparql/', include('sparql.urls'), name="sparql"),
-    #path('sparql.html', sparql.views.index, name="index"),
+    path('sparql.html', sparql.views.index, name="index"),
     path('data/', include('pubby.urls', namespace="data")),
     path('datasets/', include('pubby.urls', namespace="datasets")),
     path('ontology/', include('pubby.urls', namespace="ontology")),
