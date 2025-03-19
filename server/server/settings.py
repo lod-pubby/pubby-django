@@ -121,7 +121,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 
@@ -145,8 +145,6 @@ if os.path.isfile("server/localsettings.py"):
     from .localsettings import *
 
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
 
 #GND_FILE = "/data/judaicalink/data.judaicalink.org/htdocs/dumps/ep/ep_GND_ids.json.gz"
 
@@ -156,6 +154,10 @@ mimetypes.add_type("text/css", ".css", True)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'django.utils.autoreload': {
+        'handlers': ['console', 'file'],
+        'level': os.getenv("DJANGO_LOG_LEVEL", "WARNING")
+    },
     'formatters': {
         'verbose': {
             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
@@ -166,22 +168,20 @@ LOGGING = {
     },
     'handlers': {
         'file': {
-            'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': os.getenv('DJANGO_LOG_FILE', 'pubby.log'),
             'formatter': 'verbose'
         },
         'console': {
-            'level': 'INFO',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['file'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'handlers': ['file', 'console'],
             'propagate': True,
         },
     },
 }
+

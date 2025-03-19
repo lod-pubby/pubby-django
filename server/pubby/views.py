@@ -14,6 +14,7 @@ import csv
 import requests
 import hashlib
 
+logger = logging.getLogger(__name__)
 
 
 # Create your views here.
@@ -65,13 +66,13 @@ class Resource:
             if self.sparql_endpoint == "default":
                 self.sparql_endpoint = str(self.config["defaultEndpoint"])
 
-            logging.debug("Checking Dataset %S for matches.", ds['datasetBase'])
+            logger.debug("Checking Dataset %S for matches.", ds['datasetBase'])
             datasetURIPattern = ds["datasetURIPattern"]
             if datasetURIPattern:
-                logging.debug("Found datasetURIPattern")
+                logger.debug("Found datasetURIPattern")
                 match = datasetURIPattern.fullmatch(self.resource_uri)
                 if match:
-                    logging.debug("Matched datasetURIPattern")
+                    logger.debug("Matched datasetURIPattern")
                     self.sparql_query = f"DESCRIBE <{self.resource_uri}>"
                     return
             useSparqlMapping = ds["useSparqlMapping"]
@@ -79,7 +80,7 @@ class Resource:
                 uriPattern = useSparqlMapping["uriPattern"]
                 match = uriPattern.fullmatch(self.resource_uri)
                 if match:
-                    logging.debug("Matched uriPattern")
+                    logger.debug("Matched uriPattern")
                     sparql = useSparqlMapping["sparqlQuery"]
                     primary_resource = useSparqlMapping["primaryResource"]
                     publish_resources = useSparqlMapping["publishResources"]
@@ -130,32 +131,32 @@ def rewrite_URL(URL, dataset_base, web_base):
 
 
 def get(request, URI):
-    logging.debug("____________")
+    logger.debug("____________")
     resource = Resource(request, URI)
 
     # Content negotiation
     try:
         accept = request.META.get("HTTP_ACCEPT").lower()
-        logging.debug("Accept: %s", accept)
+        logger.debug("Accept: %s", accept)
     except:
         accept = "text/html"
-        logging.debug("No Accept header, using %s", accept)
+        logger.debug("No Accept header, using %s", accept)
 
     serialization = "html"
 
     # Not a real content negotiation, simply the first match
     # in our dictionary is used.
     for mime in mime2serialisation:
-        logging.debug("Matching %s", mime)
+        logger.debug("Matching %s", mime)
         if mime in accept:
             serialization = mime2serialisation[mime]
             break
-    logging.debug("Content negotiation: %s", serialization)
+    logger.debug("Content negotiation: %s", serialization)
 
     # Only redirect if we are at the resource URI, not at the html or rdf views
     if resource.resource_path == resource.request_path:
-        logging.debug(resource.resource_path, resource.request_path)
-        logging.debug("Redirecting to %s", resource.resource_uri)
+        logger.debug(resource.resource_path, resource.request_path)
+        logger.debug("Redirecting to %s", resource.resource_uri)
         if serialization == "html":
             return HttpResponseSeeOther(resource.web_base + resource.page_path)
         else:
@@ -167,14 +168,14 @@ def get(request, URI):
     # We need JSON-LD to get the graph information
     sparql.setReturnFormat(JSONLD)
     result = sparql.query().convert()
-    logging.debug('Result: %s', len(list(result.quads())))
+    logger.debug('Result: %s', len(list(result.quads())))
 
     if(len(list(result.quads())) == 0): #If there are no results.
         raise Http404("No results")
         #return HttpResponseNotFound("Data not found")
 
 
-    logging.debug("Data path: %s",  resource.data_path)
+    logger.debug("Data path: %s",  resource.data_path)
     # We want data
     if resource.request_path == resource.data_path:
         # Hard-coded decision what we deliver if a browser accesses our data page
@@ -183,8 +184,8 @@ def get(request, URI):
             mime = "text/turtle"
         response = HttpResponse(content_type=mime, charset="utf-8")
         response.content = result.serialize(format=serialization)
-        logging.debug("mime:", mime)
-        logging.debug("response:", response)
+        logger.debug("mime:", mime)
+        logger.debug("response:", response)
         return response
 
     primary_resource = create_quad_by_predicate(resource.primary_resource, resource, result)
@@ -246,12 +247,12 @@ def create_quad_by_predicate(uri, resource, result):
     # sort the predicates and objects so the presentation of the data does not change on a refresh
     sparql_data = list(quads_by_predicate.values())
     if len(sparql_data) > 0:
-        logging.debug("Sparql Data: {}".format(list(sparql_data)))
+        logger.debug("Sparql Data: {}".format(list(sparql_data)))
 
         sparql_data.sort(key=lambda x: x["labels"][0]["label_or_uri"])
 
         for value in sparql_data:
-            logging.debug("Values: {}".format(value['objects']))
+            logger.debug("Values: {}".format(value['objects']))
             value["objects"].sort(key=lambda item: item["labels"][0]["label_or_uri"])
             value["num_objects"] = len(value["objects"])
 
@@ -351,7 +352,7 @@ def preferredLabel(rdf_graph, subject, lang=None, default=None, labelProperties=
 
     for labelProp in labelProperties:
         labels = list(filter(langfilter, rdf_graph.objects(subject, labelProp)))
-        logging.debug("Labels: {}".format(labels))
+        logger.debug("Labels: {}".format(labels))
         if len(labels) > 0:
             return [(labelProp, label) for label in labels]
         else:
@@ -381,7 +382,7 @@ def get_labels_for(URI_or_literal, result, resource):
     '''
 
     labels = []
-    logging.debug("Result {}".format(result))
+    logger.debug("Result {}".format(result))
     for _, label in preferredLabel(result, URI_or_literal, default=[(None, URI_or_literal)]):
         label_dict = {}
         if isinstance(label, URIRef):
@@ -399,13 +400,13 @@ def get_labels_for(URI_or_literal, result, resource):
             label_dict["dataset_label"] = None
             label_dict["label_or_uri"] = label_dict["label"]
         labels.append(label_dict)
-        logging.debug('labels', labels)
-        logging.debug('label_dict', label_dict)
+        logger.debug('labels', labels)
+        logger.debug('label_dict', label_dict)
     return sorted(labels, key=lambda label: label["label_or_uri"])
 
 def index(request):
     config = getconfig(request)
-    logging.debug("Index, redirecting to %s", config['indexResource'])
+    logger.debug("Index, redirecting to %s", config['indexResource'])
     return redirect(config["indexResource"].str())
 
 
