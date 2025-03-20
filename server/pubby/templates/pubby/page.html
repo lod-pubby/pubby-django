@@ -90,7 +90,7 @@
     <div class="col-md-0 col-lg-3 col-xl-4">
      <div class="image-fluid mt-4" id="picturemargintop30">
          {% if wikidata_image_data %}
-            <img data-src="{{wikidata_image_data.img_url}}" class="img-thumbnail img-fluid" alt="Dataset Picture"  loading="lazy">
+            <img src="{{wikidata_image_data.img_url}}" class="img-thumbnail img-fluid" alt="Dataset Picture"  loading="lazy">
      </div>
             <div style="word-wrap: break-word;">
                 <p class="alert alert-info text-center mt-2"><b>License:</b> {{wikidata_image_data.img_license}}<br><b>Creator:</b> {{wikidata_image_data.img_author|safe}}</p>
