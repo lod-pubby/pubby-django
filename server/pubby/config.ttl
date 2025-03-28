@@ -67,7 +67,7 @@
     conf:defaultLanguage "en";
     # When the homepage of the server is accessed, this resource will
     # be shown.
-    conf:indexResource <http://data.judaicalink.org/data/html/yivo/Moscow>;
+    conf:indexResource <http://localhost:8000/pubby/yivo/moscow>;
     conf:labelProperty rdfs:label, dc:title, dc:identifier, skos:prefLabel;
     conf:imageProperty <http://onto.dm2e.eu/schemas/dm2e/1.1/hasAnnotatableVersionAt>;
     conf:showLabels "true";
@@ -77,7 +77,7 @@
         <http://dublincore.org/2012/06/14/dcelements.rdf>;
 #    conf:loadVocabularyFromFile
 #        "";
-    conf:defaultEndpoint <http://localhost:3030/jvmg>;
+    conf:defaultEndpoint <https://data.judaicalink.org/sparql/query>;
 
 
 
@@ -91,7 +91,7 @@
         # Default graph name to query (not necessary for most endpoints)
         # conf:sparqlDefaultGraph <http://141.20.126.155/api/file/50b8c6d228f37c3d62000007/data>;
         # Common URI prefix of all resource URIs in the SPARQL dataset
-        conf:datasetBase <http://mediagraph.link/>;
+        conf:datasetBase <http://data.judaicalink.org/data/>;
         conf:priority "3";
         conf:addSameAsStatements "false";
         # Will be appended to the conf:webBase to form the public
@@ -106,7 +106,7 @@
         conf:webPagePrefix "html/";
 
         conf:useSparqlMapping [
-           conf:uriPattern "http://mediagraph.link/(.*)";
+           conf:uriPattern "http://data.judaicalink.org/data/(.*)";
            conf:sparqlQuery '''
         PREFIX is_label: <http://www.w3.org/2000/01/rdf-schema#label>
         CONSTRUCT {
@@ -123,7 +123,7 @@
         }
         WHERE {
           GRAPH ?graph {
-            ?subject ?predicate ?object . FILTER ( ?subject = <http://mediagraph.link/$1> )
+            ?subject ?predicate ?object . FILTER ( ?subject = <http://data.judaicalink.org/data/$1> )
           } .
           OPTIONAL { ?object is_label: ?o_label }
           OPTIONAL { ?predicate is_label: ?p_label1 }

@@ -1,15 +1,12 @@
-{% if predicate.graph.link %}
-<a class="graph" href="{{predicate.graph.link}}">
-  {{predicate.graph.label}}
-</a>
-{% endif %}
 <a href="{{predicate.link}}">
-  {% for item in predicate.label %}
-  {% if item.language %}
-  <span lang="{{item.language}}">{{item}}</span>
+  {% for item in predicate.labels %}
+  <span lang="{{item.language}}">
+    {% if item.label %}
+     {{item.label}}
   {% else %}
-  <span>{{item}}</span>
+    {{item.heuristic}}
   {% endif %}
+  </span>
   {% endfor %}
 </a>
 {% if predicate.num_objects > 7 %}

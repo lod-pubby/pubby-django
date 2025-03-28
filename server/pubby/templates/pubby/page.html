@@ -1,25 +1,33 @@
-<!DOCTYPE html>
+{% extends 'pubby/base.html' %}
+{% block content %}
 {% load static %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'pubby/styles.css' %}">
 
-<html lang="en">
-  <head>
+<!--content-->
+    {% include "pubby/header.html" %}
+<main class="row">
+	<div class="col-12 col-sm-12 col-md-12 col-lg-9 col-xl-8">
+
+
     <!-- <meta charset="UTF-8"> -->
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <title>{{resource_label}}</title>
-  </head>
-  <body>
-    <h1>{{resource_label}}</h1>
-    <nav>
+    <h1 class="text-center text-md-left">{{resource_label}}</h1>
+
+    <p>URI: <a href="{{resource_uri}}">{{resource_uri}}</a></p>
+
+<!--    <nav>
       <a href="#" class=switch-mode>
         <span class=text-for-light>Light Mode</span>
         <span class=text-for-dark>Dark Mode</span>
       </a>
-    </nav>
-    <table>
-      <tr><th>Property</th><th>Value</th></tr>
-      {% for predicate in sparql_data %}
+    </nav>-->
+
+    <div class="table-responsive">
+
+    <table class="table table-light table-striped">
+      <tr><th scope="col" style="width: 35%">Property</th><th scope="col">Value</th></tr>
+      {% for predicate in primary_resource %}
       <tr>
         <td>
           {% if predicate.is_subject %}
@@ -29,13 +37,18 @@
           {% endif %}
         </td>
         <td>
+          {% if predicate.graph.link %}
+          <a class="graph badge badge-secondary float-right ml-3 mb-3" href="{{predicate.graph.link}}">
+            {{predicate.graph.label}}
+          </a>
+          {% endif %}
           {% if predicate.num_objects == 1 %}
-          {% include "pubby/object_link.html" with object=predicate.objects.0 %}
+          {% include "pubby/object_link.html" with object=predicate.objects.0 length=10000 %}
           {% else %}
           <ul>
             {% for object in predicate.objects %}
             <li>
-              {% include "pubby/object_link.html" with object=object %}
+              {% include "pubby/object_link.html" with object=object length=40 %}
             </li>
             {% endfor %}
           </ul>
@@ -44,5 +57,30 @@
       </tr>
       {% endfor %}
     </table>
-  </body>
-</html>
+    </div>
+
+
+</div>
+
+
+
+    <div class="col-md-0 col-lg-3 col-xl-4">
+     <div class="img-fluid mt-4 sticky-top" id="picturemargintop30">
+            <img src="{% static '/img/markus-winkler-aYPtEknQmXE-unsplash.jpg' %}" class="img-thumbnail img-fluid mt-4" alt="Dataset Picture">
+       <br><br>
+         <p class="alert alert-info text-center">Dataset about: <b>{{resource_label}}</b></p>
+
+</div>
+    </div>
+        </div>
+
+</main>
+
+
+<!--footer-->
+
+{% include "pubby/footer.html" %}
+
+<!--footer-->
+
+{% endblock content %}
