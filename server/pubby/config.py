@@ -6,6 +6,8 @@ from rdflib import Graph, Namespace, URIRef, BNode
 from rdflib.namespace import RDF
 import re
 
+logger = logging.getLogger(__name__)
+
 CONF = Namespace("http://richard.cyganiak.de/2007/pubby/config.rdf#")
 FUNCTIONAL = [
     CONF.projectName,
@@ -126,9 +128,11 @@ def getconfig(request):
     Gets access to the root ConfigElement.
     The namespace is determined based on the request path.
     """
-    logging.debug("request.path:", request.path)
+    logger.debug("request.path:", request.path)
+    print("request.path:", request.path)
     namespace = resolve(request.path).namespace
-    logging.debug("namespace:", namespace)
+    logger.debug("namespace:", namespace)
+    print("namespace:", namespace)
     return configs[namespace]
 
 
@@ -146,7 +150,7 @@ def init_config():
         with open(file_path, "r", encoding="utf-8") as f:
             g.parse(f, format="turtle")
             for ns in g.namespaces():
-                logging.debug("Namespaces configured :%s", ns)
+                logger.debug("Namespaces configured :%s", ns)
         subject = g.value(None, RDF.type, CONF.Configuration, any=False)
         configs[namespace] = ConfigElement(g, subject)
-        logging.debug("Pubby configured for namespace '%s', using '%d'", namespace, file_path)
+        logger.debug("Pubby configured for namespace '%s', using '%d'", namespace, file_path)

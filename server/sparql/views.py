@@ -5,6 +5,8 @@ import requests
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
+from server import settings
+
 
 # Create your views here.
 def index(request):
@@ -13,7 +15,8 @@ def index(request):
 
     # get a list of all the graphs
     # iterate over the files in the path
-    path = "/data/web.judaicalink.org/judaicalink-site/content/datasets"
+    #path = "/data/web.judaicalink.org/judaicalink-site/content/datasets"
+    path = os.path.join(settings.BASE_DIR, settings.DATASETS_DIR)
 
     # get the list of files
     files = os.listdir(path)

@@ -40,10 +40,12 @@ LIMIT 10</textarea>
                         <div class="input-group">
                   <span class="input-group-text">Query
                   Target graph URI (or use <code>FROM</code> in the query)</span>
-                            <select class="form-control" name="default-graph-uri" id="default-graph-uri">
-                                <option value="" selected>All</option>
+                            <select class="form-control" name="default-graph-uri" id="default-graph-uri" onchange="updateQuery()">
+                                <option value="ALL" selected>All</option>
                                 {% for title, uri in graphs.items %}
-                                    <option value="{{ uri }}">{{ title }}</option>
+                                    {% if uri %}
+                                        <option value="{{ uri }}">{{ title }}</option>
+                                    {% endif %}
                                 {% endfor %}
                             </select>
                         </div>
@@ -113,44 +115,123 @@ LIMIT 10</textarea>
     <script>
         function fetchSPARQL() {
             // Get form values
-            let graphURI = encodeURI($('#default-graph-uri').val());
+            let graphURI = $('#default-graph-uri').val();
             const output = $('#output').val();
-            const stylesheet = encodeURI($('#stylesheet').val());
-            const forceAccept = encodeURI($('#force-accept').val());
-            const query = encodeURIComponent($('#query').val());
+            const stylesheet = encodeURIComponent($('#stylesheet').val());
+            const forceAccept = $('#force-accept').is(':checked') ? 'text/plain' : '';
+            const prefixes = `
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX gndo: <http://d-nb.info/standards/elementset/gnd#>
+PREFIX jl: <http://data.judaicalink.org/ontology/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+`;
 
-            let url = "";
-            if (graphURI === "") {
-                url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&output=' + output + '&stylesheet=' + stylesheet;
+            let query = prefixes; // Start with prefixes
+            let url = "https://data.judaicalink.org/sparql/query/?";
+
+            if (graphURI === "ALL") {
+                // Query for all graphs
+                query += `
+SELECT *
+WHERE {
+    { ?s ?p ?o }
+    UNION
+    { GRAPH ?g { ?s ?p ?o } }
+}
+LIMIT 10
+`;
             } else {
-                url = 'https://data.judaicalink.org/sparql/query/?query=' + query + '&default-graph-uri=' + graphURI + '&output=' + output + '&stylesheet=' + stylesheet;
+                // Query for a specific graph
+                query += `
+SELECT *
+WHERE {
+    GRAPH <${graphURI}> {
+        ?s ?p ?o
+    }
+}
+LIMIT 10
+`;
             }
 
-            if (forceAccept !== "") {
+            // Update the query textarea for user clarity
+            $('#query').val(query.trim());
+
+            url += 'query=' + encodeURIComponent(query.trim()) + '&output=' + output + '&stylesheet=' + stylesheet;
+
+            if (forceAccept) {
                 url += '&force-accept=' + forceAccept;
             }
 
-            console.log(url);
+            console.log("Query URL:", url);
 
-            // Perform a GET request to fetch the XML data
+            // Perform the GET request to fetch the results
             fetch(url)
                 .then(response => response.text())
                 .then(data => {
-                    //console.log(data);
-                    // Update the textarea with the XML data
-                    document.getElementById('results').innerHTML = data;
-                    document.getElementById('results').style.whiteSpace = 'pre-wrap';
-                    document.getElementById('results').style.overflow = 'auto';
-                    document.getElementById('results').style.resize = 'both';
-                    // Resize the textarea to fit the content
-                    document.getElementById('results').style.height = 'auto';
-                    document.getElementById('results').style.width = 'auto';
-                    document.getElementById('results').style.height = document.getElementById('results').scrollHeight + 10 + 'px';
-                    document.getElementById('results').style.width = document.getElementById('results').scrollWidth + 10 + 'px';
+                    // Display results in the textarea
+                    const resultsBox = document.getElementById('results');
+                    resultsBox.innerHTML = data;
+                    resultsBox.style.whiteSpace = 'pre-wrap';
+                    resultsBox.style.overflow = 'auto';
+                    resultsBox.style.resize = 'both';
+                    resultsBox.style.height = 'auto';
+                    resultsBox.style.width = 'auto';
+                    resultsBox.style.height = resultsBox.scrollHeight + 10 + 'px';
+                    resultsBox.style.width = resultsBox.scrollWidth + 10 + 'px';
                 })
                 .catch(error => {
-                    console.error('Error fetching XML:', error);
+                    console.error('Error fetching SPARQL results:', error);
                 });
         }
+
+        function updateQuery() {
+        const graphURI = $('#default-graph-uri').val();
+        const prefixes = `
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX gndo: <http://d-nb.info/standards/elementset/gnd#>
+PREFIX jl: <http://data.judaicalink.org/ontology/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+`;
+
+        let query = prefixes; // Start with prefixes
+
+        if (graphURI === "ALL") {
+            // Query for all graphs
+            query += `
+SELECT *
+WHERE {
+    { ?s ?p ?o }
+    UNION
+    { GRAPH ?g { ?s ?p ?o } }
+}
+LIMIT 10
+`;
+        } else {
+            // Query for a specific graph
+            query += `
+SELECT *
+WHERE {
+    GRAPH <${graphURI}> {
+        ?s ?p ?o
+    }
+}
+LIMIT 10
+`;
+        }
+
+        // Update the query textarea
+        $('#query').val(query.trim());
+    }
     </script>
+
 {% endblock %}
